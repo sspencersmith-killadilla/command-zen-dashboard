@@ -142,8 +142,8 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
             <div className="space-y-6">
               <Header
                 icon={<Link2 />}
-                title="Connect Google Calendar"
-                subtitle="Lets the Command Center schedule tiered reminders — a heads-up days out, a nudge the night before, a final ping the morning of."
+                title="Google Calendar"
+                subtitle="Tiered reminders — a heads-up days out, a nudge the night before, a final ping the morning of."
               />
               <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-2">
                 <p className="font-medium text-foreground">What this does:</p>
@@ -152,15 +152,12 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                   <li>Powers the Daily Reset prompt (the Gemini briefing references real events)</li>
                   <li>You can revoke access anytime from your Google account settings</li>
                 </ul>
-                <p className="pt-1 text-xs">Use the same Google account you use for school.</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setGoogleConnected(true)}
-                className={`w-full rounded-xl border p-5 flex items-center gap-4 transition-all ${
+              <div
+                className={`w-full rounded-xl border p-5 flex items-center gap-4 ${
                   googleConnected
                     ? "border-accent bg-accent/10"
-                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                    : "border-border bg-muted/30"
                 }`}
               >
                 <div className={`h-11 w-11 rounded-lg flex items-center justify-center ${googleConnected ? "bg-accent" : "bg-muted"}`}>
@@ -172,15 +169,18 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                 </div>
                 <div className="text-left flex-1">
                   <div className="font-medium text-foreground">
-                    {googleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
+                    {googleConnected ? "Signed in with Google" : "Not signed in with Google"}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {googleConnected ? "We'll handle the alerts." : "One-tap sign-in with Google."}
+                    {googleConnected
+                      ? "We'll use this account for Calendar reminders."
+                      : "Sign out and use \"Continue with Google\" on the login page to enable Calendar."}
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           )}
+
 
           {step === 3 && (
             <div className="space-y-6">
