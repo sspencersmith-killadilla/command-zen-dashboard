@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Plus, Trash2, RotateCcw, LogOut } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, RotateCcw, LogOut, Check, Calendar } from "lucide-react";
 import { useWinstonConfig } from "@/lib/winston-store";
+import { configQueryKey } from "@/lib/winston-store";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  startGoogleCalendarConnect,
+  disconnectGoogleCalendar,
+} from "@/lib/google-calendar.functions";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const searchSchema = z.object({
+  gcal: z.enum(["connected", "error"]).optional(),
+  reason: z.string().optional(),
+});
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — Command Center" }] }),
+  validateSearch: searchSchema,
   component: SettingsPage,
 });
 
