@@ -76,14 +76,24 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
               </div>
               <div className="space-y-3">
                 <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
-                  Welcome, Winston.
+                  Welcome to your Command Center.
                 </h1>
                 <p className="text-lg text-muted-foreground">
-                  Let's get your semester automated.
+                  First — what should we call you?
                 </p>
               </div>
+              <div className="max-w-sm mx-auto text-left space-y-2">
+                <Label htmlFor="name">Your name</Label>
+                <Input
+                  id="name"
+                  autoFocus
+                  placeholder="e.g. Winston"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                />
+              </div>
               <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground text-left space-y-2 max-w-md mx-auto">
-                <p className="font-medium text-foreground">You'll connect three things:</p>
+                <p className="font-medium text-foreground">Next, you'll connect three things:</p>
                 <ul className="space-y-1.5">
                   <li><span className="font-medium text-foreground">1. Canvas</span> — so every assignment shows up here automatically.</li>
                   <li><span className="font-medium text-foreground">2. Google Calendar</span> — so the Command Center can send you smart reminders.</li>
