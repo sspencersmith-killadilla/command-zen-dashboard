@@ -73,6 +73,29 @@ function SettingsPage() {
     }
   }
 
+  function addCourse() {
+    if (!draftName.trim() || !draftUrl.trim()) return;
+    update({
+      courses: [
+        ...cfg.courses,
+        { id: crypto.randomUUID(), name: draftName.trim(), notebookUrl: draftUrl.trim() },
+      ],
+    });
+    setDraftName("");
+    setDraftUrl("");
+  }
+
+  async function resetOnboarding() {
+    if (!confirm("Re-run onboarding? Your saved settings stay; you'll just walk through the wizard again.")) return;
+    update({ onboarded: false });
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/login", replace: true });
+  }
+
+
 
   return (
     <div className="min-h-screen bg-background">
