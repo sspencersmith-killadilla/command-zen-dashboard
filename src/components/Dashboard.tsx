@@ -1,0 +1,264 @@
+import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import {
+  CalendarClock,
+  BookOpen,
+  Copy,
+  Check,
+  ExternalLink,
+  Settings,
+  Bell,
+  Sparkles,
+} from "lucide-react";
+import {
+  useWinstonConfig,
+  getSimulatedAssignments,
+  tierFor,
+  GEMINI_PROMPT,
+  type AlertTier,
+} from "@/lib/winston-store";
+
+const TIER_LABEL: Record<AlertTier, string> = {
+  horizon: "On the Horizon",
+  incoming: "Incoming",
+  focus: "Focus Time",
+};
+const TIER_CLASS: Record<AlertTier, string> = {
+  horizon: "bg-horizon/15 text-horizon-foreground border-horizon/30",
+  incoming: "bg-incoming/15 border-incoming/30",
+  focus: "bg-focus/15 border-focus/40",
+};
+const TIER_DOT: Record<AlertTier, string> = {
+  horizon: "bg-horizon",
+  incoming: "bg-incoming",
+  focus: "bg-focus",
+};
+
+function fmtDue(d: Date) {
+  const days = Math.round((d.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+  if (days === 0) return "Today";
+  if (days === 1) return "Tomorrow";
+  if (days < 0) return `${-days}d overdue`;
+  return `in ${days}d`;
+}
+
+export function Dashboard() {
+  const { cfg, update } = useWinstonConfig();
+  const [copied, setCopied] = useState(false);
+
+  const assignments = useMemo(
+    () => getSimulatedAssignments(cfg.courses).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime()),
+    [cfg.courses]
+  );
+
+  function matchCourse(courseCode: string) {
+    return cfg.courses.find((c) => c.name.toLowerCase() === courseCode.toLowerCase());
+  }
+
+  async function copyPrompt() {
+    try {
+      await navigator.clipboard.writeText(GEMINI_PROMPT);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border/60 bg-card/50 backdrop-blur sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-[image:var(--gradient-hero)] flex items-center justify-center">
+              <Sparkles className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">Winston's</div>
+              <div className="font-semibold leading-tight">Command Center</div>
+            </div>
+          </div>
+          <Link
+            to="/settings"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Settings className="h-4 w-4" />
+            Settings
+          </Link>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <div className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
+            Good day, Winston.
+          </h1>
+          <p className="text-lg text-muted-foreground mt-2">
+            Everything's synced. Here's what matters.
+          </p>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Card A */}
+          <Card className="p-6 lg:col-span-2 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2.5">
+                <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                  <CalendarClock className="h-4.5 w-4.5" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-lg">What's Next?</h2>
+                  <p className="text-xs text-muted-foreground">From your Canvas feed</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Bell className="h-3.5 w-3.5" />
+                Alerts
+                <Switch
+                  checked={cfg.notificationsEnabled}
+                  onCheckedChange={(v) => update({ notificationsEnabled: v })}
+                />
+              </div>
+            </div>
+
+            {assignments.length === 0 ? (
+              <EmptyState text="No assignments yet. Add a class in Settings to populate your timeline." />
+            ) : (
+              <ol className="space-y-2">
+                {assignments.map((a, i) => {
+                  const tier = tierFor(a.dueAt);
+                  const course = matchCourse(a.courseCode);
+                  return (
+                    <li
+                      key={a.id}
+                      className="flex items-center gap-4 p-4 rounded-xl border border-border/60 hover:border-border bg-card hover:bg-muted/30 transition-colors animate-fade-up"
+                      style={{ animationDelay: `${i * 40}ms` }}
+                    >
+                      <div className={`h-2.5 w-2.5 rounded-full ${TIER_DOT[tier]}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-foreground truncate">{a.title}</div>
+                        <div className="text-sm text-muted-foreground truncate">{a.courseCode}</div>
+                      </div>
+                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${TIER_CLASS[tier]}`}>
+                        {TIER_LABEL[tier]}
+                      </span>
+                      <div className="text-sm text-muted-foreground tabular-nums w-20 text-right">
+                        {fmtDue(a.dueAt)}
+                      </div>
+                      {course && (
+                        <a
+                          href={course.notebookUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          aria-label="Open notebook"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+
+            <p className="mt-5 text-xs text-muted-foreground">
+              Tiered alerts: 2 weeks → 1 week → 2 days. Push delivery via Twilio / FCM when enabled.
+            </p>
+          </Card>
+
+          {/* Card C */}
+          <Card className="p-6 border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground" style={{ boxShadow: "var(--shadow-soft)" }}>
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="h-9 w-9 rounded-lg bg-white/15 flex items-center justify-center">
+                <Sparkles className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-lg">The Daily Reset</h2>
+                <p className="text-xs text-primary-foreground/70">Morning Gemini prompt</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-black/15 backdrop-blur p-4 text-sm leading-relaxed text-primary-foreground/95 mb-5">
+              "{GEMINI_PROMPT}"
+            </div>
+
+            <Button
+              onClick={copyPrompt}
+              size="lg"
+              variant="secondary"
+              className="w-full gap-2 font-medium"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-4 w-4 animate-check-pop" />
+                  Copied — paste into Gemini
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4" />
+                  One-Click Copy
+                </>
+              )}
+            </Button>
+          </Card>
+
+          {/* Card B */}
+          <Card className="p-6 lg:col-span-3 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="h-9 w-9 rounded-lg bg-accent/20 text-accent-foreground flex items-center justify-center">
+                <BookOpen className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-lg">My Second Brain</h2>
+                <p className="text-xs text-muted-foreground">Quick-launch your class notebooks</p>
+              </div>
+            </div>
+
+            {cfg.courses.length === 0 ? (
+              <EmptyState text="No notebooks linked yet." />
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {cfg.courses.map((c, i) => {
+                  const linked = assignments.filter((a) => a.courseCode === c.name).length;
+                  return (
+                    <a
+                      key={c.id}
+                      href={c.notebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-muted/30 transition-all animate-fade-up"
+                      style={{ animationDelay: `${i * 50}ms` }}
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center text-sm font-semibold text-accent-foreground">
+                          {c.name.slice(0, 2).toUpperCase()}
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="font-medium text-foreground truncate">{c.name}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {linked} linked assignment{linked === 1 ? "" : "s"}
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center text-sm text-muted-foreground">
+      {text}
+    </div>
+  );
+}
