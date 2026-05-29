@@ -150,12 +150,34 @@ function SettingsPage() {
 
         <Card className="p-6 space-y-4 border-border/60">
           <h2 className="font-semibold text-lg">Integrations</h2>
-          <Row
-            title="Google account"
-            subtitle={cfg.googleConnected ? "Signed in with Google. Calendar reminders enabled." : "Sign in with Google to enable Calendar reminders."}
-            checked={cfg.googleConnected}
-            disabled
-          />
+          <div className="flex items-center justify-between gap-4 py-2">
+            <div className="flex items-start gap-3">
+              <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${cfg.googleConnected ? "bg-accent" : "bg-muted"}`}>
+                {cfg.googleConnected ? (
+                  <Check className="h-5 w-5 text-accent-foreground" />
+                ) : (
+                  <Calendar className="h-5 w-5 text-muted-foreground" />
+                )}
+              </div>
+              <div>
+                <div className="font-medium">Google Calendar</div>
+                <div className="text-sm text-muted-foreground">
+                  {cfg.googleConnected
+                    ? "Reminders will be written to your primary Google Calendar."
+                    : "Connect to write reminders to your Google Calendar."}
+                </div>
+              </div>
+            </div>
+            {cfg.googleConnected ? (
+              <Button variant="outline" size="sm" onClick={disconnectGoogle}>
+                Disconnect
+              </Button>
+            ) : (
+              <Button size="sm" onClick={connectGoogle} disabled={connecting}>
+                {connecting ? "Redirecting…" : "Connect"}
+              </Button>
+            )}
+          </div>
           <Row
             title="Push / SMS alerts"
             subtitle="Tiered reminders via Twilio / FCM."
