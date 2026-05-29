@@ -278,7 +278,13 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
             >
               Back
             </Button>
-            <Button type="button" onClick={next} size="lg" className="gap-1.5">
+            <Button
+              type="button"
+              onClick={next}
+              size="lg"
+              className="gap-1.5"
+              disabled={step === 0 && !displayName.trim()}
+            >
               {step === steps.length - 1 ? "Enter the Command Center" : "Continue"}
               <ArrowRight className="h-4 w-4" />
             </Button>
