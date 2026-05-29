@@ -101,4 +101,4 @@ export function tierFor(dueAt: Date): AlertTier {
 }
 
 export const GEMINI_PROMPT =
-  "@Google Calendar, give me a hyper-focused overview of my schedule today and tell me the single most critical assignment I should start working on early to beat my ADHD time-blindness.";
+  "@Google Calendar, give me a hyper-focused overview of my schedule today and tell me the single most critical assignment I should start working on early so I stay ahead of deadlines.";
