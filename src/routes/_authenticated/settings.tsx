@@ -1,24 +1,77 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Plus, Trash2, RotateCcw, LogOut } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, RotateCcw, LogOut, Check, Calendar } from "lucide-react";
 import { useWinstonConfig } from "@/lib/winston-store";
+import { configQueryKey } from "@/lib/winston-store";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  startGoogleCalendarConnect,
+  disconnectGoogleCalendar,
+} from "@/lib/google-calendar.functions";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const searchSchema = z.object({
+  gcal: z.enum(["connected", "error"]).optional(),
+  reason: z.string().optional(),
+});
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — Command Center" }] }),
+  validateSearch: searchSchema,
   component: SettingsPage,
 });
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const qc = useQueryClient();
   const { cfg, update } = useWinstonConfig();
   const [draftName, setDraftName] = useState("");
   const [draftUrl, setDraftUrl] = useState("");
+  const [connecting, setConnecting] = useState(false);
+  const connectFn = useServerFn(startGoogleCalendarConnect);
+  const disconnectFn = useServerFn(disconnectGoogleCalendar);
+
+  useEffect(() => {
+    if (search.gcal === "connected") {
+      toast.success("Google Calendar connected");
+      qc.invalidateQueries({ queryKey: configQueryKey });
+      navigate({ to: "/settings", search: {}, replace: true });
+    } else if (search.gcal === "error") {
+      toast.error(`Google Calendar failed${search.reason ? `: ${search.reason}` : ""}`);
+      navigate({ to: "/settings", search: {}, replace: true });
+    }
+  }, [search.gcal, search.reason, navigate, qc]);
+
+  async function connectGoogle() {
+    setConnecting(true);
+    try {
+      const { authorizationUrl } = await connectFn();
+      window.location.href = authorizationUrl;
+    } catch (e) {
+      setConnecting(false);
+      toast.error(e instanceof Error ? e.message : "Failed to start OAuth");
+    }
+  }
+
+  async function disconnectGoogle() {
+    if (!confirm("Disconnect Google Calendar? You can reconnect anytime.")) return;
+    try {
+      await disconnectFn();
+      toast.success("Google Calendar disconnected");
+      qc.invalidateQueries({ queryKey: configQueryKey });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to disconnect");
+    }
+  }
 
   function addCourse() {
     if (!draftName.trim() || !draftUrl.trim()) return;
@@ -41,6 +94,8 @@ function SettingsPage() {
     await supabase.auth.signOut();
     navigate({ to: "/login", replace: true });
   }
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -95,12 +150,34 @@ function SettingsPage() {
 
         <Card className="p-6 space-y-4 border-border/60">
           <h2 className="font-semibold text-lg">Integrations</h2>
-          <Row
-            title="Google account"
-            subtitle={cfg.googleConnected ? "Signed in with Google. Calendar reminders enabled." : "Sign in with Google to enable Calendar reminders."}
-            checked={cfg.googleConnected}
-            disabled
-          />
+          <div className="flex items-center justify-between gap-4 py-2">
+            <div className="flex items-start gap-3">
+              <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${cfg.googleConnected ? "bg-accent" : "bg-muted"}`}>
+                {cfg.googleConnected ? (
+                  <Check className="h-5 w-5 text-accent-foreground" />
+                ) : (
+                  <Calendar className="h-5 w-5 text-muted-foreground" />
+                )}
+              </div>
+              <div>
+                <div className="font-medium">Google Calendar</div>
+                <div className="text-sm text-muted-foreground">
+                  {cfg.googleConnected
+                    ? "Reminders will be written to your primary Google Calendar."
+                    : "Connect to write reminders to your Google Calendar."}
+                </div>
+              </div>
+            </div>
+            {cfg.googleConnected ? (
+              <Button variant="outline" size="sm" onClick={disconnectGoogle}>
+                Disconnect
+              </Button>
+            ) : (
+              <Button size="sm" onClick={connectGoogle} disabled={connecting}>
+                {connecting ? "Redirecting…" : "Connect"}
+              </Button>
+            )}
+          </div>
           <Row
             title="Push / SMS alerts"
             subtitle="Tiered reminders via Twilio / FCM."

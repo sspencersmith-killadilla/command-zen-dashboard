@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Sparkles, Calendar, Link2, BookOpen, Check, Plus, Trash2, ArrowRight } from "lucide-react";
 import type { CourseHub, WinstonConfig } from "@/lib/winston-store";
+import { startGoogleCalendarConnect } from "@/lib/google-calendar.functions";
+import { toast } from "sonner";
 
 type Props = {
   initial: WinstonConfig;
@@ -16,11 +19,24 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
   const [displayName, setDisplayName] = useState(initial.displayName);
   const [canvasUrl, setCanvasUrl] = useState(initial.canvasFeedUrl);
   const googleConnected = initial.googleConnected;
+  const [connecting, setConnecting] = useState(false);
+  const connectFn = useServerFn(startGoogleCalendarConnect);
   const [courses, setCourses] = useState<CourseHub[]>(
     initial.courses.length ? initial.courses : []
   );
   const [draftName, setDraftName] = useState("");
   const [draftUrl, setDraftUrl] = useState("");
+
+  async function connectGoogle() {
+    setConnecting(true);
+    try {
+      const { authorizationUrl } = await connectFn();
+      window.location.href = authorizationUrl;
+    } catch (e) {
+      setConnecting(false);
+      toast.error(e instanceof Error ? e.message : "Failed to start OAuth");
+    }
+  }
 
   const steps = ["Welcome", "Canvas", "Google", "Notebooks"];
   const progress = ((step + 1) / steps.length) * 100;
@@ -169,14 +185,19 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                 </div>
                 <div className="text-left flex-1">
                   <div className="font-medium text-foreground">
-                    {googleConnected ? "Signed in with Google" : "Not signed in with Google"}
+                    {googleConnected ? "Google Calendar connected" : "Not connected"}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {googleConnected
-                      ? "We'll use this account for Calendar reminders."
-                      : "Sign out and use \"Continue with Google\" on the login page to enable Calendar."}
+                      ? "Reminders will be written to your primary calendar."
+                      : "You'll be redirected to Google to grant access."}
                   </div>
                 </div>
+                {!googleConnected && (
+                  <Button size="sm" onClick={connectGoogle} disabled={connecting}>
+                    {connecting ? "Redirecting…" : "Connect"}
+                  </Button>
+                )}
               </div>
             </div>
           )}
