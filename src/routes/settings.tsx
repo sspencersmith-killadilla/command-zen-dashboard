@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Plus, Trash2, RotateCcw } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, RotateCcw, CloudUpload } from "lucide-react";
 import { useWinstonConfig, saveConfig } from "@/lib/winston-store";
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({ meta: [{ title: "Settings — Winston's Command Center" }] }),
+  head: () => ({ meta: [{ title: "Settings — Command Center" }] }),
   component: SettingsPage,
 });
 
@@ -31,9 +31,10 @@ function SettingsPage() {
   }
 
   function resetAll() {
-    if (!confirm("Reset Winston's Command Center? This clears all saved config.")) return;
+    if (!confirm("Reset your Command Center? This clears all saved config.")) return;
     saveConfig({
       onboarded: false,
+      displayName: "",
       canvasFeedUrl: "",
       googleConnected: false,
       notificationsEnabled: false,
@@ -54,6 +55,22 @@ function SettingsPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-10 space-y-6">
+        <Card className="p-6 space-y-4 border-border/60">
+          <div>
+            <h2 className="font-semibold text-lg">Your name</h2>
+            <p className="text-sm text-muted-foreground">Used for your dashboard greeting.</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Display name</Label>
+            <Input
+              id="name"
+              value={cfg.displayName}
+              onChange={(e) => update({ displayName: e.target.value })}
+              placeholder="e.g. Winston"
+            />
+          </div>
+        </Card>
+
         <Card className="p-6 space-y-4 border-border/60">
           <div>
             <h2 className="font-semibold text-lg">Canvas feed</h2>
@@ -123,6 +140,57 @@ function SettingsPage() {
           <Button onClick={addCourse} variant="secondary" disabled={!draftName.trim() || !draftUrl.trim()}>
             <Plus className="h-4 w-4 mr-1.5" /> Add class
           </Button>
+        </Card>
+
+        {/* Cross-device sync walkthrough */}
+        <Card className="p-6 space-y-4 border-border/60">
+          <div className="flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <CloudUpload className="h-4.5 w-4.5" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-lg">Sync across devices</h2>
+              <p className="text-sm text-muted-foreground">
+                Optional. Right now your config lives only in this browser — laptop and phone each need their own setup.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-3">
+            <p>
+              To sync your name, Canvas feed, and notebooks between your phone and laptop, connect a free
+              <span className="font-medium text-foreground"> Supabase </span>
+              backend. It stores your config in the cloud and signs you in on any device.
+            </p>
+
+            <div>
+              <p className="font-medium text-foreground mb-1.5">Walkthrough:</p>
+              <ol className="list-decimal pl-5 space-y-2">
+                <li>
+                  Go to <a href="https://supabase.com" target="_blank" rel="noreferrer" className="underline text-primary">supabase.com</a> and create a free account.
+                </li>
+                <li>
+                  Click <span className="font-medium">New project</span>. Pick a name (e.g. "command-center"), set a database password (save it somewhere), and choose the closest region.
+                </li>
+                <li>
+                  Wait ~1 minute for it to provision. When it's ready, open <span className="font-medium">Project Settings → API</span>.
+                </li>
+                <li>
+                  Copy two values: the <span className="font-medium">Project URL</span> and the <span className="font-medium">anon / public key</span>.
+                </li>
+                <li>
+                  Back in your Command Center project, ask Lovable: <span className="italic">"connect this Supabase project: &lt;URL&gt; and &lt;anon key&gt;, and sync my config + sign-in across devices."</span>
+                </li>
+                <li>
+                  Lovable will scaffold a <code className="text-xs bg-background px-1 py-0.5 rounded">user_configs</code> table, add Google sign-in, and migrate your current localStorage data on first login.
+                </li>
+              </ol>
+            </div>
+
+            <p className="text-xs">
+              Easier alternative: ask Lovable to <span className="font-medium text-foreground">"enable Lovable Cloud"</span> — same result, no Supabase account needed. We held off so you keep full ownership of the database.
+            </p>
+          </div>
         </Card>
 
         <Card className="p-6 border-border/60">
