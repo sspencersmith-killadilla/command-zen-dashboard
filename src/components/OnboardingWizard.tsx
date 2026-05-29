@@ -172,14 +172,19 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                 </div>
                 <div className="text-left flex-1">
                   <div className="font-medium text-foreground">
-                    {googleConnected ? "Signed in with Google" : "Not signed in with Google"}
+                    {googleConnected ? "Google Calendar connected" : "Not connected"}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {googleConnected
-                      ? "We'll use this account for Calendar reminders."
-                      : "Sign out and use \"Continue with Google\" on the login page to enable Calendar."}
+                      ? "Reminders will be written to your primary calendar."
+                      : "You'll be redirected to Google to grant access."}
                   </div>
                 </div>
+                {!googleConnected && (
+                  <Button size="sm" onClick={connectGoogle} disabled={connecting}>
+                    {connecting ? "Redirecting…" : "Connect"}
+                  </Button>
+                )}
               </div>
             </div>
           )}
