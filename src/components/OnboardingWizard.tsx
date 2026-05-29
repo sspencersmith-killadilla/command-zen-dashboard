@@ -80,22 +80,39 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                   Let's get your semester automated.
                 </p>
               </div>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                Four short steps. After this, you barely need to touch it.
-              </p>
+              <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground text-left space-y-2 max-w-md mx-auto">
+                <p className="font-medium text-foreground">You'll connect three things:</p>
+                <ul className="space-y-1.5">
+                  <li><span className="font-medium text-foreground">1. Canvas</span> — so every assignment shows up here automatically.</li>
+                  <li><span className="font-medium text-foreground">2. Google Calendar</span> — so the Command Center can send you smart reminders.</li>
+                  <li><span className="font-medium text-foreground">3. NotebookLM</span> — one notebook per class, for instant study help.</li>
+                </ul>
+                <p className="pt-1">Takes about 3 minutes. After this, you barely touch it.</p>
+              </div>
             </div>
           )}
 
           {step === 1 && (
             <div className="space-y-6">
-              <Header icon={<Calendar />} title="Sync your Canvas calendar" subtitle="Paste your Canvas Calendar Feed URL." />
-              <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-2">
-                <p className="font-medium text-foreground">Where to find it:</p>
-                <ol className="list-decimal pl-5 space-y-1">
-                  <li>Open Canvas → <span className="font-medium">Calendar</span></li>
-                  <li>Click <span className="font-medium">Calendar Feed</span> at the bottom right</li>
-                  <li>Copy the URL that ends in <code className="text-xs bg-background px-1.5 py-0.5 rounded">.ics</code></li>
-                </ol>
+              <Header
+                icon={<Calendar />}
+                title="Sync your Canvas calendar"
+                subtitle="Pulls every assignment due date into one timeline — no more checking five class pages."
+              />
+              <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-3">
+                <div>
+                  <p className="font-medium text-foreground mb-1.5">Step-by-step:</p>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    <li>Open Canvas and sign in</li>
+                    <li>Click <span className="font-medium">Calendar</span> in the left sidebar</li>
+                    <li>Scroll to the bottom-right and click <span className="font-medium">Calendar Feed</span></li>
+                    <li>A popup shows a long URL ending in <code className="text-xs bg-background px-1.5 py-0.5 rounded">.ics</code> — copy it</li>
+                    <li>Paste it below</li>
+                  </ol>
+                </div>
+                <p className="text-xs">
+                  <span className="font-medium text-foreground">Privacy:</span> this is a read-only feed. Nothing can be changed in Canvas from here.
+                </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="canvas">Canvas feed URL</Label>
@@ -111,7 +128,20 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
 
           {step === 2 && (
             <div className="space-y-6">
-              <Header icon={<Link2 />} title="Connect Google Calendar" subtitle="So Winston's Command Center can schedule intelligent alerts." />
+              <Header
+                icon={<Link2 />}
+                title="Connect Google Calendar"
+                subtitle="Lets the Command Center schedule tiered reminders — a heads-up days out, a nudge the night before, a final ping the morning of."
+              />
+              <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-2">
+                <p className="font-medium text-foreground">What this does:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Writes assignment reminders directly to your existing Google Calendar</li>
+                  <li>Powers the Daily Reset prompt (the Gemini briefing references real events)</li>
+                  <li>You can revoke access anytime from your Google account settings</li>
+                </ul>
+                <p className="pt-1 text-xs">Use the same Google account you use for school.</p>
+              </div>
               <button
                 type="button"
                 onClick={() => setGoogleConnected(true)}
@@ -133,7 +163,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                     {googleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {googleConnected ? "We'll handle the alerts." : "One-tap OAuth (simulated)."}
+                    {googleConnected ? "We'll handle the alerts." : "One-tap sign-in with Google."}
                   </div>
                 </div>
               </button>
@@ -142,7 +172,30 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
 
           {step === 3 && (
             <div className="space-y-6">
-              <Header icon={<BookOpen />} title="Your class notebooks" subtitle="Paste NotebookLM links for each class." />
+              <Header
+                icon={<BookOpen />}
+                title="Your class notebooks"
+                subtitle="Each class gets its own NotebookLM hub — your second brain for that course."
+              />
+              <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-3">
+                <div>
+                  <p className="font-medium text-foreground mb-1.5">Don't have notebooks yet?</p>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    <li>Go to <a href="https://notebooklm.google.com" target="_blank" rel="noreferrer" className="underline text-primary">notebooklm.google.com</a></li>
+                    <li>Click <span className="font-medium">+ Create new</span> and name it after the class (e.g. "CS 374")</li>
+                    <li>Upload your syllabus, lecture slides, and readings as sources</li>
+                  </ol>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground mb-1.5">Getting the URL:</p>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    <li>Open the notebook</li>
+                    <li>Copy the URL from your browser's address bar — it looks like <code className="text-xs bg-background px-1.5 py-0.5 rounded">notebooklm.google.com/notebook/...</code></li>
+                    <li>Paste it below with the class name</li>
+                  </ol>
+                </div>
+                <p className="text-xs">Add one per class. You can add more later from Settings.</p>
+              </div>
 
               <div className="space-y-2">
                 {courses.map((c) => (
@@ -184,7 +237,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                     <Label htmlFor="curl" className="text-xs">NotebookLM URL</Label>
                     <Input
                       id="curl"
-                      placeholder="https://notebooklm.google.com/..."
+                      placeholder="https://notebooklm.google.com/notebook/..."
                       value={draftUrl}
                       onChange={(e) => setDraftUrl(e.target.value)}
                     />
