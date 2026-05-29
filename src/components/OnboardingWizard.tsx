@@ -19,11 +19,24 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
   const [displayName, setDisplayName] = useState(initial.displayName);
   const [canvasUrl, setCanvasUrl] = useState(initial.canvasFeedUrl);
   const googleConnected = initial.googleConnected;
+  const [connecting, setConnecting] = useState(false);
+  const connectFn = useServerFn(startGoogleCalendarConnect);
   const [courses, setCourses] = useState<CourseHub[]>(
     initial.courses.length ? initial.courses : []
   );
   const [draftName, setDraftName] = useState("");
   const [draftUrl, setDraftUrl] = useState("");
+
+  async function connectGoogle() {
+    setConnecting(true);
+    try {
+      const { authorizationUrl } = await connectFn();
+      window.location.href = authorizationUrl;
+    } catch (e) {
+      setConnecting(false);
+      toast.error(e instanceof Error ? e.message : "Failed to start OAuth");
+    }
+  }
 
   const steps = ["Welcome", "Canvas", "Google", "Notebooks"];
   const progress = ((step + 1) / steps.length) * 100;
