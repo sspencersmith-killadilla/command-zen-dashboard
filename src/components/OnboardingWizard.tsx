@@ -13,7 +13,7 @@ type Props = {
 
 export function OnboardingWizard({ initial, onComplete }: Props) {
   const [step, setStep] = useState(0);
-  const [canvasUrl, setCanvasUrl] = useState(initial.canvasFeedUrl);
+  const [displayName, setDisplayName] = useState(initial.displayName);
   const [googleConnected, setGoogleConnected] = useState(initial.googleConnected);
   const [courses, setCourses] = useState<CourseHub[]>(
     initial.courses.length ? initial.courses : []
