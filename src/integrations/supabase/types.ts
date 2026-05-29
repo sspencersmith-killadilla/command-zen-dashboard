@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      user_configs: {
+        Row: {
+          canvas_feed_url: string
+          courses: Json
+          created_at: string
+          display_name: string
+          google_connection_id: string | null
+          id: string
+          notifications_enabled: boolean
+          onboarded: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          canvas_feed_url?: string
+          courses?: Json
+          created_at?: string
+          display_name?: string
+          google_connection_id?: string | null
+          id?: string
+          notifications_enabled?: boolean
+          onboarded?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          canvas_feed_url?: string
+          courses?: Json
+          created_at?: string
+          display_name?: string
+          google_connection_id?: string | null
+          id?: string
+          notifications_enabled?: boolean
+          onboarded?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

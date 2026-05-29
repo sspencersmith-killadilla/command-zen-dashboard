@@ -1,17 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useCallback } from "react";
+import { getMyConfig, updateMyConfig, type WinstonConfig, type CourseHub } from "./winston-store.functions";
 
-export type CourseHub = { id: string; name: string; notebookUrl: string };
-
-export type WinstonConfig = {
-  onboarded: boolean;
-  displayName: string;
-  canvasFeedUrl: string;
-  googleConnected: boolean;
-  notificationsEnabled: boolean;
-  courses: CourseHub[];
-};
-
-const KEY = "winston-config-v1";
+export type { WinstonConfig, CourseHub };
 
 const DEFAULT: WinstonConfig = {
   onboarded: false,
@@ -22,43 +14,46 @@ const DEFAULT: WinstonConfig = {
   courses: [],
 };
 
-export function loadConfig(): WinstonConfig {
-  if (typeof window === "undefined") return DEFAULT;
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return DEFAULT;
-    return { ...DEFAULT, ...JSON.parse(raw) };
-  } catch {
-    return DEFAULT;
-  }
-}
-
-export function saveConfig(cfg: WinstonConfig) {
-  localStorage.setItem(KEY, JSON.stringify(cfg));
-  window.dispatchEvent(new CustomEvent("winston-config-change"));
-}
+export const configQueryKey = ["winston-config"] as const;
 
 export function useWinstonConfig() {
-  const [cfg, setCfg] = useState<WinstonConfig>(DEFAULT);
-  const [ready, setReady] = useState(false);
+  const qc = useQueryClient();
+  const fetchCfg = useServerFn(getMyConfig);
+  const saveCfg = useServerFn(updateMyConfig);
 
-  useEffect(() => {
-    setCfg(loadConfig());
-    setReady(true);
-    const handler = () => setCfg(loadConfig());
-    window.addEventListener("winston-config-change", handler);
-    return () => window.removeEventListener("winston-config-change", handler);
-  }, []);
+  const query = useQuery({
+    queryKey: configQueryKey,
+    queryFn: () => fetchCfg(),
+    staleTime: 30_000,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (patch: Partial<WinstonConfig>) => saveCfg({ data: patch }),
+    onMutate: async (patch) => {
+      await qc.cancelQueries({ queryKey: configQueryKey });
+      const prev = qc.getQueryData<WinstonConfig>(configQueryKey);
+      if (prev) qc.setQueryData<WinstonConfig>(configQueryKey, { ...prev, ...patch });
+      return { prev };
+    },
+    onError: (_e, _p, ctx) => {
+      if (ctx?.prev) qc.setQueryData(configQueryKey, ctx.prev);
+    },
+    onSuccess: (data) => {
+      qc.setQueryData(configQueryKey, data);
+    },
+  });
 
   const update = useCallback((patch: Partial<WinstonConfig>) => {
-    setCfg((prev) => {
-      const next = { ...prev, ...patch };
-      saveConfig(next);
-      return next;
-    });
-  }, []);
+    mutation.mutate(patch);
+  }, [mutation]);
 
-  return { cfg, update, ready };
+  return {
+    cfg: query.data ?? DEFAULT,
+    update,
+    ready: query.isSuccess,
+    loading: query.isLoading,
+    error: query.error,
+  };
 }
 
 // Simulated Canvas-feed assignments (since we can't actually fetch ICS in browser reliably)
