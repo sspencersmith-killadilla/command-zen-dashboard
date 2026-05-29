@@ -73,7 +73,13 @@ export const updateMyConfig = createServerFn({ method: "POST" })
   .inputValidator((input) => patchSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      onboarded?: boolean;
+      display_name?: string;
+      canvas_feed_url?: string;
+      notifications_enabled?: boolean;
+      courses?: CourseHub[];
+    } = {};
     if (data.onboarded !== undefined) patch.onboarded = data.onboarded;
     if (data.displayName !== undefined) patch.display_name = data.displayName;
     if (data.canvasFeedUrl !== undefined) patch.canvas_feed_url = data.canvasFeedUrl;
