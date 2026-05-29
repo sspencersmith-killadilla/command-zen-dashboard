@@ -77,7 +77,9 @@ export function Dashboard() {
               <Sparkles className="h-4 w-4 text-primary-foreground" />
             </div>
             <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Winston's</div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                {(cfg.displayName || "Your").trim()}{(cfg.displayName || "Your").trim().endsWith("s") ? "'" : "'s"}
+              </div>
               <div className="font-semibold leading-tight">Command Center</div>
             </div>
           </div>
@@ -94,7 +96,7 @@ export function Dashboard() {
       <main className="max-w-7xl mx-auto px-6 py-10">
         <div className="mb-10">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
-            Good day, Winston.
+            Good day{cfg.displayName ? `, ${cfg.displayName}` : ""}.
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
             Everything's synced. Here's what matters.

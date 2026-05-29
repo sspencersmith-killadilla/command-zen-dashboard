@@ -4,6 +4,7 @@ export type CourseHub = { id: string; name: string; notebookUrl: string };
 
 export type WinstonConfig = {
   onboarded: boolean;
+  displayName: string;
   canvasFeedUrl: string;
   googleConnected: boolean;
   notificationsEnabled: boolean;
@@ -14,6 +15,7 @@ const KEY = "winston-config-v1";
 
 const DEFAULT: WinstonConfig = {
   onboarded: false,
+  displayName: "",
   canvasFeedUrl: "",
   googleConnected: false,
   notificationsEnabled: false,
