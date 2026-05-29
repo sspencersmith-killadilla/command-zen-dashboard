@@ -7,9 +7,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Winston's Command Center" },
-      { name: "description", content: "A calm, single-hub dashboard built for an ADHD college student. Canvas, NotebookLM, and Gemini — automated." },
+      { name: "description", content: "A calm, single-hub command center for college. Canvas, NotebookLM, and Gemini — automated." },
       { property: "og:title", content: "Winston's Command Center" },
-      { property: "og:description", content: "A calm, single-hub dashboard built for an ADHD college student." },
+      { property: "og:description", content: "A calm, single-hub command center for college." },
     ],
   }),
   component: Index,
