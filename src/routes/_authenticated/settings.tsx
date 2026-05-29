@@ -31,31 +31,48 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const qc = useQueryClient();
   const { cfg, update } = useWinstonConfig();
   const [draftName, setDraftName] = useState("");
   const [draftUrl, setDraftUrl] = useState("");
+  const [connecting, setConnecting] = useState(false);
+  const connectFn = useServerFn(startGoogleCalendarConnect);
+  const disconnectFn = useServerFn(disconnectGoogleCalendar);
 
-  function addCourse() {
-    if (!draftName.trim() || !draftUrl.trim()) return;
-    update({
-      courses: [
-        ...cfg.courses,
-        { id: crypto.randomUUID(), name: draftName.trim(), notebookUrl: draftUrl.trim() },
-      ],
-    });
-    setDraftName("");
-    setDraftUrl("");
+  useEffect(() => {
+    if (search.gcal === "connected") {
+      toast.success("Google Calendar connected");
+      qc.invalidateQueries({ queryKey: configQueryKey });
+      navigate({ to: "/settings", search: {}, replace: true });
+    } else if (search.gcal === "error") {
+      toast.error(`Google Calendar failed${search.reason ? `: ${search.reason}` : ""}`);
+      navigate({ to: "/settings", search: {}, replace: true });
+    }
+  }, [search.gcal, search.reason, navigate, qc]);
+
+  async function connectGoogle() {
+    setConnecting(true);
+    try {
+      const { authorizationUrl } = await connectFn();
+      window.location.href = authorizationUrl;
+    } catch (e) {
+      setConnecting(false);
+      toast.error(e instanceof Error ? e.message : "Failed to start OAuth");
+    }
   }
 
-  async function resetOnboarding() {
-    if (!confirm("Re-run onboarding? Your saved settings stay; you'll just walk through the wizard again.")) return;
-    update({ onboarded: false });
+  async function disconnectGoogle() {
+    if (!confirm("Disconnect Google Calendar? You can reconnect anytime.")) return;
+    try {
+      await disconnectFn();
+      toast.success("Google Calendar disconnected");
+      qc.invalidateQueries({ queryKey: configQueryKey });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to disconnect");
+    }
   }
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/login", replace: true });
-  }
 
   return (
     <div className="min-h-screen bg-background">
