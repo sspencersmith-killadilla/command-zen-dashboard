@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Sparkles, Calendar, Link2, BookOpen, Check, Plus, Trash2, ArrowRight } from "lucide-react";
 import type { CourseHub, WinstonConfig } from "@/lib/winston-store";
+import { startGoogleCalendarConnect } from "@/lib/google-calendar.functions";
+import { toast } from "sonner";
 
 type Props = {
   initial: WinstonConfig;
