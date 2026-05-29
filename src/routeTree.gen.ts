@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -33,16 +34,24 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiOauthGoogleCalendarCallbackRoute =
+  ApiOauthGoogleCalendarCallbackRouteImport.update({
+    id: '/api/oauth/google-calendar/callback',
+    path: '/api/oauth/google-calendar/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
+  '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,23 +59,30 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/settings'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/settings'
+    | '/api/oauth/google-calendar/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/settings' | '/'
+  to: '/login' | '/settings' | '/' | '/api/oauth/google-calendar/callback'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/settings'
     | '/_authenticated/'
+    | '/api/oauth/google-calendar/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiOauthGoogleCalendarCallbackRoute: typeof ApiOauthGoogleCalendarCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/oauth/google-calendar/callback': {
+      id: '/api/oauth/google-calendar/callback'
+      path: '/api/oauth/google-calendar/callback'
+      fullPath: '/api/oauth/google-calendar/callback'
+      preLoaderRoute: typeof ApiOauthGoogleCalendarCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -119,7 +142,18 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiOauthGoogleCalendarCallbackRoute: ApiOauthGoogleCalendarCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
