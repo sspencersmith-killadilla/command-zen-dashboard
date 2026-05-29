@@ -14,6 +14,7 @@ type Props = {
 export function OnboardingWizard({ initial, onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [displayName, setDisplayName] = useState(initial.displayName);
+  const [canvasUrl, setCanvasUrl] = useState(initial.canvasFeedUrl);
   const [googleConnected, setGoogleConnected] = useState(initial.googleConnected);
   const [courses, setCourses] = useState<CourseHub[]>(
     initial.courses.length ? initial.courses : []
@@ -29,6 +30,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
     else
       onComplete({
         onboarded: true,
+        displayName: displayName.trim() || "Friend",
         canvasFeedUrl: canvasUrl,
         googleConnected,
         courses,
