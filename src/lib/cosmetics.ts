@@ -234,46 +234,85 @@ export const STEPPER_OPTIONS: Record<keyof AvatarParts, StepperOption[]> = {
 // ------------------------------------------------------------------
 
 export const COSMETICS: CosmeticItem[] = [
-  // Universal seed
-  { id: "u-cap-grey",    name: "Charcoal Cap",     slot: "hat",       theme: null, color: "#3a3a3a", source: "seed",    blurb: "Standard issue." },
-  { id: "u-frame-thin",  name: "Thin Frame",       slot: "frame",     theme: null, color: "#bcbcbc", source: "seed",    blurb: "Clean border." },
-  { id: "u-pin-star",    name: "Star Pin",         slot: "accessory", theme: null, color: "#e8c84a", source: "seed",    blurb: "A small star." },
+  // ─── Seed (starter kit) ─────────────────────────────────────────────
+  { id: "u-cap-grey",    name: "Charcoal Cap",       slot: "hat",       theme: null, color: "#3a3a3a", source: "seed",    rarity: "common", blurb: "Standard issue. Every academic starts here." },
+  { id: "u-frame-thin",  name: "Thin Frame",         slot: "frame",     theme: null, color: "#bcbcbc", source: "seed",    rarity: "common", blurb: "A clean hairline border. Quiet, considered." },
+  { id: "u-pin-star",    name: "Brass Star Pin",     slot: "accessory", theme: null, color: "#e8c84a", source: "seed",    rarity: "common", blurb: "A small star, lightly tarnished. Honest beginnings." },
+  { id: "u-tee-stone",   name: "Stone Tee",          slot: "top",       theme: null, color: "#c8c4bc", source: "seed",    rarity: "common", blurb: "Garment-washed cotton. The everything shirt." },
 
-  // On-time drop pool
-  { id: "u-cap-red",     name: "Red Cap",          slot: "hat",       theme: null, color: "#c44a3a", source: "on_time", blurb: "For showing up." },
-  { id: "u-beanie-nav",  name: "Navy Beanie",      slot: "hat",       theme: null, color: "#1f2a4e", source: "on_time", blurb: "Cold-morning grind." },
-  { id: "u-jacket-grn",  name: "Field Jacket",     slot: "top",       theme: null, color: "#3a5a2a", source: "on_time", blurb: "Pockets for plans." },
-  { id: "u-jacket-blk",  name: "Black Jacket",     slot: "top",       theme: null, color: "#0d0d0d", source: "on_time", blurb: "Quiet confidence." },
-  { id: "u-frame-gold",  name: "Gold Frame",       slot: "frame",     theme: null, color: "#c9a84c", source: "on_time", blurb: "Earned shine." },
-  { id: "u-frame-neon",  name: "Neon Frame",       slot: "frame",     theme: null, color: "#4adcc9", source: "on_time", blurb: "Late-night energy." },
-  { id: "u-pin-flame",   name: "Flame Pin",        slot: "accessory", theme: null, color: "#e85a2a", source: "on_time", blurb: "On a streak." },
-  { id: "u-pin-bolt",    name: "Bolt Pin",         slot: "accessory", theme: null, color: "#4ac9e8", source: "on_time", blurb: "Move fast." },
+  // ─── On-time drops (common → legendary) ─────────────────────────────
+  // Common
+  { id: "u-cap-red",     name: "Crimson Cap",        slot: "hat",       theme: null, color: "#c44a3a", source: "on_time", rarity: "common", blurb: "For showing up — even on the bad days." },
+  { id: "u-beanie-nav",  name: "Harbor Beanie",      slot: "hat",       theme: null, color: "#1f2a4e", source: "on_time", rarity: "common", blurb: "Ribbed merino. Cold-morning grind essential." },
+  { id: "u-cap-olive",   name: "Olive Field Cap",    slot: "hat",       theme: null, color: "#4a5530", source: "on_time", rarity: "common", blurb: "Six-panel, broken-in. Quietly capable." },
+  { id: "u-jacket-grn",  name: "Field Jacket",       slot: "top",       theme: null, color: "#3a5a2a", source: "on_time", rarity: "common", blurb: "Four pockets, room for the whole plan." },
+  { id: "u-jacket-blk",  name: "Black Bomber",       slot: "top",       theme: null, color: "#0d0d0d", source: "on_time", rarity: "common", blurb: "Cropped, ribbed cuffs. Quiet confidence." },
+  { id: "u-crew-oat",    name: "Oat Crewneck",       slot: "top",       theme: null, color: "#d6c8a8", source: "on_time", rarity: "common", blurb: "Loop-back fleece. The library uniform." },
+  { id: "u-pin-flame",   name: "Ember Pin",          slot: "accessory", theme: null, color: "#e85a2a", source: "on_time", rarity: "common", blurb: "A small flame, enameled. You are on a streak." },
+  { id: "u-pin-bolt",    name: "Bolt Pin",           slot: "accessory", theme: null, color: "#4ac9e8", source: "on_time", rarity: "common", blurb: "Cobalt enamel. Move fast, deliver clean." },
 
-  // Themed mastery sets
-  { id: "m-mythic-hat",  name: "Sage Hood",         slot: "hat",       theme: "mythic",  setId: "mythic-set",  color: "#4a2a6e", source: "mastery", blurb: "Mythic set · 1/4" },
-  { id: "m-mythic-top",  name: "Rune Cloak",        slot: "top",       theme: "mythic",  setId: "mythic-set",  color: "#1a1a3a", color2: "#c9a84c", source: "mastery", blurb: "Mythic set · 2/4" },
-  { id: "m-mythic-acc",  name: "Sigil Pin",         slot: "accessory", theme: "mythic",  setId: "mythic-set",  color: "#c9a84c", source: "mastery", blurb: "Mythic set · 3/4" },
-  { id: "m-mythic-frm",  name: "Arcane Frame",      slot: "frame",     theme: "mythic",  setId: "mythic-set",  color: "#c9a84c", source: "mastery", blurb: "Mythic set · 4/4" },
-  { id: "m-sports-hat",  name: "Coach Cap",         slot: "hat",       theme: "sports",  setId: "sports-set",  color: "#c44a2a", source: "mastery", blurb: "Sports set · 1/4" },
-  { id: "m-sports-top",  name: "Letterman",         slot: "top",       theme: "sports",  setId: "sports-set",  color: "#2a3a6e", color2: "#e8c84a", source: "mastery", blurb: "Sports set · 2/4" },
-  { id: "m-sports-acc",  name: "Gold Medal",        slot: "accessory", theme: "sports",  setId: "sports-set",  color: "#e8c84a", source: "mastery", blurb: "Sports set · 3/4" },
-  { id: "m-sports-frm",  name: "Stadium Frame",     slot: "frame",     theme: "sports",  setId: "sports-set",  color: "#e85a2a", source: "mastery", blurb: "Sports set · 4/4" },
-  { id: "m-fin-hat",     name: "Trader Visor",      slot: "hat",       theme: "finance", setId: "finance-set", color: "#0d3a2a", source: "mastery", blurb: "Finance set · 1/4" },
-  { id: "m-fin-top",     name: "Pinstripe Suit",    slot: "top",       theme: "finance", setId: "finance-set", color: "#1a1a2a", color2: "#bcbcbc", source: "mastery", blurb: "Finance set · 2/4" },
-  { id: "m-fin-acc",     name: "Dollar Pin",        slot: "accessory", theme: "finance", setId: "finance-set", color: "#4adc8a", source: "mastery", blurb: "Finance set · 3/4" },
-  { id: "m-fin-frm",     name: "Bull Frame",        slot: "frame",     theme: "finance", setId: "finance-set", color: "#4adc8a", source: "mastery", blurb: "Finance set · 4/4" },
-  { id: "m-her-hat",     name: "Hero Cowl",         slot: "hat",       theme: "heroes",  setId: "heroes-set",  color: "#c4202a", source: "mastery", blurb: "Heroes set · 1/4" },
-  { id: "m-her-top",     name: "Caped Suit",        slot: "top",       theme: "heroes",  setId: "heroes-set",  color: "#1a3ad6", color2: "#e8c84a", source: "mastery", blurb: "Heroes set · 2/4" },
-  { id: "m-her-acc",     name: "Power Emblem",      slot: "accessory", theme: "heroes",  setId: "heroes-set",  color: "#e8c84a", source: "mastery", blurb: "Heroes set · 3/4" },
-  { id: "m-her-frm",     name: "Halftone Frame",    slot: "frame",     theme: "heroes",  setId: "heroes-set",  color: "#c4202a", source: "mastery", blurb: "Heroes set · 4/4" },
-  { id: "m-rea-hat",     name: "Camera Headset",    slot: "hat",       theme: "reality", setId: "reality-set", color: "#1a1a1a", source: "mastery", blurb: "Reality set · 1/4" },
-  { id: "m-rea-top",     name: "Confessional Lace", slot: "top",       theme: "reality", setId: "reality-set", color: "#e0408a", color2: "#f0d78c", source: "mastery", blurb: "Reality set · 2/4" },
-  { id: "m-rea-acc",     name: "Diamond Earring",   slot: "accessory", theme: "reality", setId: "reality-set", color: "#f0d78c", source: "mastery", blurb: "Reality set · 3/4" },
-  { id: "m-rea-frm",     name: "Spotlight Frame",   slot: "frame",     theme: "reality", setId: "reality-set", color: "#e0408a", source: "mastery", blurb: "Reality set · 4/4" },
-  { id: "m-mod-hat",     name: "Quiet Hair Crop",   slot: "hat",       theme: "modern",  setId: "modern-set",  color: "#3a3530", source: "mastery", blurb: "Modern set · 1/4" },
-  { id: "m-mod-top",     name: "Sage Blazer",       slot: "top",       theme: "modern",  setId: "modern-set",  color: "#7d9b76", color2: "#f5f0e8", source: "mastery", blurb: "Modern set · 2/4" },
-  { id: "m-mod-acc",     name: "Tortoise Glasses",  slot: "accessory", theme: "modern",  setId: "modern-set",  color: "#8a5638", source: "mastery", blurb: "Modern set · 3/4" },
-  { id: "m-mod-frm",     name: "Clay Frame",        slot: "frame",     theme: "modern",  setId: "modern-set",  color: "#c2956b", source: "mastery", blurb: "Modern set · 4/4" },
+  // Rare
+  { id: "u-frame-gold",  name: "Brushed Gold Frame", slot: "frame",     theme: null, color: "#c9a84c", source: "on_time", rarity: "rare", blurb: "Earned shine — three on-time submissions running." },
+  { id: "u-frame-neon",  name: "Neon Wire Frame",    slot: "frame",     theme: null, color: "#4adcc9", source: "on_time", rarity: "rare", blurb: "Late-night energy made visible." },
+  { id: "u-frame-ivory", name: "Ivory Frame",        slot: "frame",     theme: null, color: "#f0e6d2", source: "on_time", rarity: "rare", blurb: "Bone-white border. Editorial weight." },
+  { id: "u-hood-char",   name: "Charcoal Hoodie",    slot: "top",       theme: null, color: "#2a2a2e", source: "on_time", rarity: "rare", blurb: "Heavyweight loopback. Drafted-in-by-noon energy." },
+  { id: "u-jacket-rust", name: "Rust Chore Coat",    slot: "top",       theme: null, color: "#a04a2a", source: "on_time", rarity: "rare", blurb: "Selvedge twill. Built for a long semester." },
+  { id: "u-cap-cream",   name: "Cream Trucker",      slot: "hat",       theme: null, color: "#e8dcc0", source: "on_time", rarity: "rare", blurb: "Foam crown, mesh back. Off-campus signature." },
+  { id: "u-pin-laurel",  name: "Laurel Pin",         slot: "accessory", theme: null, color: "#7d9b76", source: "on_time", rarity: "rare", blurb: "A sprig of victory — modest, hard-earned." },
+  { id: "u-pin-quill",   name: "Silver Quill",       slot: "accessory", theme: null, color: "#d8d8d8", source: "on_time", rarity: "rare", blurb: "For the writer who finishes the paragraph." },
+
+  // Epic
+  { id: "u-blazer-navy", name: "Navy Blazer",        slot: "top",       theme: null, color: "#1f3a6e", color2: "#c9a84c", source: "on_time", rarity: "epic", blurb: "Gold-button worsted. The seminar uniform." },
+  { id: "u-trench-camel",name: "Camel Trench",       slot: "top",       theme: null, color: "#b5894a", color2: "#3a2a1a", source: "on_time", rarity: "epic", blurb: "Belted gabardine. Walks into lecture three minutes early." },
+  { id: "u-frame-marble",name: "Marble Frame",       slot: "frame",     theme: null, color: "#dcd6c8", color2: "#3a3a3a", source: "on_time", rarity: "epic", blurb: "Veined plaster. Museum-wall energy." },
+  { id: "u-hat-fedora",  name: "Felt Fedora",        slot: "hat",       theme: null, color: "#2a1f14", source: "on_time", rarity: "epic", blurb: "Pinch-front wool. Sundays at the archive." },
+  { id: "u-pin-compass", name: "Compass Brooch",     slot: "accessory", theme: null, color: "#1f3a6e", color2: "#c9a84c", source: "on_time", rarity: "epic", blurb: "Brass rose. Points toward the next deadline." },
+
+  // Legendary — earned for the long-haul
+  { id: "u-frame-aurora",name: "Aurora Frame",       slot: "frame",     theme: null, color: "#6a4adc", color2: "#4adcc9", source: "on_time", rarity: "legendary", blurb: "Shifting violet-to-mint border. Worn by finishers." },
+  { id: "u-crown-laurel",name: "Laurel Crown",       slot: "hat",       theme: null, color: "#7d9b76", color2: "#c9a84c", source: "on_time", rarity: "legendary", blurb: "Gilded olive leaves. A semester of zero misses." },
+  { id: "u-pin-phoenix", name: "Phoenix Sigil",      slot: "accessory", theme: null, color: "#e85a2a", color2: "#f0d78c", source: "on_time", rarity: "legendary", blurb: "Cast bronze. For the comeback that became a streak." },
+  { id: "u-cape-onyx",   name: "Onyx Overcoat",      slot: "top",       theme: null, color: "#0a0a0e", color2: "#c9a84c", source: "on_time", rarity: "legendary", blurb: "Cashmere with gold lining. Whisper-quiet authority." },
+
+  // ─── Themed mastery sets (one full set per theme — epic) ────────────
+  // Mythic
+  { id: "m-mythic-hat",  name: "Sage Hood",          slot: "hat",       theme: "mythic",  setId: "mythic-set",  color: "#4a2a6e", source: "mastery", rarity: "epic", blurb: "Mythic set · 1/4 — drawn cowl, kept secrets." },
+  { id: "m-mythic-top",  name: "Rune Cloak",         slot: "top",       theme: "mythic",  setId: "mythic-set",  color: "#1a1a3a", color2: "#c9a84c", source: "mastery", rarity: "epic", blurb: "Mythic set · 2/4 — gold script on midnight wool." },
+  { id: "m-mythic-acc",  name: "Sigil Pin",          slot: "accessory", theme: "mythic",  setId: "mythic-set",  color: "#c9a84c", source: "mastery", rarity: "epic", blurb: "Mythic set · 3/4 — a glyph only you can read." },
+  { id: "m-mythic-frm",  name: "Arcane Frame",       slot: "frame",     theme: "mythic",  setId: "mythic-set",  color: "#c9a84c", source: "mastery", rarity: "epic", blurb: "Mythic set · 4/4 — runes etched into the gild." },
+  // Sports
+  { id: "m-sports-hat",  name: "Coach Cap",          slot: "hat",       theme: "sports",  setId: "sports-set",  color: "#c44a2a", source: "mastery", rarity: "epic", blurb: "Sports set · 1/4 — worn at the line." },
+  { id: "m-sports-top",  name: "Letterman Jacket",   slot: "top",       theme: "sports",  setId: "sports-set",  color: "#2a3a6e", color2: "#e8c84a", source: "mastery", rarity: "epic", blurb: "Sports set · 2/4 — chenille patch, leather sleeves." },
+  { id: "m-sports-acc",  name: "Gold Medal",         slot: "accessory", theme: "sports",  setId: "sports-set",  color: "#e8c84a", source: "mastery", rarity: "epic", blurb: "Sports set · 3/4 — finals season, first place." },
+  { id: "m-sports-frm",  name: "Stadium Frame",      slot: "frame",     theme: "sports",  setId: "sports-set",  color: "#e85a2a", source: "mastery", rarity: "epic", blurb: "Sports set · 4/4 — floodlight halo." },
+  // Finance
+  { id: "m-fin-hat",     name: "Trader Visor",       slot: "hat",       theme: "finance", setId: "finance-set", color: "#0d3a2a", source: "mastery", rarity: "epic", blurb: "Finance set · 1/4 — green eyeshade, sharp pencil." },
+  { id: "m-fin-top",     name: "Pinstripe Suit",     slot: "top",       theme: "finance", setId: "finance-set", color: "#1a1a2a", color2: "#bcbcbc", source: "mastery", rarity: "epic", blurb: "Finance set · 2/4 — chalk stripe, half-canvas." },
+  { id: "m-fin-acc",     name: "Dollar Lapel Pin",   slot: "accessory", theme: "finance", setId: "finance-set", color: "#4adc8a", source: "mastery", rarity: "epic", blurb: "Finance set · 3/4 — enamel mint." },
+  { id: "m-fin-frm",     name: "Bull Frame",         slot: "frame",     theme: "finance", setId: "finance-set", color: "#4adc8a", source: "mastery", rarity: "epic", blurb: "Finance set · 4/4 — line goes up." },
+  // Heroes
+  { id: "m-her-hat",     name: "Hero Cowl",          slot: "hat",       theme: "heroes",  setId: "heroes-set",  color: "#c4202a", source: "mastery", rarity: "epic", blurb: "Heroes set · 1/4 — pulled low, eyes forward." },
+  { id: "m-her-top",     name: "Caped Suit",         slot: "top",       theme: "heroes",  setId: "heroes-set",  color: "#1a3ad6", color2: "#e8c84a", source: "mastery", rarity: "epic", blurb: "Heroes set · 2/4 — primary colors, panel lines." },
+  { id: "m-her-acc",     name: "Power Emblem",       slot: "accessory", theme: "heroes",  setId: "heroes-set",  color: "#e8c84a", source: "mastery", rarity: "epic", blurb: "Heroes set · 3/4 — chest insignia, polished." },
+  { id: "m-her-frm",     name: "Halftone Frame",     slot: "frame",     theme: "heroes",  setId: "heroes-set",  color: "#c4202a", source: "mastery", rarity: "epic", blurb: "Heroes set · 4/4 — dotted comic-print border." },
+  // Reality
+  { id: "m-rea-hat",     name: "Camera Headset",     slot: "hat",       theme: "reality", setId: "reality-set", color: "#1a1a1a", source: "mastery", rarity: "epic", blurb: "Reality set · 1/4 — always-on mic, hot light." },
+  { id: "m-rea-top",     name: "Confessional Lace",  slot: "top",       theme: "reality", setId: "reality-set", color: "#e0408a", color2: "#f0d78c", source: "mastery", rarity: "epic", blurb: "Reality set · 2/4 — blush silk, gold trim." },
+  { id: "m-rea-acc",     name: "Diamond Drop",       slot: "accessory", theme: "reality", setId: "reality-set", color: "#f0d78c", source: "mastery", rarity: "epic", blurb: "Reality set · 3/4 — pear cut, catches every angle." },
+  { id: "m-rea-frm",     name: "Spotlight Frame",    slot: "frame",     theme: "reality", setId: "reality-set", color: "#e0408a", source: "mastery", rarity: "epic", blurb: "Reality set · 4/4 — magenta gel, soft focus." },
+  // Modern
+  { id: "m-mod-hat",     name: "Quiet Crop",         slot: "hat",       theme: "modern",  setId: "modern-set",  color: "#3a3530", source: "mastery", rarity: "epic", blurb: "Modern set · 1/4 — clipper-cut, no fuss." },
+  { id: "m-mod-top",     name: "Sage Blazer",        slot: "top",       theme: "modern",  setId: "modern-set",  color: "#7d9b76", color2: "#f5f0e8", source: "mastery", rarity: "epic", blurb: "Modern set · 2/4 — unstructured linen, soft shoulder." },
+  { id: "m-mod-acc",     name: "Tortoise Frames",    slot: "accessory", theme: "modern",  setId: "modern-set",  color: "#8a5638", source: "mastery", rarity: "epic", blurb: "Modern set · 3/4 — round acetate, reading rim." },
+  { id: "m-mod-frm",     name: "Clay Frame",         slot: "frame",     theme: "modern",  setId: "modern-set",  color: "#c2956b", source: "mastery", rarity: "epic", blurb: "Modern set · 4/4 — terracotta wash, hand-thrown edge." },
+
+  // ─── Legendary themed capstones — full set mastery rewards ──────────
+  { id: "l-mythic-cap",  name: "Oracle's Diadem",    slot: "hat",       theme: "mythic",  color: "#4a2a6e", color2: "#c9a84c", source: "mastery", rarity: "legendary", blurb: "Mythic capstone — the prophecy you actually finished." },
+  { id: "l-sports-cap",  name: "Championship Ring",  slot: "accessory", theme: "sports",  color: "#e8c84a", color2: "#c4202a", source: "mastery", rarity: "legendary", blurb: "Sports capstone — banner year, raised rafters." },
+  { id: "l-fin-cap",     name: "Bull-Market Lapel",  slot: "accessory", theme: "finance", color: "#0d3a2a", color2: "#4adc8a", source: "mastery", rarity: "legendary", blurb: "Finance capstone — closed every quarter green." },
+  { id: "l-her-cap",     name: "Aegis Mantle",       slot: "top",       theme: "heroes",  color: "#c4202a", color2: "#c9a84c", source: "mastery", rarity: "legendary", blurb: "Heroes capstone — the cape that earned its weight." },
+  { id: "l-rea-cap",     name: "Confetti Crown",     slot: "hat",       theme: "reality",  color: "#e0408a", color2: "#f0d78c", source: "mastery", rarity: "legendary", blurb: "Reality capstone — finale night, last one standing." },
+  { id: "l-mod-cap",     name: "Atelier Coat",       slot: "top",       theme: "modern",  color: "#3a3530", color2: "#c2956b", source: "mastery", rarity: "legendary", blurb: "Modern capstone — bespoke, hand-finished, signed." },
 ];
 
 export function getCosmetic(id: string | undefined | null): CosmeticItem | undefined {
