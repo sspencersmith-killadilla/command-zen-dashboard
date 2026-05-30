@@ -11,6 +11,7 @@ export type WinstonConfig = {
   googleConnected: boolean;
   notificationsEnabled: boolean;
   courses: CourseHub[];
+  companionId: string;
 };
 
 const courseSchema = z.object({
@@ -25,6 +26,7 @@ const patchSchema = z.object({
   canvasFeedUrl: z.string().max(2048).optional(),
   notificationsEnabled: z.boolean().optional(),
   courses: z.array(courseSchema).max(50).optional(),
+  companionId: z.enum(["barnaby", "bean", "roxie", "pip", "lafitte"]).optional(),
 });
 
 function rowToConfig(row: {
@@ -34,6 +36,7 @@ function rowToConfig(row: {
   notifications_enabled: boolean;
   onboarded: boolean;
   google_connection_id: string | null;
+  companion_id: string | null;
 }): WinstonConfig {
   return {
     onboarded: row.onboarded,
@@ -42,6 +45,7 @@ function rowToConfig(row: {
     googleConnected: !!row.google_connection_id,
     notificationsEnabled: row.notifications_enabled,
     courses: Array.isArray(row.courses) ? (row.courses as CourseHub[]) : [],
+    companionId: row.companion_id ?? "barnaby",
   };
 }
 
