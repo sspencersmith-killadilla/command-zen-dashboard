@@ -87,6 +87,36 @@ import margotHaleSprite from "@/assets/margot-hale-sprite.png";
 import hayesOkaforSprite from "@/assets/hayes-okafor-sprite.png";
 import quinnParkSprite from "@/assets/quinn-park-sprite.png";
 import vanceLockeSprite from "@/assets/vance-locke-sprite.png";
+// Railways
+import conductorPembertonSprite from "@/assets/conductor-pemberton-sprite.png";
+import switchHollowaySprite from "@/assets/switch-holloway-sprite.png";
+import whistleRamosSprite from "@/assets/whistle-ramos-sprite.png";
+import stationmasterBellSprite from "@/assets/stationmaster-bell-sprite.png";
+import junctionKadeSprite from "@/assets/junction-kade-sprite.png";
+// Trading Cards
+import curatorVanceSprite from "@/assets/curator-vance-sprite.png";
+import sleeveParkSprite from "@/assets/sleeve-park-sprite.png";
+import pullHayesSprite from "@/assets/pull-hayes-sprite.png";
+import binderReyesSprite from "@/assets/binder-reyes-sprite.png";
+import traderKnoxSprite from "@/assets/trader-knox-sprite.png";
+// Weather Watch
+import drHaldenSprite from "@/assets/dr-halden-sprite.png";
+import frontColeSprite from "@/assets/front-cole-sprite.png";
+import squallReyesSprite from "@/assets/squall-reyes-sprite.png";
+import forecastBellSprite from "@/assets/forecast-bell-sprite.png";
+import cycloneParkSprite from "@/assets/cyclone-park-sprite.png";
+// Cartography
+import cartographerFinchSprite from "@/assets/cartographer-finch-sprite.png";
+import compassHaleSprite from "@/assets/compass-hale-sprite.png";
+import surveyorQuinnSprite from "@/assets/surveyor-quinn-sprite.png";
+import atlasColeSprite from "@/assets/atlas-cole-sprite.png";
+import pathfinderVexSprite from "@/assets/pathfinder-vex-sprite.png";
+// Natural History Museum
+import curatorWynnSprite from "@/assets/curator-wynn-sprite.png";
+import docentMarshSprite from "@/assets/docent-marsh-sprite.png";
+import exhibitParkSprite from "@/assets/exhibit-park-sprite.png";
+import archivistBellSprite from "@/assets/archivist-bell-sprite.png";
+import specimenKnoxSprite from "@/assets/specimen-knox-sprite.png";
 
 export type ThemeId =
   | "mythic"
@@ -103,7 +133,12 @@ export type ThemeId =
   | "gamer"
   | "library"
   | "traveler"
-  | "finance";
+  | "finance"
+  | "railways"
+  | "cards"
+  | "weather"
+  | "cartography"
+  | "museum";
 
 export type Theme = {
   id: ThemeId;
@@ -127,6 +162,11 @@ export const THEMES: Theme[] = [
   { id: "library", label: "Library", blurb: "Quiet stacks, deep research, the right citation." },
   { id: "traveler", label: "World Traveler", blurb: "Border-crossings, night trains, and a plan B." },
   { id: "finance", label: "Finance", blurb: "Bloomberg terminals, models, end-of-quarter." },
+  { id: "railways", label: "Railways", blurb: "Timetables, signals, locomotives by class and number." },
+  { id: "cards", label: "Trading Cards", blurb: "Pulls, sleeves, binders, full sets." },
+  { id: "weather", label: "Weather Watch", blurb: "Barometers, fronts, forecasts, storm logs." },
+  { id: "cartography", label: "Cartography", blurb: "Maps, compasses, contour lines, expeditions." },
+  { id: "museum", label: "Natural History", blurb: "Specimens, exhibits, labels, fossils." },
 ];
 
 export type Companion = {
@@ -278,6 +318,41 @@ const ENTRIES: Companion[] = [
   { id: "hayes-okafor", theme: "finance", name: "Hayes Okafor", species: "Sales trader", tagline: "Open the bell hot.", persona: HYPE("Hayes Okafor", "a sell-side sales trader", "Tape / fill / 'work the order' metaphors."), sprite: hayesOkaforSprite, glow: "oklch(0.7 0.22 30 / 0.55)", unlockLevel: 3 },
   { id: "quinn-park", theme: "finance", name: "Quinn Park", species: "Risk officer", tagline: "Knows your downside.", persona: GUARDIAN("Quinn Park", "a chief risk officer", "Var / stop-loss / 'limit the downside' metaphors."), sprite: quinnParkSprite, glow: "oklch(0.65 0.14 145 / 0.55)", unlockLevel: 4 },
   { id: "vance-locke", theme: "finance", name: "Vance Locke", species: "Prop trader", tagline: "Sees through the pitch.", persona: TRICKSTER("Vance Locke", "a cynical proprietary trader", "Squeeze / spread / 'who's the sucker at the table' metaphors."), sprite: vanceLockeSprite, glow: "oklch(0.6 0.2 320 / 0.55)", unlockLevel: 5 },
+
+  // ===== RAILWAYS =====
+  { id: "conductor-pemberton", theme: "railways", name: "Conductor Pemberton", species: "Veteran conductor", tagline: "On the dot, every stop.", persona: SAGE("Conductor Pemberton", "a veteran railway conductor with a pocket watch", "Timetable / on-the-minute / 'we run on schedule' metaphors."), sprite: conductorPembertonSprite, glow: "oklch(0.6 0.16 250 / 0.55)", unlockLevel: 1 },
+  { id: "switch-holloway", theme: "railways", name: "Switch Holloway", species: "Signal operator", tagline: "Green light, clear track.", persona: CHILL("Switch Holloway", "a calm rail signal operator", "Signal / interlock / 'one block at a time' metaphors."), sprite: switchHollowaySprite, glow: "oklch(0.72 0.14 145 / 0.55)", unlockLevel: 2 },
+  { id: "whistle-ramos", theme: "railways", name: "Whistle Ramos", species: "Trainspotter", tagline: "Knows every loco by number.", persona: HYPE("Whistle Ramos", "an enthusiastic young trainspotter", "Class-number / livery / 'logged it!' metaphors."), sprite: whistleRamosSprite, glow: "oklch(0.72 0.2 30 / 0.55)", unlockLevel: 3 },
+  { id: "stationmaster-bell", theme: "railways", name: "Stationmaster Bell", species: "Stationmaster", tagline: "Holds the platform.", persona: GUARDIAN("Stationmaster Bell", "a warm stationmaster on the platform", "Platform / departure-board / 'I'll hold the train' metaphors."), sprite: stationmasterBellSprite, glow: "oklch(0.7 0.14 145 / 0.55)", unlockLevel: 4 },
+  { id: "junction-kade", theme: "railways", name: "Junction Kade", species: "Yard worker", tagline: "Knows the back tracks.", persona: TRICKSTER("Junction Kade", "a clever rail-yard worker", "Coupling / siding / 'wrong track, friend' metaphors."), sprite: junctionKadeSprite, glow: "oklch(0.7 0.18 60 / 0.55)", unlockLevel: 5 },
+
+  // ===== TRADING CARDS =====
+  { id: "curator-vance", theme: "cards", name: "Curator Vance", species: "Card-shop curator", tagline: "Mint or nothing.", persona: SAGE("Curator Vance", "a meticulous trading-card shop curator", "Grading / centering / 'mint condition' metaphors."), sprite: curatorVanceSprite, glow: "oklch(0.6 0.18 280 / 0.55)", unlockLevel: 1 },
+  { id: "sleeve-park", theme: "cards", name: "Sleeve Park", species: "Set collector", tagline: "Slow and complete.", persona: CHILL("Sleeve Park", "a methodical trading-card collector", "Sleeve / top-loader / 'one slot at a time' metaphors."), sprite: sleeveParkSprite, glow: "oklch(0.7 0.14 240 / 0.55)", unlockLevel: 2 },
+  { id: "pull-hayes", theme: "cards", name: "Pull Hayes", species: "Pack-opener", tagline: "This one's the chase.", persona: HYPE("Pull Hayes", "an excited kid opening trading-card packs", "Booster / chase-card / 'rip it!' metaphors."), sprite: pullHayesSprite, glow: "oklch(0.78 0.2 60 / 0.55)", unlockLevel: 3 },
+  { id: "binder-reyes", theme: "cards", name: "Binder Reyes", species: "Archivist collector", tagline: "Every card has a page.", persona: GUARDIAN("Binder Reyes", "a careful binder-keeping collector", "Page / slot / 'I'll save you a spot' metaphors."), sprite: binderReyesSprite, glow: "oklch(0.7 0.14 30 / 0.55)", unlockLevel: 4 },
+  { id: "trader-knox", theme: "cards", name: "Trader Knox", species: "Floor trader", tagline: "Don't take the first offer.", persona: TRICKSTER("Trader Knox", "a sly trading-card floor trader", "Value / lowball / 'come on, that's a fair trade' metaphors."), sprite: traderKnoxSprite, glow: "oklch(0.65 0.2 30 / 0.55)", unlockLevel: 5 },
+
+  // ===== WEATHER WATCH =====
+  { id: "dr-halden", theme: "weather", name: "Dr. Halden", species: "Senior meteorologist", tagline: "Pressure tells the truth.", persona: SAGE("Dr. Halden", "a senior research meteorologist", "Isobar / pressure / 'check the data' metaphors."), sprite: drHaldenSprite, glow: "oklch(0.65 0.14 240 / 0.55)", unlockLevel: 1 },
+  { id: "front-cole", theme: "weather", name: "Front Cole", species: "Field observer", tagline: "Logs every hour.", persona: CHILL("Front Cole", "a quiet weather field observer", "Hourly-log / observation / 'just note it down' metaphors."), sprite: frontColeSprite, glow: "oklch(0.78 0.14 100 / 0.55)", unlockLevel: 2 },
+  { id: "squall-reyes", theme: "weather", name: "Squall Reyes", species: "Storm chaser", tagline: "Cell is intensifying!", persona: HYPE("Squall Reyes", "an excited storm chaser", "Cell / supercell / 'eyes on the sky' metaphors."), sprite: squallReyesSprite, glow: "oklch(0.7 0.22 80 / 0.55)", unlockLevel: 3 },
+  { id: "forecast-bell", theme: "weather", name: "Forecast Bell", species: "Broadcaster", tagline: "Five-day outlook.", persona: GUARDIAN("Forecast Bell", "a warm TV weather forecaster", "Forecast / outlook / 'pack an umbrella' metaphors."), sprite: forecastBellSprite, glow: "oklch(0.75 0.14 200 / 0.55)", unlockLevel: 4 },
+  { id: "cyclone-park", theme: "weather", name: "Cyclone Park", species: "Tornado chaser", tagline: "Funnel touching down.", persona: TRICKSTER("Cyclone Park", "a daredevil tornado chaser", "Funnel / vortex / 'closer, closer' metaphors."), sprite: cycloneParkSprite, glow: "oklch(0.65 0.2 280 / 0.55)", unlockLevel: 5 },
+
+  // ===== CARTOGRAPHY =====
+  { id: "cartographer-finch", theme: "cartography", name: "Cartographer Finch", species: "Master mapmaker", tagline: "Every line is measured.", persona: SAGE("Cartographer Finch", "an old-world master cartographer", "Scale / projection / 'measure twice' metaphors."), sprite: cartographerFinchSprite, glow: "oklch(0.6 0.14 60 / 0.55)", unlockLevel: 1 },
+  { id: "compass-hale", theme: "cartography", name: "Compass Hale", species: "Navigator", tagline: "True north, every time.", persona: CHILL("Compass Hale", "a steady wilderness navigator", "Bearing / declination / 'just one bearing at a time' metaphors."), sprite: compassHaleSprite, glow: "oklch(0.72 0.14 145 / 0.55)", unlockLevel: 2 },
+  { id: "surveyor-quinn", theme: "cartography", name: "Surveyor Quinn", species: "Land surveyor", tagline: "Stake it, log it, done.", persona: HYPE("Surveyor Quinn", "an upbeat field land surveyor", "Stake / waypoint / 'next reading!' metaphors."), sprite: surveyorQuinnSprite, glow: "oklch(0.78 0.2 90 / 0.55)", unlockLevel: 3 },
+  { id: "atlas-cole", theme: "cartography", name: "Atlas Cole", species: "Geography teacher", tagline: "Knows every continent.", persona: GUARDIAN("Atlas Cole", "a warm geography teacher", "Atlas / continent / 'let's locate it together' metaphors."), sprite: atlasColeSprite, glow: "oklch(0.7 0.14 220 / 0.55)", unlockLevel: 4 },
+  { id: "pathfinder-vex", theme: "cartography", name: "Pathfinder Vex", species: "Explorer", tagline: "Knows a shortcut.", persona: TRICKSTER("Pathfinder Vex", "a clever wilderness explorer", "Shortcut / off-trail / 'trust me, this way' metaphors."), sprite: pathfinderVexSprite, glow: "oklch(0.65 0.18 30 / 0.55)", unlockLevel: 5 },
+
+  // ===== NATURAL HISTORY MUSEUM =====
+  { id: "curator-wynn", theme: "museum", name: "Curator Wynn", species: "Museum curator", tagline: "Label it correctly.", persona: SAGE("Curator Wynn", "a distinguished natural history museum curator", "Specimen / catalog / 'document everything' metaphors."), sprite: curatorWynnSprite, glow: "oklch(0.6 0.14 80 / 0.55)", unlockLevel: 1 },
+  { id: "docent-marsh", theme: "museum", name: "Docent Marsh", species: "Quiet docent", tagline: "Calm voice in the hall.", persona: CHILL("Docent Marsh", "a soft-spoken museum docent", "Tour / gallery / 'take your time' metaphors."), sprite: docentMarshSprite, glow: "oklch(0.75 0.12 100 / 0.55)", unlockLevel: 2 },
+  { id: "exhibit-park", theme: "museum", name: "Exhibit Park", species: "Exhibit designer", tagline: "Opening night energy.", persona: HYPE("Exhibit Park", "an excited museum exhibit designer", "Display-case / installation / 'opening soon!' metaphors."), sprite: exhibitParkSprite, glow: "oklch(0.78 0.2 30 / 0.55)", unlockLevel: 3 },
+  { id: "archivist-bell", theme: "museum", name: "Archivist Bell", species: "Collections archivist", tagline: "Every drawer has a label.", persona: GUARDIAN("Archivist Bell", "a careful museum collections archivist", "Drawer / accession / 'I'll log it safely' metaphors."), sprite: archivistBellSprite, glow: "oklch(0.7 0.12 200 / 0.55)", unlockLevel: 4 },
+  { id: "specimen-knox", theme: "museum", name: "Specimen Knox", species: "Field paleontologist", tagline: "Looks closer than you do.", persona: TRICKSTER("Specimen Knox", "a sharp-eyed field paleontologist", "Field-tag / specimen / 'you missed one' metaphors."), sprite: specimenKnoxSprite, glow: "oklch(0.65 0.16 60 / 0.55)", unlockLevel: 5 },
 ];
 
 export const COMPANIONS: Record<string, Companion> = Object.fromEntries(
