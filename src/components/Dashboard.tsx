@@ -105,53 +105,98 @@ export function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-10">
-        <div className="mb-10">
+        <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
             Good day{cfg.displayName ? `, ${cfg.displayName}` : ""}.
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
-            Everything's synced. Here's what matters.
+            Mission briefing below. Clear quests, stack XP.
           </p>
         </div>
 
-        <div className="mb-6">
-          <GamificationPanel />
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Card A */}
-          <Card className="p-6 lg:col-span-2 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2.5">
-                <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                  <CalendarClock className="h-4.5 w-4.5" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-lg">What's Next?</h2>
-                  <p className="text-xs text-muted-foreground">From your Canvas feed</p>
-                </div>
+        {/* HERO: Upcoming assignments — front and center */}
+        <Card
+          className="p-6 md:p-7 mb-6 border-border/60 relative overflow-hidden"
+          style={{ boxShadow: "var(--shadow-soft)" }}
+        >
+          <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <CalendarClock className="h-5 w-5" />
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Bell className="h-3.5 w-3.5" />
-                Alerts
-                <Switch
-                  checked={cfg.notificationsEnabled}
-                  onCheckedChange={(v) => update({ notificationsEnabled: v })}
-                />
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">
+                  Mission Briefing
+                </div>
+                <h2 className="font-bold text-2xl leading-tight">Up Next</h2>
               </div>
             </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Bell className="h-3.5 w-3.5" />
+              Alerts
+              <Switch
+                checked={cfg.notificationsEnabled}
+                onCheckedChange={(v) => update({ notificationsEnabled: v })}
+              />
+            </div>
+          </div>
 
-            {assignments.length === 0 ? (
-              <EmptyState text="No assignments yet. Add a class in Settings to populate your timeline." />
-            ) : (
+          {assignments.length === 0 ? (
+            <EmptyState text="No assignments yet. Add a class in Settings to populate your timeline." />
+          ) : (
+            <>
+              {(() => {
+                const a = assignments[0];
+                const tier = tierFor(a.dueAt);
+                const course = matchCourse(a.courseCode);
+                return (
+                  <div
+                    className="rounded-2xl border-2 p-5 mb-4 relative overflow-hidden bg-muted/40"
+                    style={{ borderColor: "color-mix(in oklab, var(--primary) 35%, transparent)" }}
+                  >
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <span className={`h-2 w-2 rounded-full ${TIER_DOT[tier]}`} />
+                          <span className={`text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded border ${TIER_CLASS[tier]}`}>
+                            {TIER_LABEL[tier]}
+                          </span>
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            · due {fmtDue(a.dueAt)}
+                          </span>
+                        </div>
+                        <h3 className="font-bold text-xl md:text-2xl leading-tight text-foreground">
+                          {a.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1">{a.courseCode}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {course && (
+                          <Button asChild variant="outline" size="sm">
+                            <a href={course.notebookUrl} target="_blank" rel="noopener noreferrer" onClick={() => completeQuest("open-notebook")}>
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              Notebook
+                            </a>
+                          </Button>
+                        )}
+                        <Button size="sm" onClick={() => completeQuest("clear-assignment")} className="gap-1.5">
+                          <Check className="h-3.5 w-3.5" />
+                          Clear (+40 XP)
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               <ol className="space-y-2">
-                {assignments.map((a, i) => {
+                {assignments.slice(1).map((a, i) => {
                   const tier = tierFor(a.dueAt);
                   const course = matchCourse(a.courseCode);
                   return (
                     <li
                       key={a.id}
-                      className="flex items-center gap-4 p-4 rounded-xl border border-border/60 hover:border-border bg-card hover:bg-muted/30 transition-colors animate-fade-up"
+                      className="flex items-center gap-4 p-3.5 rounded-xl border border-border/60 hover:border-border bg-card hover:bg-muted/30 transition-colors animate-fade-up"
                       style={{ animationDelay: `${i * 40}ms` }}
                     >
                       <div className={`h-2.5 w-2.5 rounded-full ${TIER_DOT[tier]}`} />
@@ -170,6 +215,7 @@ export function Dashboard() {
                           href={course.notebookUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => completeQuest("open-notebook")}
                           className="text-muted-foreground hover:text-primary transition-colors"
                           aria-label="Open notebook"
                         >
@@ -180,15 +226,22 @@ export function Dashboard() {
                   );
                 })}
               </ol>
-            )}
+            </>
+          )}
 
-            <p className="mt-5 text-xs text-muted-foreground">
-              Tiered alerts: 2 weeks → 1 week → 2 days. Push delivery via Twilio / FCM when enabled.
-            </p>
-          </Card>
+          <p className="mt-5 text-xs text-muted-foreground">
+            Tiered alerts: 2 weeks → 1 week → 2 days. Push delivery via Twilio / FCM when enabled.
+          </p>
+        </Card>
 
-          {/* Card C */}
-          <Card className="p-6 border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground" style={{ boxShadow: "var(--shadow-soft)" }}>
+        {/* Gamification HUD */}
+        <div className="mb-6">
+          <GamificationPanel />
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Daily Reset */}
+          <Card className="p-6 lg:col-span-1 border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground" style={{ boxShadow: "var(--shadow-soft)" }}>
             <div className="flex items-center gap-2.5 mb-5">
               <div className="h-9 w-9 rounded-lg bg-white/15 flex items-center justify-center">
                 <Sparkles className="h-4.5 w-4.5" />
@@ -203,12 +256,7 @@ export function Dashboard() {
               "{GEMINI_PROMPT}"
             </div>
 
-            <Button
-              onClick={copyPrompt}
-              size="lg"
-              variant="secondary"
-              className="w-full gap-2 font-medium"
-            >
+            <Button onClick={copyPrompt} size="lg" variant="secondary" className="w-full gap-2 font-medium">
               {copied ? (
                 <>
                   <Check className="h-4 w-4 animate-check-pop" />
@@ -217,14 +265,14 @@ export function Dashboard() {
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  One-Click Copy
+                  One-Click Copy (+20 XP)
                 </>
               )}
             </Button>
           </Card>
 
-          {/* Card B */}
-          <Card className="p-6 lg:col-span-3 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
+          {/* Second Brain */}
+          <Card className="p-6 lg:col-span-2 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
             <div className="flex items-center gap-2.5 mb-5">
               <div className="h-9 w-9 rounded-lg bg-accent/20 text-accent-foreground flex items-center justify-center">
                 <BookOpen className="h-4.5 w-4.5" />
