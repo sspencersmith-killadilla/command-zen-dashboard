@@ -51,6 +51,8 @@ import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/compan
 import { useAvatar } from "@/lib/use-avatar";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { Shirt } from "lucide-react";
+import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
+import { toast } from "sonner";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -96,7 +98,7 @@ function saveCleared(s: Set<string>) {
 
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { state, completeQuest, todayQuestsDone } = useGamification();
+  const { state, completeQuest, todayQuestsDone, applyXpDelta } = useGamification();
   const playerLevel = rankFor(state.xp).level;
   const { state: avatarState, recordOnTime, recordMastery } = useAvatar();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
@@ -148,6 +150,21 @@ export function Dashboard() {
     }
     if (credited) saveCleared(cleared);
   }, [rawAssignments, completeQuest, recordOnTime]);
+
+  // Soft consequences: penalty/refund tracking, mood, perfect-day, tarnish.
+  const consequenceItems = useMemo(
+    () =>
+      rawAssignments.map((a) => ({
+        id: a.id,
+        dueAt: new Date(a.dueAt),
+        submitted: a.submitted,
+      })),
+    [rawAssignments],
+  );
+  const consequences = useConsequences({
+    assignments: consequenceItems,
+    onXpDelta: applyXpDelta,
+  });
 
   // Theme mastery: when all 5 daily quests are done for the current theme,
   // record one arc-complete day. Fires once per day per theme via a localStorage flag.
@@ -214,6 +231,15 @@ export function Dashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {consequences.pastDueCount > 0 && (
+              <span
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-300"
+                title={`${consequences.pastDueCount} past-due item${consequences.pastDueCount === 1 ? "" : "s"} · -${20 * consequences.pastDueCount} XP applied, +10 XP refunded on submit`}
+              >
+                <AlertCircle className="h-3.5 w-3.5" />
+                Past due: {consequences.pastDueCount}
+              </span>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -221,10 +247,15 @@ export function Dashboard() {
                   className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border pl-1 pr-3 py-1 transition-colors"
                   aria-label="Switch companion"
                 >
-                  <CompanionAvatar companionId={currentCompanion.id} size="sm" />
+                  <CompanionAvatar companionId={currentCompanion.id} size="sm" mood={consequences.mood} />
                   <div className="text-left leading-tight">
                     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Companion</div>
                     <div className="text-sm font-semibold">{currentCompanion.name}</div>
+                    {consequences.flavor.companionNote && (
+                      <div className="text-[10px] italic text-amber-600 dark:text-amber-400 max-w-[16ch] truncate">
+                        {consequences.flavor.companionNote}
+                      </div>
+                    )}
                   </div>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
@@ -554,6 +585,65 @@ export function Dashboard() {
         <div className="mb-6">
           <ChatPanel />
         </div>
+
+        {/* Perfect-Day bonus — locked while anything is past due */}
+        <Card
+          className="p-5 mb-6 border-border/60 flex items-center justify-between gap-4 flex-wrap"
+          style={{ boxShadow: "var(--shadow-soft)" }}
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                consequences.perfectDayLocked
+                  ? "bg-muted text-muted-foreground"
+                  : consequences.perfectDayClaimed
+                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                    : "bg-primary/15 text-primary"
+              }`}
+            >
+              {consequences.perfectDayLocked ? (
+                <Lock className="h-5 w-5" />
+              ) : consequences.perfectDayClaimed ? (
+                <Check className="h-5 w-5" />
+              ) : (
+                <Sparkles className="h-5 w-5" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="font-semibold leading-tight">
+                Perfect Day Bonus{" "}
+                <span className="text-xs text-muted-foreground font-normal">
+                  +{PERFECT_DAY_XP} XP
+                </span>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {consequences.perfectDayLocked
+                  ? `Locked — ${consequences.pastDueCount} past-due item${consequences.pastDueCount === 1 ? "" : "s"} blocking the bonus. Clear them to unlock.`
+                  : consequences.perfectDayClaimed
+                    ? "Claimed today. Streak protected — see you tomorrow."
+                    : consequences.freezeAvailable
+                      ? "Free for the taking. Streak freeze still available this week."
+                      : "Free for the taking. (Streak freeze already used this week.)"}
+              </div>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant={consequences.canClaimPerfectDay ? "default" : "outline"}
+            disabled={!consequences.canClaimPerfectDay}
+            onClick={() => {
+              if (consequences.claimPerfectDay()) {
+                toast.success(`+${PERFECT_DAY_XP} XP — perfect day claimed`);
+              }
+            }}
+          >
+            {consequences.perfectDayClaimed
+              ? "Claimed"
+              : consequences.perfectDayLocked
+                ? "Locked"
+                : "Claim bonus"}
+          </Button>
+        </Card>
 
         {/* Gamification HUD */}
         <div className="mb-6">
