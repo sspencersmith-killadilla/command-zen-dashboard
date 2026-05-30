@@ -246,6 +246,7 @@ export function Dashboard() {
                       href={c.notebookUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => completeQuest("open-notebook")}
                       className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-muted/30 transition-all animate-fade-up"
                       style={{ animationDelay: `${i * 50}ms` }}
                     >
