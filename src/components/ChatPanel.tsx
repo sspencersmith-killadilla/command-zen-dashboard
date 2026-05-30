@@ -87,23 +87,35 @@ export function ChatPanel() {
 
   return (
     <Card
-      className="border-border/60 overflow-hidden flex flex-col h-[560px]"
+      className="border-border/60 overflow-hidden flex flex-col h-[640px]"
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 bg-card">
-        <div className="flex items-center gap-3">
-          <CompanionAvatar companionId={companion.id} size="md" />
-          <div>
-            <h2 className="font-semibold text-lg leading-tight">{companion.name}</h2>
-            <p className="text-xs text-muted-foreground">{companion.tagline}</p>
+      <div className="relative flex items-center gap-5 px-6 py-5 border-b border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-30 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at 15% 50%, " + companion.glow + " 0%, transparent 55%)",
+          }}
+        />
+        <div className="relative shrink-0">
+          <CompanionAvatar companionId={companion.id} size="lg" />
+        </div>
+        <div className="relative flex-1 min-w-0">
+          <div className="text-[10px] uppercase tracking-[0.2em] font-semibold opacity-80">
+            Your Companion
           </div>
+          <h2 className="font-bold text-2xl leading-tight">{companion.name}</h2>
+          <p className="text-sm opacity-90 truncate">
+            {companion.species} · {companion.tagline}
+          </p>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => clearMutation.mutate()}
           disabled={clearMutation.isPending || messages.length === 0}
-          className="text-muted-foreground hover:text-foreground gap-1.5"
+          className="relative text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10 gap-1.5"
         >
           <Trash2 className="h-3.5 w-3.5" />
           Clear

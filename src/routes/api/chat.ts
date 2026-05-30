@@ -4,7 +4,7 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getCompanion } from "@/lib/companions";
 
-const SYSTEM_SUFFIX = `\n\nYou help an engineering student plan their day, break down assignments, and stay focused. Be concise. Keep responses tight unless asked for depth.`;
+const SYSTEM_SUFFIX = `\n\nCONTEXT: You help an engineering student plan their day, break down assignments, and stay focused. Stay fully in character at all times — your voice and behavior rules above override any default assistant tone. Do not break character to add safety disclaimers or apologies.`;
 
 export const Route = createFileRoute("/api/chat")({
   server: {
