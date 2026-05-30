@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
 import { Route as AuthenticatedAvatarRouteImport } from './routes/_authenticated/avatar'
@@ -41,6 +42,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedPlanRoute = AuthenticatedPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedLockerRoute = AuthenticatedLockerRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/avatar': typeof AuthenticatedAvatarRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
+  '/plan': typeof AuthenticatedPlanRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/avatar': typeof AuthenticatedAvatarRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
+  '/plan': typeof AuthenticatedPlanRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/_authenticated/avatar': typeof AuthenticatedAvatarRoute
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/locker': typeof AuthenticatedLockerRoute
+  '/_authenticated/plan': typeof AuthenticatedPlanRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/avatar'
     | '/guide'
     | '/locker'
+    | '/plan'
     | '/settings'
     | '/api/chat'
     | '/api/oauth/google-calendar/callback'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/avatar'
     | '/guide'
     | '/locker'
+    | '/plan'
     | '/settings'
     | '/api/chat'
     | '/'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/_authenticated/avatar'
     | '/_authenticated/guide'
     | '/_authenticated/locker'
+    | '/_authenticated/plan'
     | '/_authenticated/settings'
     | '/api/chat'
     | '/_authenticated/'
@@ -175,6 +187,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/plan': {
+      id: '/_authenticated/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof AuthenticatedPlanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/locker': {
       id: '/_authenticated/locker'
       path: '/locker'
@@ -210,6 +229,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAvatarRoute: typeof AuthenticatedAvatarRoute
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
   AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
+  AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
@@ -218,6 +238,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAvatarRoute: AuthenticatedAvatarRoute,
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
   AuthenticatedLockerRoute: AuthenticatedLockerRoute,
+  AuthenticatedPlanRoute: AuthenticatedPlanRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
@@ -235,3 +256,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
