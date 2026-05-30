@@ -327,7 +327,7 @@ function PartGrid({
               <X className="h-5 w-5 text-muted-foreground" strokeWidth={2.5} />
             ) : (
               <div className="scale-[1.4] origin-top translate-y-1 pointer-events-none">
-                <PlayerAvatar parts={previewParts} equipped={state.equipped} size="sm" animate={false} />
+                <PlayerAvatar parts={previewParts} size="sm" animate={false} />
               </div>
             )}
           </button>
