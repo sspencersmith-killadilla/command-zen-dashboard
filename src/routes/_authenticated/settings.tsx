@@ -267,14 +267,18 @@ function CompanionPicker({
   const [activeTheme, setActiveTheme] = useState<ThemeId>(selected.theme);
   const visible = COMPANION_LIST.filter((c) => c.theme === activeTheme);
   const activeMeta = THEMES.find((t) => t.id === activeTheme)!;
+  const { state } = useGamification();
+  const level = rankFor(state.xp).level;
 
   return (
     <Card className="p-6 space-y-4 border-border/60">
-      <div>
-        <h2 className="font-semibold text-lg">Your companion</h2>
-        <p className="text-sm text-muted-foreground">
-          Pick a theme, then the voice you want in your corner. Switch anytime.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="font-semibold text-lg">Your companion</h2>
+          <p className="text-sm text-muted-foreground">
+            Pick a starter, then unlock more by leveling up. You're at Level {level}.
+          </p>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -301,26 +305,33 @@ function CompanionPicker({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {visible.map((c) => {
           const isSelected = selectedId === c.id;
+          const isUnlocked = isSelected || level >= c.unlockLevel;
           return (
             <button
               key={c.id}
               type="button"
-              onClick={() => onSelect(c.id)}
-              className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
+              disabled={!isUnlocked}
+              onClick={() => isUnlocked && onSelect(c.id)}
+              className={`relative flex items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
                 isSelected
                   ? "border-primary bg-primary/5"
-                  : "border-border/60 bg-card hover:border-border hover:bg-muted/40"
+                  : isUnlocked
+                  ? "border-border/60 bg-card hover:border-border hover:bg-muted/40"
+                  : "border-border/40 bg-muted/20 opacity-60 cursor-not-allowed"
               }`}
             >
-              <CompanionAvatar companionId={c.id} size="md" />
+              <div className={isUnlocked ? "" : "grayscale"}>
+                <CompanionAvatar companionId={c.id} size="md" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="font-medium flex items-center gap-2">
                   {c.name}
                   {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
+                  {!isUnlocked && <Lock className="h-3.5 w-3.5 text-muted-foreground" />}
                 </div>
                 <div className="text-xs text-muted-foreground">{c.species}</div>
                 <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                  {c.tagline}
+                  {isUnlocked ? c.tagline : `Unlocks at Level ${c.unlockLevel}`}
                 </div>
               </div>
             </button>
