@@ -70,6 +70,8 @@ export type Database = {
       }
       user_configs: {
         Row: {
+          canvas_api_token: string
+          canvas_domain: string
           canvas_feed_url: string
           companion_id: string
           courses: Json
@@ -83,6 +85,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          canvas_api_token?: string
+          canvas_domain?: string
           canvas_feed_url?: string
           companion_id?: string
           courses?: Json
@@ -96,6 +100,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          canvas_api_token?: string
+          canvas_domain?: string
           canvas_feed_url?: string
           companion_id?: string
           courses?: Json
