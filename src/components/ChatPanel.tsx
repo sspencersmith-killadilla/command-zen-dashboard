@@ -313,6 +313,11 @@ export function ChatPanel() {
           </PromptInputFooter>
         </PromptInput>
       </div>
+      <CompanionCloseup
+        companionId={companion.id}
+        open={closeup.open}
+        intensity={closeup.speaking ? "speaking" : "idle"}
+      />
     </Card>
   );
 }
