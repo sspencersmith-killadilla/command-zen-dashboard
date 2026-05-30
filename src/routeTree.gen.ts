@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedWellnessRouteImport } from './routes/_authenticated/wellness'
 import { Route as AuthenticatedTriageRouteImport } from './routes/_authenticated/triage'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedRecallRouteImport } from './routes/_authenticated/recall'
@@ -42,6 +43,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedWellnessRoute = AuthenticatedWellnessRouteImport.update({
+  id: '/wellness',
+  path: '/wellness',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedTriageRoute = AuthenticatedTriageRouteImport.update({
   id: '/triage',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/recall': typeof AuthenticatedRecallRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/triage': typeof AuthenticatedTriageRoute
+  '/wellness': typeof AuthenticatedWellnessRoute
   '/api/chat': typeof ApiChatRoute
   '/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/recall': typeof AuthenticatedRecallRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/triage': typeof AuthenticatedTriageRoute
+  '/wellness': typeof AuthenticatedWellnessRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
   '/recall/$deck': typeof AuthenticatedRecallDeckRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/_authenticated/recall': typeof AuthenticatedRecallRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/triage': typeof AuthenticatedTriageRoute
+  '/_authenticated/wellness': typeof AuthenticatedWellnessRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/recall/$deck': typeof AuthenticatedRecallDeckRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/recall'
     | '/settings'
     | '/triage'
+    | '/wellness'
     | '/api/chat'
     | '/recall/$deck'
     | '/api/oauth/google-calendar/callback'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/recall'
     | '/settings'
     | '/triage'
+    | '/wellness'
     | '/api/chat'
     | '/'
     | '/recall/$deck'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/_authenticated/recall'
     | '/_authenticated/settings'
     | '/_authenticated/triage'
+    | '/_authenticated/wellness'
     | '/api/chat'
     | '/_authenticated/'
     | '/_authenticated/recall/$deck'
@@ -227,6 +239,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/wellness': {
+      id: '/_authenticated/wellness'
+      path: '/wellness'
+      fullPath: '/wellness'
+      preLoaderRoute: typeof AuthenticatedWellnessRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/triage': {
       id: '/_authenticated/triage'
@@ -321,6 +340,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedRecallRoute: typeof AuthenticatedRecallRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTriageRoute: typeof AuthenticatedTriageRoute
+  AuthenticatedWellnessRoute: typeof AuthenticatedWellnessRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
@@ -333,6 +353,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedRecallRoute: AuthenticatedRecallRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTriageRoute: AuthenticatedTriageRoute,
+  AuthenticatedWellnessRoute: AuthenticatedWellnessRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
