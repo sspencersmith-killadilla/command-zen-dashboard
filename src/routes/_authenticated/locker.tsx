@@ -4,7 +4,7 @@ import { ArrowLeft, Lock, X, Sparkles, Trophy, Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAvatar } from "@/lib/use-avatar";
-import { PlayerAvatar } from "@/components/PlayerAvatar";
+
 import { COSMETICS, RARITY_META, type Slot, type Rarity, type CosmeticItem } from "@/lib/cosmetics";
 import { cn } from "@/lib/utils";
 
@@ -59,46 +59,42 @@ function LockerPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        {/* Hero — character + collection summary */}
+        {/* Hero — collection summary */}
         <Card className="p-6 border-border/60 overflow-hidden relative">
-          <div className="flex items-start gap-6 flex-wrap">
-            <div className="rounded-2xl overflow-hidden ring-1 ring-border/40 shrink-0">
-              <PlayerAvatar parts={state} equipped={state.equipped} size="xl" />
-            </div>
-            <div className="flex-1 min-w-[260px] space-y-4">
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Collection</div>
-                <h2 className="font-bold text-2xl leading-tight mt-0.5">
-                  {stats.ownedCount} <span className="text-muted-foreground font-normal">/ {stats.total} items</span>
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Earn drops by submitting on time. Master a theme — five full daily arcs — to unlock its set.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {RARITY_ORDER.map((r) => {
-                  const meta = RARITY_META[r];
-                  const s = stats.byRarity[r];
-                  return (
-                    <div key={r} className={cn("rounded-xl border px-3 py-2.5", meta.ring)}>
-                      <div className={cn("text-[10px] uppercase tracking-wider font-semibold", meta.text)}>
-                        {meta.label}
-                      </div>
-                      <div className="text-lg font-bold tabular-nums leading-tight">
-                        {s.owned}<span className="text-sm text-muted-foreground font-normal">/{s.total}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                On-time progress: <span className="font-medium text-foreground tabular-nums">{state.on_time_count % 3}/3</span> toward next drop.
+          <div className="space-y-4">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Collection</div>
+              <h2 className="font-bold text-2xl leading-tight mt-0.5">
+                {stats.ownedCount} <span className="text-muted-foreground font-normal">/ {stats.total} items</span>
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Earn drops by submitting on time. Master a theme — five full daily arcs — to unlock its set.
               </p>
             </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {RARITY_ORDER.map((r) => {
+                const meta = RARITY_META[r];
+                const s = stats.byRarity[r];
+                return (
+                  <div key={r} className={cn("rounded-xl border px-3 py-2.5", meta.ring)}>
+                    <div className={cn("text-[10px] uppercase tracking-wider font-semibold", meta.text)}>
+                      {meta.label}
+                    </div>
+                    <div className="text-lg font-bold tabular-nums leading-tight">
+                      {s.owned}<span className="text-sm text-muted-foreground font-normal">/{s.total}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              On-time progress: <span className="font-medium text-foreground tabular-nums">{state.on_time_count % 3}/3</span> toward next drop.
+            </p>
           </div>
         </Card>
+
 
         {/* Rarity filter */}
         <div className="flex items-center gap-1.5 flex-wrap">
