@@ -109,6 +109,8 @@ export const DAILY_QUESTS = [
   { id: "clear-assignment", label: "Knock out an assignment", xp: 40 },
 ];
 
+import { isFreezeAvailable, consumeFreeze } from "./consequences";
+
 export function useGamification() {
   const [state, setState] = useState<GameState>(DEFAULT_STATE);
   const [lastGain, setLastGain] = useState<{ xp: number; at: number } | null>(null);
@@ -119,7 +121,14 @@ export function useGamification() {
     if (loaded.lastActiveDay && loaded.lastActiveDay !== t) {
       const last = new Date(loaded.lastActiveDay);
       const diff = Math.round((Date.now() - last.getTime()) / 86400000);
-      if (diff > 1) loaded.streak = 0;
+      if (diff > 1) {
+        // Soft consequence #1: weekly streak freeze. Burns the freeze, keeps streak.
+        if (isFreezeAvailable()) {
+          consumeFreeze();
+        } else {
+          loaded.streak = 0;
+        }
+      }
     }
     setState(loaded);
   }, []);
@@ -152,10 +161,17 @@ export function useGamification() {
     });
   }, [persist]);
 
+  /** Apply a raw XP delta (penalty or refund/bonus). Never goes negative. */
+  const applyXpDelta = useCallback((delta: number) => {
+    if (!delta) return;
+    persist((s) => ({ ...s, xp: Math.max(0, s.xp + delta) }));
+    setLastGain({ xp: delta, at: Date.now() });
+  }, [persist]);
+
   const reset = useCallback(() => persist(() => DEFAULT_STATE), [persist]);
 
   const t = today();
   const todayQuestsDone = DAILY_QUESTS.filter((q) => state.quests[q.id] === t).map((q) => q.id);
 
-  return { state, completeQuest, reset, todayQuestsDone, lastGain };
+  return { state, completeQuest, applyXpDelta, reset, todayQuestsDone, lastGain };
 }
