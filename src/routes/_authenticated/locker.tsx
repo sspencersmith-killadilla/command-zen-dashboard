@@ -4,7 +4,7 @@ import { ArrowLeft, Lock, X, Sparkles, Trophy, Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAvatar } from "@/lib/use-avatar";
-import { PlayerAvatar } from "@/components/PlayerAvatar";
+
 import { COSMETICS, RARITY_META, type Slot, type Rarity, type CosmeticItem } from "@/lib/cosmetics";
 import { cn } from "@/lib/utils";
 
