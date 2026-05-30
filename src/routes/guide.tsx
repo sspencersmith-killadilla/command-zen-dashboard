@@ -133,7 +133,7 @@ function GuidePage() {
             </li>
             <li>
               <strong>Connect Canvas.</strong> Paste your Canvas access token
-              once in <em>Settings</em>. Winston will pull your upcoming
+              once in <em>Settings</em>. The app will pull your upcoming
               assignments and auto-clear ones you've submitted. (See section 6
               for step-by-step token instructions.)
             </li>
