@@ -66,11 +66,21 @@ export function Dashboard() {
   const assignments = useMemo(() => {
     const raw = canvasQ.data?.assignments ?? [];
     return raw
-      .map((a) => ({ id: a.id, title: a.title, courseCode: a.courseCode, dueAt: new Date(a.dueAt) }))
+      .map((a) => ({
+        id: a.id,
+        title: a.title,
+        courseCode: a.courseCode,
+        dueAt: new Date(a.dueAt),
+        htmlUrl: a.htmlUrl,
+        files: a.files ?? [],
+      }))
       .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
   }, [canvasQ.data]);
 
-  const canvasError = cfg.canvasFeedUrl ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null) : null;
+  const canvasError = (cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain))
+    ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null)
+    : null;
+  const canvasConfigured = !!(cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain));
 
   useEffect(() => {
     const t = setTimeout(() => completeQuest("check-timeline"), 1200);
