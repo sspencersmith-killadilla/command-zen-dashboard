@@ -149,8 +149,8 @@ function GuidePage() {
         {/* 2. Daily loop */}
         <Section id="daily-loop" icon={Calendar} title="2. The daily loop">
           <p>
-            Every day Winston gives you a five-step arc themed to your world.
-            The <strong>steps complete themselves</strong> as you actually
+            Every day you get a five-step arc themed to your world. The{" "}
+            <strong>steps complete themselves</strong> as you actually
             study — no self-reporting.
           </p>
           <div className="grid sm:grid-cols-2 gap-3 mt-4">
