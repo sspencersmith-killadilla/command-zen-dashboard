@@ -166,6 +166,7 @@ export function ChatPanel() {
 
   function quickAsk(text: string, questId?: string) {
     if (isBusy) return;
+    unlockAudio(); // gesture: prime AudioContext for later auto-play
     sendMessage({ text });
     completeQuest("chat-winston");
     if (questId) completeQuest(questId);
