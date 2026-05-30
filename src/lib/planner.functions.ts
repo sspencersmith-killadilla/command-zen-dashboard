@@ -80,7 +80,13 @@ export const updateStudyBlock = createServerFn({ method: "POST" })
   .inputValidator((input) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      title?: string;
+      notes?: string;
+      starts_at?: string;
+      ends_at?: string;
+      completed_at?: string | null;
+    } = {};
     if (data.title !== undefined) patch.title = data.title;
     if (data.notes !== undefined) patch.notes = data.notes;
     if (data.starts_at !== undefined) patch.starts_at = data.starts_at;
