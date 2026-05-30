@@ -231,6 +231,15 @@ export function Dashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {consequences.pastDueCount > 0 && (
+              <span
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-300"
+                title={`${consequences.pastDueCount} past-due item${consequences.pastDueCount === 1 ? "" : "s"} · -${20 * consequences.pastDueCount} XP applied, +10 XP refunded on submit`}
+              >
+                <AlertCircle className="h-3.5 w-3.5" />
+                Past due: {consequences.pastDueCount}
+              </span>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -238,10 +247,15 @@ export function Dashboard() {
                   className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border pl-1 pr-3 py-1 transition-colors"
                   aria-label="Switch companion"
                 >
-                  <CompanionAvatar companionId={currentCompanion.id} size="sm" />
+                  <CompanionAvatar companionId={currentCompanion.id} size="sm" mood={consequences.mood} />
                   <div className="text-left leading-tight">
                     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Companion</div>
                     <div className="text-sm font-semibold">{currentCompanion.name}</div>
+                    {consequences.flavor.companionNote && (
+                      <div className="text-[10px] italic text-amber-600 dark:text-amber-400 max-w-[16ch] truncate">
+                        {consequences.flavor.companionNote}
+                      </div>
+                    )}
                   </div>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
