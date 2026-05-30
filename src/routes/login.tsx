@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles } from "lucide-react";
+import { Sparkles, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
@@ -75,7 +75,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-background">
       <Card className="w-full max-w-md p-8 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
         <div className="text-center mb-6">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[image:var(--gradient-hero)] mb-4">
@@ -137,6 +137,14 @@ function LoginPage() {
           </button>
         </p>
       </Card>
+
+      <Link
+        to="/guide"
+        className="mt-5 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <BookOpen className="h-4 w-4" />
+        New here? Read the guide
+      </Link>
     </div>
   );
 }
