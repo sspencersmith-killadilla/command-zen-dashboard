@@ -334,7 +334,7 @@ function GuidePage() {
             <strong>Plan</strong> link in the dashboard header.
           </p>
           <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
-            <li><strong>Auto-generate.</strong> Hit <em>Auto-plan</em> and Winston slots your upcoming Canvas assignments into study blocks weighted by due date.</li>
+            <li><strong>Auto-generate.</strong> Hit <em>Auto-plan</em> and your upcoming Canvas assignments slot into study blocks weighted by due date.</li>
             <li><strong>Add a block manually.</strong> Title, optional notes, date — useful for review sessions or non-Canvas work.</li>
             <li><strong>Tick blocks done</strong> as you finish them; completed blocks fall out of the active list and feed your streak.</li>
             <li><strong>Delete</strong> anything that no longer fits — the plan is meant to be edited daily.</li>
