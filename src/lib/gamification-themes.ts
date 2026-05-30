@@ -433,12 +433,250 @@ const MUSEUM: ThemePack = {
   },
 };
 
+const mkRanks = (titles: string[], subs: string[]) =>
+  titles.map((title, i) => ({
+    title,
+    subtitle: `Level ${i + 1} · ${subs[i]}`,
+    minXp: [0, 80, 200, 450, 800, 1300, 2000, 3000][i],
+  }));
+
+const mkAchievements = (first: string, reset: string, library: string): Record<string, string> => ({
+  [A.first]: first,
+  [A.reset]: reset,
+  [A.library]: library,
+  [A.s3]: "Three-Day Streak",
+  [A.s7]: "Seven-Day Streak",
+  [A.s14]: "Two-Week Streak",
+  [A.l5]: "Level 5",
+  [A.l7]: "Level 7",
+});
+
+const BASEBALL: ThemePack = {
+  arcTitle: "Today's Lineup",
+  arcSubtitle: "Five at-bats. Run the card, post the W.",
+  arcCompletePhrase: "Game over. Box score looks clean.",
+  accent: "oklch(0.78 0.18 30)",
+  bgHue: "20",
+  hudLabel: "Scorecard",
+  ranks: mkRanks(
+    ["Rookie", "Utility", "Starter", "Veteran", "All-Star", "Captain", "Hall-of-Famer", "Legend"],
+    ["Signed", "First start", "In the order", "Locker respected", "Selected", "Wears the C", "Plaque earned", "Retired #"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Read the scouting report", outcome: "Report read", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Step into the cage", outcome: "Cage work in", icon: Target, xp: 15 },
+    { id: Q.reset, label: "Run the warm-up routine", outcome: "Warmed up", icon: Dumbbell, xp: 20 },
+    { id: Q.chat, label: "Talk to the manager", outcome: "Signs in", icon: Medal, xp: 15 },
+    { id: Q.assignment, label: "Drive in one run", outcome: "RBI", icon: Trophy, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Hit", "Warm-up", "Tape Study"),
+};
+
+const HOTROD: ThemePack = {
+  arcTitle: "Today's Build Sheet",
+  arcSubtitle: "Five passes through the garage. Make the car faster.",
+  arcCompletePhrase: "Hood down. She's tuned.",
+  accent: "oklch(0.72 0.2 30)",
+  bgHue: "20",
+  hudLabel: "Garage Log",
+  ranks: mkRanks(
+    ["Apprentice", "Wrench", "Tuner", "Builder", "Driver", "Crew Chief", "Track Record", "Legend of the Strip"],
+    ["Shop sweep", "First swap", "Dyno'd", "Frame off", "Behind the wheel", "Calls the pit", "Time slip framed", "Name on the wall"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Walk the build sheet", outcome: "Sheet walked", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Open the shop manual", outcome: "Manual open", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Run the morning checklist", outcome: "Fluids topped", icon: Wrench, xp: 20 },
+    { id: Q.chat, label: "Ping the crew chief", outcome: "Crew aligned", icon: Hammer, xp: 15 },
+    { id: Q.assignment, label: "Finish one pass", outcome: "Quarter-mile clean", icon: Car, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Pass", "Cold Start", "Manual Read"),
+};
+
+const ROBOTICS: ThemePack = {
+  arcTitle: "Today's Sprint",
+  arcSubtitle: "Five tickets. Ship the build.",
+  arcCompletePhrase: "Sprint shipped. PR merged.",
+  accent: "oklch(0.78 0.15 200)",
+  bgHue: "210",
+  hudLabel: "Standup",
+  ranks: mkRanks(
+    ["Intern", "Junior", "Engineer", "Senior", "Lead", "Staff", "Principal", "Founder"],
+    ["Badged in", "First commit", "Owns a service", "Reviews PRs", "Runs the standup", "Sets the roadmap", "Org-wide impact", "Sets the vision"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Review the backlog", outcome: "Backlog triaged", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Open the IDE", outcome: "IDE open", icon: Code, xp: 15 },
+    { id: Q.reset, label: "Run the morning standup", outcome: "Standup done", icon: Bot, xp: 20 },
+    { id: Q.chat, label: "Pair with the lead", outcome: "Plan reviewed", icon: Cpu, xp: 15 },
+    { id: Q.assignment, label: "Ship one ticket", outcome: "PR merged", icon: Rocket, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Commit", "Standup Habit", "Docs Read"),
+};
+
+const INTERIOR: ThemePack = {
+  arcTitle: "Today's Moodboard",
+  arcSubtitle: "Five small choices. Make the room sing.",
+  arcCompletePhrase: "Room composed. Lights down.",
+  accent: "oklch(0.8 0.1 60)",
+  bgHue: "40",
+  hudLabel: "Studio Notes",
+  ranks: mkRanks(
+    ["Assistant", "Stylist", "Designer", "Senior Designer", "Art Director", "Principal", "Tastemaker", "Icon"],
+    ["Sample wrangling", "First room", "Owns a project", "Runs a vertical", "Sets the look", "Brand of one", "On the cover", "Defines the era"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Review the moodboard", outcome: "Board reviewed", icon: Palette, xp: 10 },
+    { id: Q.notebook, label: "Open the swatch book", outcome: "Swatches out", icon: Layers, xp: 15 },
+    { id: Q.reset, label: "Re-measure the space", outcome: "Plan measured", icon: Ruler, xp: 20 },
+    { id: Q.chat, label: "Walk the client through it", outcome: "Client aligned", icon: Lightbulb, xp: 15 },
+    { id: Q.assignment, label: "Finalize one room", outcome: "Room styled", icon: Sofa, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Pin", "Reset the Room", "Library of Swatches"),
+};
+
+const BROADWAY: ThemePack = {
+  arcTitle: "Today's Call Sheet",
+  arcSubtitle: "Five cues. Hit your marks.",
+  arcCompletePhrase: "Curtain. Standing O.",
+  accent: "oklch(0.78 0.18 350)",
+  bgHue: "330",
+  hudLabel: "Playbill",
+  ranks: mkRanks(
+    ["Ensemble", "Understudy", "Featured", "Lead", "Headliner", "Tony Nominee", "Tony Winner", "Legend"],
+    ["First call", "Knows every part", "Solo number", "Top of the bill", "Marquee", "Nominated", "Won", "Named in the rafters"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Read the call sheet", outcome: "Call reviewed", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Open the script", outcome: "Script open", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Run vocal warm-ups", outcome: "Voice warmed", icon: Mic, xp: 20 },
+    { id: Q.chat, label: "Check in with the director", outcome: "Notes given", icon: Drama, xp: 15 },
+    { id: Q.assignment, label: "Nail one scene", outcome: "Scene landed", icon: Music, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Bow", "Warm-up", "Off-book"),
+};
+
+const YOUTUBE: ThemePack = {
+  arcTitle: "Today's Upload Plan",
+  arcSubtitle: "Five steps. Ship the video.",
+  arcCompletePhrase: "Uploaded. Notifications squad fed.",
+  accent: "oklch(0.72 0.22 25)",
+  bgHue: "15",
+  hudLabel: "Creator Studio",
+  ranks: mkRanks(
+    ["Newcomer", "Hobbyist", "Creator", "Mid-Tier", "Verified", "Partner", "Top Creator", "Icon"],
+    ["First upload", "Posts weekly", "Niche locked", "Algorithm friend", "Checkmark", "Brand deals", "Plaque on wall", "Genre-defining"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Review the upload calendar", outcome: "Calendar reviewed", icon: Clapperboard, xp: 10 },
+    { id: Q.notebook, label: "Open the script doc", outcome: "Script open", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Record the daily B-roll", outcome: "B-roll captured", icon: Camera, xp: 20 },
+    { id: Q.chat, label: "Brief the editor", outcome: "Cut approved", icon: Film, xp: 15 },
+    { id: Q.assignment, label: "Publish one video", outcome: "Video live", icon: Video, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Upload", "Daily Vlog", "Watch History"),
+};
+
+const GAMER: ThemePack = {
+  arcTitle: "Today's Quest Log",
+  arcSubtitle: "Five objectives. Complete the daily.",
+  arcCompletePhrase: "Daily cleared. XP banked.",
+  accent: "oklch(0.78 0.18 280)",
+  bgHue: "270",
+  hudLabel: "Player Card",
+  ranks: mkRanks(
+    ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Top 500"],
+    ["Tutorial done", "Ranked unlocked", "Climbing", "Holding rank", "Sweat zone", "Pro adjacent", "Elite", "Leaderboard"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Check the quest log", outcome: "Log opened", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Open the inventory", outcome: "Inventory open", icon: Package, xp: 15 },
+    { id: Q.reset, label: "Run the daily mission", outcome: "Daily done", icon: Joystick, xp: 20 },
+    { id: Q.chat, label: "Comms check with the squad", outcome: "Comms hot", icon: Headphones, xp: 15 },
+    { id: Q.assignment, label: "Clear one boss", outcome: "Boss down", icon: Gamepad2, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Clear", "Daily Login", "Lore Master"),
+};
+
+const LIBRARY: ThemePack = {
+  arcTitle: "Today's Reading List",
+  arcSubtitle: "Five quiet tasks. Build the bibliography.",
+  arcCompletePhrase: "Closing time. Stacks restored.",
+  accent: "oklch(0.7 0.1 50)",
+  bgHue: "35",
+  hudLabel: "Card Catalog",
+  ranks: mkRanks(
+    ["Patron", "Page", "Clerk", "Reference", "Archivist", "Head Librarian", "Curator", "Director"],
+    ["Card issued", "Shelving", "Helps at the desk", "Knows the stacks", "Owns the collection", "Runs the branch", "Special collections", "Library of record"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Scan the catalog", outcome: "Catalog scanned", icon: Search, xp: 10 },
+    { id: Q.notebook, label: "Open a notebook", outcome: "Notebook open", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Reset your study desk", outcome: "Desk reset", icon: LibraryIcon, xp: 20 },
+    { id: Q.chat, label: "Ask the reference librarian", outcome: "Cite confirmed", icon: BookMarked, xp: 15 },
+    { id: Q.assignment, label: "Finish one chapter", outcome: "Chapter logged", icon: Trophy, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Citation", "Quiet Hour", "Stacks Scholar"),
+};
+
+const TRAVELER: ThemePack = {
+  arcTitle: "Today's Itinerary",
+  arcSubtitle: "Five legs. Make the connection.",
+  arcCompletePhrase: "Bags down. City unlocked.",
+  accent: "oklch(0.75 0.15 200)",
+  bgHue: "210",
+  hudLabel: "Passport",
+  ranks: mkRanks(
+    ["Tourist", "Backpacker", "Wanderer", "Globetrotter", "Nomad", "Expat", "World Citizen", "Living Atlas"],
+    ["First stamp", "Hostel veteran", "Continent done", "Multi-continent", "No fixed address", "Visa renewed", "Speaks 5 cities", "Map of life"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Review the itinerary", outcome: "Plan reviewed", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Open the travel journal", outcome: "Journal open", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Repack the day bag", outcome: "Bag packed", icon: Luggage, xp: 20 },
+    { id: Q.chat, label: "Ask a local", outcome: "Tip logged", icon: Globe, xp: 15 },
+    { id: Q.assignment, label: "Make one connection", outcome: "Border crossed", icon: Plane, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Stamp", "Morning Departure", "Phrasebook"),
+};
+
+const FINANCE: ThemePack = {
+  arcTitle: "Today's Trading Day",
+  arcSubtitle: "Five tasks before the close.",
+  arcCompletePhrase: "Bell rung. Books closed.",
+  accent: "oklch(0.78 0.15 145)",
+  bgHue: "150",
+  hudLabel: "Terminal",
+  ranks: mkRanks(
+    ["Analyst", "Associate", "VP", "Director", "Managing Director", "Partner", "Portfolio Manager", "CIO"],
+    ["First model", "Owns the deck", "Runs the deal", "Sets the strategy", "Closes deals", "Equity owner", "Runs the book", "Sets the firm"]
+  ),
+  quests: [
+    { id: Q.timeline, label: "Read the morning tape", outcome: "Tape read", icon: LineChart, xp: 10 },
+    { id: Q.notebook, label: "Open the model", outcome: "Model open", icon: BarChart3, xp: 15 },
+    { id: Q.reset, label: "Run the open routine", outcome: "Bell open", icon: TrendingUp, xp: 20 },
+    { id: Q.chat, label: "Check in with the desk", outcome: "Desk aligned", icon: Briefcase, xp: 15 },
+    { id: Q.assignment, label: "Close one position", outcome: "Trade booked", icon: DollarSign, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Print", "Opening Bell", "Research Stack"),
+};
+
 export const THEME_PACKS: Partial<Record<ThemeId, ThemePack>> = {
   mythic: MYTHIC,
   sports: SPORTS,
   anime: ANIME,
   cyber: CYBER,
   cottage: COTTAGE,
+  baseball: BASEBALL,
+  hotrod: HOTROD,
+  robotics: ROBOTICS,
+  interior: INTERIOR,
+  broadway: BROADWAY,
+  youtube: YOUTUBE,
+  gamer: GAMER,
+  library: LIBRARY,
+  traveler: TRAVELER,
+  finance: FINANCE,
   railways: RAILWAYS,
   cards: CARDS,
   weather: WEATHER,
