@@ -257,3 +257,39 @@ function Row({ title, subtitle, checked, onChange, disabled }: { title: string; 
     </div>
   );
 }
+
+function CompanionSwap() {
+  const { activeId, unlocked, choose } = useCompanions();
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      {COMPANIONS.map((c) => {
+        const isUnlocked = unlocked.includes(c.id);
+        const isActive = activeId === c.id;
+        return (
+          <button
+            key={c.id}
+            type="button"
+            disabled={!isUnlocked}
+            onClick={() => isUnlocked && choose(c.id)}
+            className={`relative rounded-xl border-2 p-2 flex flex-col items-center gap-1.5 transition-all ${
+              isActive
+                ? "border-primary bg-primary/5"
+                : isUnlocked
+                ? "border-border/60 hover:border-border bg-muted/30"
+                : "border-border/40 bg-muted/20 opacity-60 cursor-not-allowed"
+            }`}
+          >
+            {!isUnlocked && (
+              <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
+                <Lock className="h-2.5 w-2.5" />
+              </div>
+            )}
+            <CompanionAvatar id={c.id} size="sm" animate={isActive} />
+            <div className="text-xs font-medium leading-tight">{c.name}</div>
+            <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{c.species}</div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
