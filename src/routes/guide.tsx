@@ -309,13 +309,13 @@ function GuidePage() {
               <li>Sign in to your Canvas at your school's URL (e.g. <code className="text-xs">school.instructure.com</code>).</li>
               <li>Click <strong>Account</strong> in the left sidebar, then <strong>Settings</strong>.</li>
               <li>Scroll to <strong>Approved Integrations</strong> and click <strong>+ New Access Token</strong>.</li>
-              <li>Purpose: <em>"Winston study companion"</em>. Leave the expiry blank (or set one if you prefer).</li>
+              <li>Purpose: <em>"Study companion"</em>. Leave the expiry blank (or set one if you prefer).</li>
               <li>Click <strong>Generate Token</strong>. <strong>Copy the long token immediately</strong> — Canvas won't show it again.</li>
             </ol>
           </Card>
           <Card className="p-4 mt-3">
             <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-              Paste it into Winston
+              Paste it in
             </div>
             <ol className="list-decimal list-outside ml-5 text-sm space-y-1.5">
               <li>Open <Link to="/settings" className="underline">Settings</Link>.</li>
