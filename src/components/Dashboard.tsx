@@ -21,6 +21,7 @@ import {
   type AlertTier,
 } from "@/lib/winston-store";
 import { GamificationPanel } from "@/components/GamificationPanel";
+import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification } from "@/lib/gamification";
 
 const TIER_LABEL: Record<AlertTier, string> = {
