@@ -51,6 +51,8 @@ import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/compan
 import { useAvatar } from "@/lib/use-avatar";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { Shirt } from "lucide-react";
+import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
+import { toast } from "sonner";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
