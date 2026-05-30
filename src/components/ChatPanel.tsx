@@ -87,9 +87,11 @@ export function ChatPanel() {
 
   const isBusy = status === "submitted" || status === "streaming";
 
-  function quickAsk(text: string) {
+  function quickAsk(text: string, questId?: string) {
     if (isBusy) return;
     sendMessage({ text });
+    completeQuest("chat-winston");
+    if (questId) completeQuest(questId);
   }
 
   const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string }[] = [
