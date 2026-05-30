@@ -19,6 +19,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, THEMES, getCompanion, type ThemeId } from "@/lib/companions";
+import { useGamification, rankFor } from "@/lib/gamification";
+import { Lock } from "lucide-react";
 
 const searchSchema = z.object({
   gcal: z.enum(["connected", "error"]).optional(),
