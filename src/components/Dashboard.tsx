@@ -52,7 +52,6 @@ function fmtDue(d: Date) {
 
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const [copied, setCopied] = useState(false);
   const { completeQuest } = useGamification();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
 
@@ -73,7 +72,6 @@ export function Dashboard() {
 
   const canvasError = cfg.canvasFeedUrl ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null) : null;
 
-  // Award XP just for showing up and scanning the timeline
   useEffect(() => {
     const t = setTimeout(() => completeQuest("check-timeline"), 1200);
     return () => clearTimeout(t);
@@ -85,17 +83,6 @@ export function Dashboard() {
     return cfg.courses.find(
       (c) => c.name.toLowerCase() === code || code.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(code),
     );
-  }
-
-  async function copyPrompt() {
-    try {
-      await navigator.clipboard.writeText(GEMINI_PROMPT);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-      completeQuest("copy-prompt");
-    } catch {
-      /* ignore */
-    }
   }
 
   return (
