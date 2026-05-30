@@ -147,6 +147,21 @@ export const COSMETICS: CosmeticItem[] = [
   { id: "m-fin-top",     name: "Pinstripe Suit",    slot: "top",       theme: "finance", setId: "finance-set", color: "#1a1a2a", color2: "#bcbcbc", source: "mastery", blurb: "Finance set · 2/4" },
   { id: "m-fin-acc",     name: "Dollar Pin",        slot: "accessory", theme: "finance", setId: "finance-set", color: "#4adc8a", source: "mastery", blurb: "Finance set · 3/4" },
   { id: "m-fin-frm",     name: "Bull Frame",        slot: "frame",     theme: "finance", setId: "finance-set", color: "#4adc8a", source: "mastery", blurb: "Finance set · 4/4" },
+  // Heroes
+  { id: "m-her-hat",     name: "Hero Cowl",         slot: "hat",       theme: "heroes",  setId: "heroes-set",  color: "#c4202a", source: "mastery", blurb: "Heroes set · 1/4" },
+  { id: "m-her-top",     name: "Caped Suit",        slot: "top",       theme: "heroes",  setId: "heroes-set",  color: "#1a3ad6", color2: "#e8c84a", source: "mastery", blurb: "Heroes set · 2/4" },
+  { id: "m-her-acc",     name: "Power Emblem",      slot: "accessory", theme: "heroes",  setId: "heroes-set",  color: "#e8c84a", source: "mastery", blurb: "Heroes set · 3/4" },
+  { id: "m-her-frm",     name: "Halftone Frame",    slot: "frame",     theme: "heroes",  setId: "heroes-set",  color: "#c4202a", source: "mastery", blurb: "Heroes set · 4/4" },
+  // Reality TV
+  { id: "m-rea-hat",     name: "Camera Headset",    slot: "hat",       theme: "reality", setId: "reality-set", color: "#1a1a1a", source: "mastery", blurb: "Reality set · 1/4" },
+  { id: "m-rea-top",     name: "Confessional Lace", slot: "top",       theme: "reality", setId: "reality-set", color: "#e0408a", color2: "#f0d78c", source: "mastery", blurb: "Reality set · 2/4" },
+  { id: "m-rea-acc",     name: "Diamond Earring",   slot: "accessory", theme: "reality", setId: "reality-set", color: "#f0d78c", source: "mastery", blurb: "Reality set · 3/4" },
+  { id: "m-rea-frm",     name: "Spotlight Frame",   slot: "frame",     theme: "reality", setId: "reality-set", color: "#e0408a", source: "mastery", blurb: "Reality set · 4/4" },
+  // Modern Professional
+  { id: "m-mod-hat",     name: "Quiet Hair Crop",   slot: "hat",       theme: "modern",  setId: "modern-set",  color: "#3a3530", source: "mastery", blurb: "Modern set · 1/4" },
+  { id: "m-mod-top",     name: "Sage Blazer",       slot: "top",       theme: "modern",  setId: "modern-set",  color: "#7d9b76", color2: "#f5f0e8", source: "mastery", blurb: "Modern set · 2/4" },
+  { id: "m-mod-acc",     name: "Tortoise Glasses",  slot: "accessory", theme: "modern",  setId: "modern-set",  color: "#8a5638", source: "mastery", blurb: "Modern set · 3/4" },
+  { id: "m-mod-frm",     name: "Clay Frame",        slot: "frame",     theme: "modern",  setId: "modern-set",  color: "#c2956b", source: "mastery", blurb: "Modern set · 4/4" },
 ];
 
 export function getCosmetic(id: string | undefined | null): CosmeticItem | undefined {
