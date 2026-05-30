@@ -94,11 +94,12 @@ export function ChatPanel() {
     if (questId) completeQuest(questId);
   }
 
-  const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string }[] = [
+  const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string; questId?: string }[] = [
     {
       label: "Daily Reset",
       icon: <Sunrise className="h-3.5 w-3.5" />,
       prompt: DAILY_RESET_PROMPT,
+      questId: "copy-prompt",
     },
     {
       label: "What's due this week?",
