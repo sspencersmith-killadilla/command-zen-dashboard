@@ -33,7 +33,7 @@ import {
   Crown,
 } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/guide")({
+export const Route = createFileRoute("/guide")({
   head: () => ({
     meta: [
       { title: "Field Manual — How Winston Works" },
