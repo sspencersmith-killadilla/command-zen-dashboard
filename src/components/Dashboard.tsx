@@ -169,13 +169,64 @@ export function Dashboard() {
               <div className="font-semibold leading-tight">Command Center</div>
             </div>
           </div>
-          <Link
-            to="/settings"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Link>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border pl-1 pr-3 py-1 transition-colors"
+                  aria-label="Switch companion"
+                >
+                  <CompanionAvatar companionId={currentCompanion.id} size="sm" />
+                  <div className="text-left leading-tight">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Companion</div>
+                    <div className="text-sm font-semibold">{currentCompanion.name}</div>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuLabel className="flex items-center justify-between">
+                  <span>Switch companion</span>
+                  <span className="text-[10px] font-normal text-muted-foreground">Lv {playerLevel}</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {COMPANION_LIST.map((c) => {
+                  const unlocked = playerLevel >= c.unlockLevel || c.id === cfg.companionId;
+                  const isSel = c.id === cfg.companionId;
+                  return (
+                    <DropdownMenuItem
+                      key={c.id}
+                      disabled={!unlocked}
+                      onSelect={() => unlocked && update({ companionId: c.id })}
+                      className="flex items-center gap-2.5 py-2"
+                    >
+                      <div className={unlocked ? "" : "grayscale opacity-60"}>
+                        <CompanionAvatar companionId={c.id} size="sm" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium flex items-center gap-1.5">
+                          {c.name}
+                          {isSel && <Check className="h-3 w-3 text-primary" />}
+                          {!unlocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground truncate">
+                          {unlocked ? c.tagline : `Unlocks at Level ${c.unlockLevel}`}
+                        </div>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link
+              to="/settings"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Settings</span>
+            </Link>
+          </div>
         </div>
       </header>
 
