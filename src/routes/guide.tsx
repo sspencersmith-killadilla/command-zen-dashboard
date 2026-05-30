@@ -93,11 +93,10 @@ function GuidePage() {
               ["#canvas", "6. Connecting Canvas", RefreshCw],
               ["#plan", "7. Study Planner", CalendarClock],
               ["#focus", "8. Focus timer", Timer],
-              ["#locker", "9. Locker & cosmetic drops", Shirt],
-              ["#chat", "10. Chatting with your companion", MessageSquare],
-              ["#settings", "11. Settings explained", SettingsIcon],
-              ["#bios", "12. Character biographies", BookOpen],
-              ["#faq", "13. FAQ & troubleshooting", Bell],
+              ["#chat", "9. Chatting with your companion", MessageSquare],
+              ["#settings", "10. Settings explained", SettingsIcon],
+              ["#bios", "11. Character biographies", BookOpen],
+              ["#faq", "12. FAQ & troubleshooting", Bell],
             ].map(([href, label, Icon]) => {
               const I = Icon as typeof Sparkles;
               return (
