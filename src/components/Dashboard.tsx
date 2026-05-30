@@ -14,6 +14,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   CalendarClock,
   BookOpen,
   Check,
@@ -25,6 +35,7 @@ import {
   AlertCircle,
   ChevronDown,
   Lock,
+  Palette,
 } from "lucide-react";
 import {
   useWinstonConfig,
