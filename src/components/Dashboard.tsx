@@ -50,11 +50,18 @@ function fmtDue(d: Date) {
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
   const [copied, setCopied] = useState(false);
+  const { completeQuest } = useGamification();
 
   const assignments = useMemo(
     () => getSimulatedAssignments(cfg.courses).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime()),
     [cfg.courses]
   );
+
+  // Award XP just for showing up and scanning the timeline
+  useEffect(() => {
+    const t = setTimeout(() => completeQuest("check-timeline"), 1200);
+    return () => clearTimeout(t);
+  }, [completeQuest]);
 
   function matchCourse(courseCode: string) {
     return cfg.courses.find((c) => c.name.toLowerCase() === courseCode.toLowerCase());
@@ -65,6 +72,7 @@ export function Dashboard() {
       await navigator.clipboard.writeText(GEMINI_PROMPT);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+      completeQuest("copy-prompt");
     } catch {
       /* ignore */
     }
