@@ -90,6 +90,70 @@ export function ChatPanel() {
 
   const isBusy = status === "submitted" || status === "streaming";
 
+  // Floating close-up: pops in when a new assistant message arrives (idle bob)
+  // and stays in "speaking" mode while voice is playing.
+  const [closeup, setCloseup] = useState<{ open: boolean; speaking: boolean }>({
+    open: false,
+    speaking: false,
+  });
+  const lastAssistantIdRef = useRef<string | null>(null);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sawInitialRef = useRef(false);
+
+  // Trigger A — new assistant message
+  useEffect(() => {
+    const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+    if (!lastAssistant) return;
+    // Skip the very first batch (hydrated history)
+    if (!sawInitialRef.current) {
+      sawInitialRef.current = true;
+      lastAssistantIdRef.current = lastAssistant.id;
+      return;
+    }
+    if (lastAssistant.id === lastAssistantIdRef.current) return;
+    lastAssistantIdRef.current = lastAssistant.id;
+    if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+    setCloseup((c) => ({ open: true, speaking: c.speaking }));
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    idleTimerRef.current = setTimeout(() => {
+      setCloseup((c) => (c.speaking ? c : { open: false, speaking: false }));
+    }, 2000);
+  }, [messages]);
+
+  // Trigger B — voice playing
+  useEffect(() => {
+    if (speakingId) {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      setCloseup({ open: true, speaking: true });
+    } else {
+      setCloseup((c) => {
+        if (!c.speaking) return c;
+        return { open: c.open, speaking: false };
+      });
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      exitTimerRef.current = setTimeout(() => {
+        setCloseup({ open: false, speaking: false });
+      }, 350);
+    }
+  }, [speakingId]);
+
+  // Reset on companion change
+  useEffect(() => {
+    setCloseup({ open: false, speaking: false });
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+  }, [companion.id]);
+
+  useEffect(
+    () => () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+    },
+    [],
+  );
+
   function quickAsk(text: string, questId?: string) {
     if (isBusy) return;
     sendMessage({ text });
