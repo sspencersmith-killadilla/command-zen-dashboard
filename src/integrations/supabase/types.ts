@@ -38,6 +38,134 @@ export type Database = {
         }
         Relationships: []
       }
+      flashcard_cards: {
+        Row: {
+          back: string
+          created_at: string
+          deck_id: string
+          due_at: string
+          ease: number
+          front: string
+          id: string
+          interval_days: number
+          last_reviewed_at: string | null
+          reps: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          back: string
+          created_at?: string
+          deck_id: string
+          due_at?: string
+          ease?: number
+          front: string
+          id?: string
+          interval_days?: number
+          last_reviewed_at?: string | null
+          reps?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          back?: string
+          created_at?: string
+          deck_id?: string
+          due_at?: string
+          ease?: number
+          front?: string
+          id?: string
+          interval_days?: number
+          last_reviewed_at?: string | null
+          reps?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcard_cards_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "flashcard_decks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flashcard_decks: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          source: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          source?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          source?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_sessions: {
+        Row: {
+          actual_minutes: number | null
+          assignment_ref: string | null
+          completed: boolean
+          course_id: string | null
+          created_at: string
+          ended_at: string | null
+          id: string
+          notes: string | null
+          planned_minutes: number
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          actual_minutes?: number | null
+          assignment_ref?: string | null
+          completed?: boolean
+          course_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          notes?: string | null
+          planned_minutes?: number
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          actual_minutes?: number | null
+          assignment_ref?: string | null
+          completed?: boolean
+          course_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          notes?: string | null
+          planned_minutes?: number
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       google_calendar_tokens: {
         Row: {
           access_token: string
@@ -63,6 +191,51 @@ export type Database = {
           expires_at?: string
           refresh_token?: string
           scope?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      study_blocks: {
+        Row: {
+          completed_at: string | null
+          course_id: string | null
+          created_at: string
+          ends_at: string
+          gcal_event_id: string | null
+          id: string
+          notes: string | null
+          source: string
+          starts_at: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          course_id?: string | null
+          created_at?: string
+          ends_at: string
+          gcal_event_id?: string | null
+          id?: string
+          notes?: string | null
+          source?: string
+          starts_at: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          course_id?: string | null
+          created_at?: string
+          ends_at?: string
+          gcal_event_id?: string | null
+          id?: string
+          notes?: string | null
+          source?: string
+          starts_at?: string
+          title?: string
           updated_at?: string
           user_id?: string
         }
@@ -194,6 +367,87 @@ export type Database = {
           item_id?: string
           source?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_reflections: {
+        Row: {
+          blockers: string | null
+          created_at: string
+          goals: Json
+          id: string
+          slips: string | null
+          updated_at: string
+          user_id: string
+          week_of: string
+          wins: string | null
+        }
+        Insert: {
+          blockers?: string | null
+          created_at?: string
+          goals?: Json
+          id?: string
+          slips?: string | null
+          updated_at?: string
+          user_id: string
+          week_of: string
+          wins?: string | null
+        }
+        Update: {
+          blockers?: string | null
+          created_at?: string
+          goals?: Json
+          id?: string
+          slips?: string | null
+          updated_at?: string
+          user_id?: string
+          week_of?: string
+          wins?: string | null
+        }
+        Relationships: []
+      }
+      wellness_logs: {
+        Row: {
+          created_at: string
+          id: string
+          log_date: string
+          meals: Json
+          mood: number | null
+          movement_minutes: number
+          movement_type: string | null
+          notes: string | null
+          sleep_hours: number | null
+          updated_at: string
+          user_id: string
+          water_cups: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          log_date: string
+          meals?: Json
+          mood?: number | null
+          movement_minutes?: number
+          movement_type?: string | null
+          notes?: string | null
+          sleep_hours?: number | null
+          updated_at?: string
+          user_id: string
+          water_cups?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          log_date?: string
+          meals?: Json
+          mood?: number | null
+          movement_minutes?: number
+          movement_type?: string | null
+          notes?: string | null
+          sleep_hours?: number | null
+          updated_at?: string
+          user_id?: string
+          water_cups?: number
         }
         Relationships: []
       }

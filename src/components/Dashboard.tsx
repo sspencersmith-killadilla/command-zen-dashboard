@@ -363,6 +363,27 @@ export function Dashboard() {
               <span className="hidden sm:inline">Locker</span>
             </Link>
 
+            <Link to="/plan" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
+              <CalendarClock className="h-4 w-4" />
+              <span className="hidden md:inline">Plan</span>
+            </Link>
+            <Link to="/triage" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
+              <AlertCircle className="h-4 w-4" />
+              <span className="hidden md:inline">Triage</span>
+            </Link>
+            <Link to="/focus" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
+              <RefreshCw className="h-4 w-4" />
+              <span className="hidden md:inline">Focus</span>
+            </Link>
+            <Link to="/recall" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden md:inline">Recall</span>
+            </Link>
+            <Link to="/wellness" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden md:inline">Wellness</span>
+            </Link>
+
             <Link
               to="/guide"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
@@ -370,6 +391,7 @@ export function Dashboard() {
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Guide</span>
             </Link>
+
 
 
             <Link

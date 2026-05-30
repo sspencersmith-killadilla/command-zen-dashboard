@@ -13,10 +13,16 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedWellnessRouteImport } from './routes/_authenticated/wellness'
+import { Route as AuthenticatedTriageRouteImport } from './routes/_authenticated/triage'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedRecallRouteImport } from './routes/_authenticated/recall'
+import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
+import { Route as AuthenticatedFocusRouteImport } from './routes/_authenticated/focus'
 import { Route as AuthenticatedAvatarRouteImport } from './routes/_authenticated/avatar'
+import { Route as AuthenticatedRecallDeckRouteImport } from './routes/_authenticated/recall.$deck'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
 
 const LoginRoute = LoginRouteImport.update({
@@ -38,9 +44,29 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWellnessRoute = AuthenticatedWellnessRouteImport.update({
+  id: '/wellness',
+  path: '/wellness',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTriageRoute = AuthenticatedTriageRouteImport.update({
+  id: '/triage',
+  path: '/triage',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRecallRoute = AuthenticatedRecallRouteImport.update({
+  id: '/recall',
+  path: '/recall',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedPlanRoute = AuthenticatedPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedLockerRoute = AuthenticatedLockerRouteImport.update({
@@ -53,10 +79,20 @@ const AuthenticatedGuideRoute = AuthenticatedGuideRouteImport.update({
   path: '/guide',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedFocusRoute = AuthenticatedFocusRouteImport.update({
+  id: '/focus',
+  path: '/focus',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAvatarRoute = AuthenticatedAvatarRouteImport.update({
   id: '/avatar',
   path: '/avatar',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRecallDeckRoute = AuthenticatedRecallDeckRouteImport.update({
+  id: '/$deck',
+  path: '/$deck',
+  getParentRoute: () => AuthenticatedRecallRoute,
 } as any)
 const ApiOauthGoogleCalendarCallbackRoute =
   ApiOauthGoogleCalendarCallbackRouteImport.update({
@@ -69,20 +105,32 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/avatar': typeof AuthenticatedAvatarRoute
+  '/focus': typeof AuthenticatedFocusRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
+  '/plan': typeof AuthenticatedPlanRoute
+  '/recall': typeof AuthenticatedRecallRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
+  '/triage': typeof AuthenticatedTriageRoute
+  '/wellness': typeof AuthenticatedWellnessRoute
   '/api/chat': typeof ApiChatRoute
+  '/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/avatar': typeof AuthenticatedAvatarRoute
+  '/focus': typeof AuthenticatedFocusRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
+  '/plan': typeof AuthenticatedPlanRoute
+  '/recall': typeof AuthenticatedRecallRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
+  '/triage': typeof AuthenticatedTriageRoute
+  '/wellness': typeof AuthenticatedWellnessRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
+  '/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesById {
@@ -90,11 +138,17 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/avatar': typeof AuthenticatedAvatarRoute
+  '/_authenticated/focus': typeof AuthenticatedFocusRoute
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/locker': typeof AuthenticatedLockerRoute
+  '/_authenticated/plan': typeof AuthenticatedPlanRoute
+  '/_authenticated/recall': typeof AuthenticatedRecallRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/triage': typeof AuthenticatedTriageRoute
+  '/_authenticated/wellness': typeof AuthenticatedWellnessRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRouteTypes {
@@ -103,31 +157,49 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/avatar'
+    | '/focus'
     | '/guide'
     | '/locker'
+    | '/plan'
+    | '/recall'
     | '/settings'
+    | '/triage'
+    | '/wellness'
     | '/api/chat'
+    | '/recall/$deck'
     | '/api/oauth/google-calendar/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/avatar'
+    | '/focus'
     | '/guide'
     | '/locker'
+    | '/plan'
+    | '/recall'
     | '/settings'
+    | '/triage'
+    | '/wellness'
     | '/api/chat'
     | '/'
+    | '/recall/$deck'
     | '/api/oauth/google-calendar/callback'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/avatar'
+    | '/_authenticated/focus'
     | '/_authenticated/guide'
     | '/_authenticated/locker'
+    | '/_authenticated/plan'
+    | '/_authenticated/recall'
     | '/_authenticated/settings'
+    | '/_authenticated/triage'
+    | '/_authenticated/wellness'
     | '/api/chat'
     | '/_authenticated/'
+    | '/_authenticated/recall/$deck'
     | '/api/oauth/google-calendar/callback'
   fileRoutesById: FileRoutesById
 }
@@ -168,11 +240,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/wellness': {
+      id: '/_authenticated/wellness'
+      path: '/wellness'
+      fullPath: '/wellness'
+      preLoaderRoute: typeof AuthenticatedWellnessRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/triage': {
+      id: '/_authenticated/triage'
+      path: '/triage'
+      fullPath: '/triage'
+      preLoaderRoute: typeof AuthenticatedTriageRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/recall': {
+      id: '/_authenticated/recall'
+      path: '/recall'
+      fullPath: '/recall'
+      preLoaderRoute: typeof AuthenticatedRecallRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/plan': {
+      id: '/_authenticated/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof AuthenticatedPlanRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/locker': {
@@ -189,12 +289,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/focus': {
+      id: '/_authenticated/focus'
+      path: '/focus'
+      fullPath: '/focus'
+      preLoaderRoute: typeof AuthenticatedFocusRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/avatar': {
       id: '/_authenticated/avatar'
       path: '/avatar'
       fullPath: '/avatar'
       preLoaderRoute: typeof AuthenticatedAvatarRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/recall/$deck': {
+      id: '/_authenticated/recall/$deck'
+      path: '/$deck'
+      fullPath: '/recall/$deck'
+      preLoaderRoute: typeof AuthenticatedRecallDeckRouteImport
+      parentRoute: typeof AuthenticatedRecallRoute
     }
     '/api/oauth/google-calendar/callback': {
       id: '/api/oauth/google-calendar/callback'
@@ -206,19 +320,40 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRecallRouteChildren {
+  AuthenticatedRecallDeckRoute: typeof AuthenticatedRecallDeckRoute
+}
+
+const AuthenticatedRecallRouteChildren: AuthenticatedRecallRouteChildren = {
+  AuthenticatedRecallDeckRoute: AuthenticatedRecallDeckRoute,
+}
+
+const AuthenticatedRecallRouteWithChildren =
+  AuthenticatedRecallRoute._addFileChildren(AuthenticatedRecallRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAvatarRoute: typeof AuthenticatedAvatarRoute
+  AuthenticatedFocusRoute: typeof AuthenticatedFocusRoute
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
   AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
+  AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
+  AuthenticatedRecallRoute: typeof AuthenticatedRecallRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTriageRoute: typeof AuthenticatedTriageRoute
+  AuthenticatedWellnessRoute: typeof AuthenticatedWellnessRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAvatarRoute: AuthenticatedAvatarRoute,
+  AuthenticatedFocusRoute: AuthenticatedFocusRoute,
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
   AuthenticatedLockerRoute: AuthenticatedLockerRoute,
+  AuthenticatedPlanRoute: AuthenticatedPlanRoute,
+  AuthenticatedRecallRoute: AuthenticatedRecallRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTriageRoute: AuthenticatedTriageRoute,
+  AuthenticatedWellnessRoute: AuthenticatedWellnessRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
