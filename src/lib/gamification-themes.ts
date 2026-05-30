@@ -4,11 +4,11 @@ import {
   Sparkles, Swords, Trophy, Flame, Crown, Shield, Flower2, Sprout, Leaf, TreeDeciduous,
   Sun, Zap, Cpu, Radio, Satellite, Rocket, Sword, Wind, Moon, Star, Mountain,
   Clipboard, Medal, Target, Dumbbell,
-  Train, TrainTrack, Clock, Flag, MapPin,
+  Train, TrainTrack, Clock, Flag,
   Layers, Package, Album, ScanLine, BookMarked,
-  CloudRain, CloudLightning, CloudSun, Thermometer, Gauge,
-  Map as MapIcon, Compass, Mountain as MountainIcon, Globe, Footprints,
-  Microscope, Telescope, Bone, Gem, BookOpen,
+  CloudLightning, CloudSun, Thermometer, Gauge,
+  Map as MapIcon, Compass, Globe, Footprints, MapPin,
+  Microscope, Telescope, Bone, BookOpen,
 } from "lucide-react";
 
 /** A single themed daily quest tied to a stable quest id. */
