@@ -117,6 +117,24 @@ import docentMarshSprite from "@/assets/docent-marsh-sprite.png";
 import exhibitParkSprite from "@/assets/exhibit-park-sprite.png";
 import archivistBellSprite from "@/assets/archivist-bell-sprite.png";
 import specimenKnoxSprite from "@/assets/specimen-knox-sprite.png";
+// Heroes (comic book)
+import sentinelPrimeSprite from "@/assets/sentinel-prime-sprite.png";
+import driftHeroSprite from "@/assets/drift-hero-sprite.png";
+import voxHeroSprite from "@/assets/vox-hero-sprite.png";
+import aegisHeroSprite from "@/assets/aegis-hero-sprite.png";
+import quipHeroSprite from "@/assets/quip-hero-sprite.png";
+// Reality TV
+import hostSterlingSprite from "@/assets/host-sterling-sprite.png";
+import producerMaeSprite from "@/assets/producer-mae-sprite.png";
+import brielleSprite from "@/assets/brielle-sprite.png";
+import camOpReggieSprite from "@/assets/cam-op-reggie-sprite.png";
+import villainVanceSprite from "@/assets/villain-vance-sprite.png";
+// Modern Professional
+import drAnaReyesSprite from "@/assets/dr-ana-reyes-sprite.png";
+import samTranSprite from "@/assets/sam-tran-sprite.png";
+import julesOkaforSprite from "@/assets/jules-okafor-sprite.png";
+import miraParkSprite from "@/assets/mira-park-sprite.png";
+import theoLockeSprite from "@/assets/theo-locke-sprite.png";
 
 export type ThemeId =
   | "mythic"
@@ -138,7 +156,10 @@ export type ThemeId =
   | "cards"
   | "weather"
   | "cartography"
-  | "museum";
+  | "museum"
+  | "heroes"
+  | "reality"
+  | "modern";
 
 export type Theme = {
   id: ThemeId;
@@ -167,6 +188,9 @@ export const THEMES: Theme[] = [
   { id: "weather", label: "Weather Watch", blurb: "Barometers, fronts, forecasts, storm logs." },
   { id: "cartography", label: "Cartography", blurb: "Maps, compasses, contour lines, expeditions." },
   { id: "museum", label: "Natural History", blurb: "Specimens, exhibits, labels, fossils." },
+  { id: "heroes", label: "Comic Heroes", blurb: "Capes, halftones, save the city by sundown." },
+  { id: "reality", label: "Reality TV", blurb: "Confessionals, alliances, eliminations." },
+  { id: "modern", label: "Modern Professional", blurb: "Calm adult productivity. No mascots, no magic." },
 ];
 
 export type Companion = {
