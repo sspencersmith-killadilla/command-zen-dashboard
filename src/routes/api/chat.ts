@@ -28,7 +28,8 @@ export const Route = createFileRoute("/api/chat")({
         if (userErr || !userData.user) return new Response("Unauthorized", { status: 401 });
         const userId = userData.user.id;
 
-        const { messages } = (await request.json()) as { messages: UIMessage[] };
+        const body = (await request.json()) as { messages: UIMessage[]; companionId?: string };
+        const { messages, companionId } = body;
         if (!Array.isArray(messages)) return new Response("messages required", { status: 400 });
 
         const key = process.env.LOVABLE_API_KEY;
@@ -49,7 +50,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const result = streamText({
           model,
-          system: SYSTEM_PROMPT,
+          system: systemPromptFor(companionId),
           messages: await convertToModelMessages(messages),
         });
 
