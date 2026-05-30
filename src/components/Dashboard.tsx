@@ -152,18 +152,42 @@ export function Dashboard() {
                 <h2 className="font-bold text-2xl leading-tight">Up Next</h2>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Bell className="h-3.5 w-3.5" />
-              Alerts
-              <Switch
-                checked={cfg.notificationsEnabled}
-                onCheckedChange={(v) => update({ notificationsEnabled: v })}
-              />
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <button
+                type="button"
+                onClick={() => canvasQ.refetch()}
+                disabled={canvasQ.isFetching || !cfg.canvasFeedUrl}
+                className="inline-flex items-center gap-1.5 hover:text-foreground disabled:opacity-50"
+                aria-label="Refresh Canvas"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${canvasQ.isFetching ? "animate-spin" : ""}`} />
+                {canvasQ.isFetching ? "Syncing…" : "Refresh"}
+              </button>
+              <span className="flex items-center gap-2">
+                <Bell className="h-3.5 w-3.5" />
+                Alerts
+                <Switch
+                  checked={cfg.notificationsEnabled}
+                  onCheckedChange={(v) => update({ notificationsEnabled: v })}
+                />
+              </span>
             </div>
           </div>
 
-          {assignments.length === 0 ? (
-            <EmptyState text="No assignments yet. Add a class in Settings to populate your timeline." />
+          {canvasError && (
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <div>
+                <div className="font-medium">Canvas sync failed</div>
+                <div className="text-xs opacity-80">{canvasError}</div>
+              </div>
+            </div>
+          )}
+
+          {!cfg.canvasFeedUrl ? (
+            <EmptyState text="Paste your Canvas Calendar Feed URL in Settings to import real assignments." />
+          ) : assignments.length === 0 ? (
+            <EmptyState text={canvasQ.isLoading ? "Loading assignments from Canvas…" : "No upcoming assignments in the next 60 days."} />
           ) : (
             <>
               {(() => {
