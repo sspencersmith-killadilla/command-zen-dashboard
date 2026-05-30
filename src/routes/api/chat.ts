@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getCompanion } from "@/lib/companions";
 
-const SYSTEM_PROMPT = `You are Barnaby, a calm, sharp study companion for an engineering student who loves video games. You help them plan their day, break down assignments, and stay focused. Be concise, motivating, and use the occasional game or RPG metaphor — never cheesy. Keep responses tight unless asked for depth.`;
+const SYSTEM_SUFFIX = `\n\nYou help an engineering student plan their day, break down assignments, and stay focused. Be concise. Keep responses tight unless asked for depth.`;
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -22,6 +23,13 @@ export const Route = createFileRoute("/api/chat")({
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+        // Look up the user's selected companion for the system prompt
+        const { data: cfgRow } = await supabaseAdmin
+          .from("user_configs")
+          .select("companion_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+        const companion = getCompanion(cfgRow?.companion_id ?? null);
 
         // Persist the latest user message (last in array)
         const lastUser = [...messages].reverse().find((m) => m.role === "user");
@@ -38,7 +46,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const result = streamText({
           model,
-          system: SYSTEM_PROMPT,
+          system: companion.persona + SYSTEM_SUFFIX,
           messages: await convertToModelMessages(messages),
         });
 

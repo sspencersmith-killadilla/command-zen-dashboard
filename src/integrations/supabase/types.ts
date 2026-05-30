@@ -71,6 +71,7 @@ export type Database = {
       user_configs: {
         Row: {
           canvas_feed_url: string
+          companion_id: string
           courses: Json
           created_at: string
           display_name: string
@@ -83,6 +84,7 @@ export type Database = {
         }
         Insert: {
           canvas_feed_url?: string
+          companion_id?: string
           courses?: Json
           created_at?: string
           display_name?: string
@@ -95,6 +97,7 @@ export type Database = {
         }
         Update: {
           canvas_feed_url?: string
+          companion_id?: string
           courses?: Json
           created_at?: string
           display_name?: string

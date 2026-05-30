@@ -12,6 +12,7 @@ const DEFAULT: WinstonConfig = {
   googleConnected: false,
   notificationsEnabled: false,
   courses: [],
+  companionId: "barnaby",
 };
 
 export const configQueryKey = ["winston-config"] as const;
