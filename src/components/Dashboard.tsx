@@ -113,6 +113,10 @@ export function Dashboard() {
           </p>
         </div>
 
+        <div className="mb-6">
+          <GamificationPanel />
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Card A */}
           <Card className="p-6 lg:col-span-2 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
