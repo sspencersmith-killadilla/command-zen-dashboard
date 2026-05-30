@@ -467,8 +467,8 @@ function GuidePage() {
           </div>
         </section>
 
-        {/* 10. FAQ */}
-        <Section id="faq" icon={Bell} title="10. FAQ & troubleshooting">
+        {/* 13. FAQ */}
+        <Section id="faq" icon={Bell} title="13. FAQ & troubleshooting">
           <FaqRow
             q="My assignments aren't showing up."
             a="Open Settings and re-save your Canvas domain and token. The domain should be just the host (school.instructure.com), no https:// and no path."
@@ -478,8 +478,20 @@ function GuidePage() {
             a="Quests fire on real actions: viewing the timeline, opening a notebook, copying the Daily Reset, chatting once, and Canvas marking an assignment submitted. If Canvas hasn't updated yet, the assignment-clear step will trigger on the next sync."
           />
           <FaqRow
+            q="I'm not getting any cosmetic drops."
+            a="Drops come from on-time Canvas submissions — one every 3. Check the on-time progress meter at the top of the Locker. Theme-mastery sets unlock separately once you've completed five daily arcs in that world."
+          />
+          <FaqRow
+            q="Does the Focus timer keep running if I close the tab?"
+            a="Yes. The session is tracked server-side from Start to Stop, so closing the tab or switching devices is fine — just come back and press Stop when you're done."
+          />
+          <FaqRow
+            q="Auto-plan didn't pick up an assignment."
+            a="Auto-plan only sees what Canvas exposes. If something's missing, re-sync from Settings, then run Auto-plan again — or add the block manually on the Planner."
+          />
+          <FaqRow
             q="I want to start over."
-            a="Settings → Reset progress wipes XP, streaks, and trophies but keeps your theme and companion. To change the world, use the Palette menu (you'll be asked to confirm)."
+            a="Settings → Reset progress wipes XP, streaks, trophies, and cosmetic drops but keeps your theme and companion. To change the world, use the Palette menu (you'll be asked to confirm)."
           />
           <FaqRow
             q="A companion is locked."
@@ -487,9 +499,10 @@ function GuidePage() {
           />
           <FaqRow
             q="Can I switch back to my old theme?"
-            a="Yes. Switching is reversible and your XP is preserved. The Palette menu lists every world."
+            a="Yes. Switching is reversible and your XP, trophies, and Locker contents are preserved. The Palette menu lists every world."
           />
         </Section>
+
 
         <p className="text-center text-xs text-muted-foreground pt-8">
           That's the whole manual. Go finish today's arc.
