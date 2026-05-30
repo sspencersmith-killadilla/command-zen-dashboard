@@ -280,6 +280,18 @@ export function Dashboard() {
                       <div className="text-sm text-muted-foreground tabular-nums w-20 text-right">
                         {fmtDue(a.dueAt)}
                       </div>
+                      {a.htmlUrl && (
+                        <a
+                          href={a.htmlUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          aria-label="Open in Canvas"
+                          title="Open in Canvas"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      )}
                       {course && (
                         <a
                           href={course.notebookUrl}
@@ -288,8 +300,9 @@ export function Dashboard() {
                           onClick={() => completeQuest("open-notebook")}
                           className="text-muted-foreground hover:text-primary transition-colors"
                           aria-label="Open notebook"
+                          title="Open notebook"
                         >
-                          <ExternalLink className="h-4 w-4" />
+                          <BookOpen className="h-4 w-4" />
                         </a>
                       )}
                     </li>
@@ -300,7 +313,9 @@ export function Dashboard() {
           )}
 
           <p className="mt-5 text-xs text-muted-foreground">
-            Pulled live from your Canvas Calendar Feed. Tiered alerts: 2 weeks → 1 week → 2 days.
+            {cfg.canvasApiToken && cfg.canvasDomain
+              ? "Live from the Canvas API — direct links and file attachments included."
+              : "Live from your Canvas calendar feed. Add an access token in Settings to also get per-assignment links and files."}
           </p>
         </Card>
 
