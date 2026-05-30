@@ -388,7 +388,14 @@ export function Dashboard() {
             Good day{cfg.displayName ? `, ${cfg.displayName}` : ""}.
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
-            Mission briefing below. Clear quests, stack XP.
+            Mission briefing below. Clear quests, stack XP.{" "}
+            <Link
+              to="/guide"
+              className="inline-flex items-center gap-1 text-primary hover:underline underline-offset-4 font-medium"
+            >
+              <BookOpen className="h-4 w-4" />
+              New here? Read the guide
+            </Link>
           </p>
         </div>
 
