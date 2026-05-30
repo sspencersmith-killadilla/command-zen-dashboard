@@ -68,6 +68,63 @@ export type Database = {
         }
         Relationships: []
       }
+      user_avatar: {
+        Row: {
+          background: string
+          body_type: string
+          brow_style: string
+          created_at: string
+          equipped: Json
+          eye_style: string
+          hair_color: string
+          hair_style: string
+          id: string
+          mastery_progress: Json
+          mouth_style: string
+          on_time_count: number
+          outfit_base: string
+          skin_tone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          background?: string
+          body_type?: string
+          brow_style?: string
+          created_at?: string
+          equipped?: Json
+          eye_style?: string
+          hair_color?: string
+          hair_style?: string
+          id?: string
+          mastery_progress?: Json
+          mouth_style?: string
+          on_time_count?: number
+          outfit_base?: string
+          skin_tone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          background?: string
+          body_type?: string
+          brow_style?: string
+          created_at?: string
+          equipped?: Json
+          eye_style?: string
+          hair_color?: string
+          hair_style?: string
+          id?: string
+          mastery_progress?: Json
+          mouth_style?: string
+          on_time_count?: number
+          outfit_base?: string
+          skin_tone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_configs: {
         Row: {
           canvas_api_token: string
@@ -112,6 +169,30 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded?: boolean
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_inventory: {
+        Row: {
+          earned_at: string
+          id: string
+          item_id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          earned_at?: string
+          id?: string
+          item_id: string
+          source?: string
+          user_id: string
+        }
+        Update: {
+          earned_at?: string
+          id?: string
+          item_id?: string
+          source?: string
           user_id?: string
         }
         Relationships: []

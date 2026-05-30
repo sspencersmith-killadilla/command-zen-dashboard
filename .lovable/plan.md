@@ -1,42 +1,72 @@
-# Themed Companion Expansion
+# Player avatar + earnable cosmetics — v1 plan
 
-Grow the companion roster from 5 → 30 by adding 25 new avatars, organized into **5 themes** users can browse. Each companion keeps the same data shape we already use (id, name, species, tagline, persona, sprite, glow), so no schema changes are needed beyond tagging each one with a `theme`.
+## What ships
+1. **Avatar builder** (8+ slots): body type, skin tone, hair style, hair color, eye style, brow style, mouth style, base outfit, background.
+2. **Layered pixel renderer** (`PlayerAvatar`) that composes base parts + equipped cosmetics on the fly.
+3. **Locker page** (`/locker`): grid of owned cosmetics, equip/unequip per slot, lock chips for unearned items.
+4. **Earning rules**: on-time assignment drops + theme-mastery sets.
+5. **Header integration**: your avatar appears next to the companion across the dashboard, with an "Edit avatar" button.
+6. **Seed catalog**: 10 universal items + 1 small themed set for 3 themes (Finance, Sports, Mythic). More added later on request.
 
-## Themes (5 × 5 = 25 new companions)
+## Data model
+**`user_avatar`** — one row per user (RLS, scoped to `auth.uid()`)
+- `body_type`, `skin_tone`, `hair_style`, `hair_color`, `eye_style`, `brow_style`, `mouth_style`, `outfit_base`, `background` (text)
+- `equipped jsonb` — `{ hat: "...", top: "...", accessory: "...", frame: "..." }`
+- `on_time_count int` — drives every-Nth drops
+- `mastery_progress jsonb` — `{ themeId: completedArcsCount }`
 
-Each theme gets 5 companions with distinct personalities mapped to the same five archetypes we already established (Wise mentor, Chill helper, Energetic motivator, Loyal protector, Trickster tough-love), so every user gets a full personality spectrum no matter which theme they pick.
+**`user_inventory`** — earned items
+- `user_id`, `item_id`, `source` ('on_time' | 'mastery' | 'seed'), `earned_at`
 
-1. **Mythic Chimera** (the current 5 — Barnaby, Bean, Roxie, Pip, Lafitte) — already built, becomes the default theme.
-2. **Sports Legends** — anthropomorphic athlete chimeras (e.g. a tiger boxer, a falcon sprinter, a bear linebacker, a wolf goalie, a fox point-guard).
-3. **Fantasy Anime** — stylized shōnen/shōjo chimera heroes (e.g. fox-spirit swordsman, dragon-kin mage, cat-girl archer, wolf knight, rabbit ninja).
-4. **Cyber / Sci-Fi** — neon cyberpunk chimeras (e.g. raven hacker, lynx pilot, mantis medic, shark mercenary, owl AI-oracle).
-5. **Cozy Cottagecore** — warm folk-art chimeras (e.g. hedgehog baker, deer herbalist, badger librarian, sparrow poet, hare gardener).
+**Cosmetic catalog** stays as a **static TS file** (`src/lib/cosmetics.ts`) — no DB table. Easier to iterate, no migrations to add new items.
 
-All 25 are realistically generatable at high quality with the existing image pipeline — same humanoid-chimera style direction, just retuned palette/wardrobe per theme. The current sprites become the Mythic theme so nothing is thrown away.
+## Earning logic (server-side, in `createServerFn`)
+- **On-time completion**: when `clear-assignment` quest completes AND assignment due-date is today or later → `on_time_count++`. Every **3rd** on-time completion → random universal-pool drop.
+- **Theme mastery**: when a user completes the full 5-quest arc for the current theme for the **5th** day → unlock that theme's set (4 items: hat, top, accessory, frame).
+- All drops surface as a **toast + locker badge** ("New item earned").
 
-## UX changes
+## UI shape
+```text
+/locker
+┌──────────────────────────────────────────────┐
+│  [Live PlayerAvatar preview]   Edit avatar →│
+├──────────────────────────────────────────────┤
+│  HAT      TOP     ACCESSORY    FRAME         │
+│ [grid of owned items per slot, locked = ░]   │
+└──────────────────────────────────────────────┘
 
-- **Settings → Companion picker**: add a theme selector (tabs or chips) above the avatar grid. Selecting a theme filters the grid to that theme's 5 companions. Currently-selected companion stays highlighted across themes.
-- **Onboarding** (if companion selection is part of it): same theme-then-companion flow.
-- No change to chat UI — the selected companion still drives header, persona, and prompt as today.
+/avatar-builder (modal-style page)
+8 stepper rows (Body / Skin / Hair style / Hair color /
+Eyes / Brows / Mouth / Outfit / Background)
+with ← → arrows and a live preview.
+```
 
-## Implementation outline
+## Rendering approach (no AI sprite gen needed for v1)
+Each base part = a small flat-color SVG/CSS layer; the renderer stacks them inside a fixed 64×64 viewport with `image-rendering: pixelated`. Cosmetics are also CSS/SVG shapes (hat = trapezoid, frame = border, accessory = pin). This keeps the seed lean per the "tiny seed + add later" choice — real PNG sprites can drop in later by swapping the layer source from SVG to `img`.
 
-1. **Data** — extend `src/lib/companions.ts`:
-   - Add `theme: ThemeId` to each companion.
-   - Add a `THEMES` registry: `{ id, label, description, blurb }`.
-   - Add 25 new companion entries (5 per new theme) with unique names, taglines, glow colors, and personas reusing the 5 archetype voices.
-2. **Assets** — generate 25 new sprite PNGs into `src/assets/<id>-sprite.png`, matching the existing humanoid-chimera style, retuned per theme palette.
-3. **Settings UI** — `src/routes/_authenticated/settings.tsx`: add theme tabs, filter the existing grid by active theme. No DB migration needed — `companion_id` already stores the chosen id.
-4. **Back-compat** — existing users default to `barnaby` (Mythic), unchanged.
-5. **Chat API** — `src/routes/api/chat.ts` already looks up persona by `companion_id`; no change.
+## Files touched
+**New**
+- `src/lib/cosmetics.ts` (catalog + slot defs + earning helpers)
+- `src/lib/avatar.functions.ts` (`getMyAvatar`, `updateAvatar`, `equipItem`, `unequipItem`)
+- `src/lib/avatar.server.ts` (drop-roll + mastery helpers)
+- `src/components/PlayerAvatar.tsx` (layered renderer)
+- `src/components/AvatarBuilder.tsx` (8-slot stepper UI)
+- `src/routes/_authenticated/locker.tsx`
+- `src/routes/_authenticated/avatar.tsx`
 
-## Technical notes
+**Edited**
+- `src/components/Dashboard.tsx` (header: PlayerAvatar + Locker link)
+- `src/lib/gamification.ts` (hook into quest completion to trigger drops)
+- New migration: `user_avatar`, `user_inventory` tables + GRANTs + RLS
 
-- No new DB columns. `companion_id` text is sufficient; theme is derived from the companions registry.
-- Persona archetypes are reused verbatim across themes so voice quality stays consistent without writing 25 bespoke personas.
-- Image generation happens once at build time and is committed as static assets — no runtime cost.
+## What's NOT in v1
+- AI-generated PNG cosmetic sprites (deferred — system is sprite-ready)
+- Soft-punishments (separate request)
+- Trading / gifting between users
+- Cosmetic rarity tiers beyond `common/themed`
 
-## Scope check
+## Out-of-the-box behavior
+- New users: prompted to "Create your avatar" on first locker visit; gets 3 seed items automatically.
+- Existing users: avatar row auto-created with defaults on first request.
 
-If 25 feels like a lot to generate in one pass, I'd recommend shipping in 2 batches: Mythic (already done) + Sports + Fantasy Anime first (10 new), then Cyber + Cottagecore (10 more). Say the word if you'd prefer the staged rollout; otherwise I'll do all 25 in one go.
+After plan approval I'll run the migration, then ship all files in one batch.
