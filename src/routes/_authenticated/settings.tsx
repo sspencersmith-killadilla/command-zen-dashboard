@@ -172,6 +172,7 @@ function SettingsPage() {
           </div>
         </Card>
 
+        <Card className="p-6 space-y-4 border-border/60">
           <div>
             <h2 className="font-semibold text-lg">Canvas feed</h2>
             <p className="text-sm text-muted-foreground">Update this each new semester.</p>
