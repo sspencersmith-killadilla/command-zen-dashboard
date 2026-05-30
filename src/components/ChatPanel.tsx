@@ -122,7 +122,7 @@ export function ChatPanel() {
               if (m.role === "assistant") {
                 return (
                   <Message from="assistant" key={m.id}>
-                    <MessageContent variant="flat" className="px-0 py-1">
+                    <MessageContent className="px-0 py-1">
                       <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
                         <ReactMarkdown>{text}</ReactMarkdown>
                       </div>
@@ -141,7 +141,7 @@ export function ChatPanel() {
           )}
           {status === "submitted" && (
             <Message from="assistant">
-              <MessageContent variant="flat" className="px-0 py-1">
+              <MessageContent className="px-0 py-1">
                 <Shimmer>Transmuting…</Shimmer>
               </MessageContent>
             </Message>
