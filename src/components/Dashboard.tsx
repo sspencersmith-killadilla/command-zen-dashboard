@@ -49,7 +49,6 @@ import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
 import { useAvatar } from "@/lib/use-avatar";
-import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { Shirt } from "lucide-react";
 import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
 import { toast } from "sonner";
@@ -100,7 +99,7 @@ export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
   const { state, completeQuest, todayQuestsDone, applyXpDelta } = useGamification();
   const playerLevel = rankFor(state.xp).level;
-  const { state: avatarState, recordOnTime, recordMastery } = useAvatar();
+  const { recordOnTime, recordMastery } = useAvatar();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
   const currentCompanion = getCompanion(cfg.companionId);
   const currentThemeId = currentCompanion.theme;
@@ -345,16 +344,6 @@ export function Dashboard() {
             </DropdownMenu>
 
             <Link
-              to="/avatar"
-              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border pl-1 pr-3 py-1 transition-colors"
-              aria-label="Customize avatar"
-              title="Customize your avatar"
-            >
-              <PlayerAvatar parts={avatarState} equipped={avatarState.equipped} size="sm" />
-              <span className="hidden sm:inline text-xs font-medium text-muted-foreground">You</span>
-            </Link>
-
-            <Link
               to="/locker"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
               aria-label="Locker"
@@ -367,21 +356,9 @@ export function Dashboard() {
               <CalendarClock className="h-4 w-4" />
               <span className="hidden md:inline">Plan</span>
             </Link>
-            <Link to="/triage" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
-              <AlertCircle className="h-4 w-4" />
-              <span className="hidden md:inline">Triage</span>
-            </Link>
             <Link to="/focus" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
               <RefreshCw className="h-4 w-4" />
               <span className="hidden md:inline">Focus</span>
-            </Link>
-            <Link to="/recall" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden md:inline">Recall</span>
-            </Link>
-            <Link to="/wellness" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
-              <Sparkles className="h-4 w-4" />
-              <span className="hidden md:inline">Wellness</span>
             </Link>
 
             <Link
