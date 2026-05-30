@@ -32,7 +32,7 @@ export function CompanionCloseup({
 
   return (
     <div
-      className="fixed z-50 pointer-events-none bottom-6 right-6 sm:bottom-10 sm:right-10"
+      className="fixed z-50 pointer-events-none top-24 right-6 sm:top-28 sm:right-10"
       aria-hidden
     >
       <div
