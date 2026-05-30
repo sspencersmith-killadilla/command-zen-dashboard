@@ -18,6 +18,8 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [displayName, setDisplayName] = useState(initial.displayName);
   const [canvasUrl, setCanvasUrl] = useState(initial.canvasFeedUrl);
+  const [canvasDomain, setCanvasDomain] = useState(initial.canvasDomain);
+  const [canvasToken, setCanvasToken] = useState(initial.canvasApiToken);
   const googleConnected = initial.googleConnected;
   const [connecting, setConnecting] = useState(false);
   const connectFn = useServerFn(startGoogleCalendarConnect);
@@ -48,6 +50,8 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
         onboarded: true,
         displayName: displayName.trim() || "Friend",
         canvasFeedUrl: canvasUrl,
+        canvasDomain: canvasDomain.trim(),
+        canvasApiToken: canvasToken.trim(),
         googleConnected,
         courses,
       });
@@ -124,33 +128,61 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
             <div className="space-y-6">
               <Header
                 icon={<Calendar />}
-                title="Sync your Canvas calendar"
-                subtitle="Pulls every assignment due date into one timeline — no more checking five class pages."
+                title="Connect Canvas"
+                subtitle="Pulls every assignment, with direct links and attached files, into one timeline."
               />
-              <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-3">
-                <div>
-                  <p className="font-medium text-foreground mb-1.5">Step-by-step:</p>
-                  <ol className="list-decimal pl-5 space-y-1">
-                    <li>Open Canvas and sign in</li>
-                    <li>Click <span className="font-medium">Calendar</span> in the left sidebar</li>
-                    <li>Scroll to the bottom-right and click <span className="font-medium">Calendar Feed</span></li>
-                    <li>A popup shows a long URL ending in <code className="text-xs bg-background px-1.5 py-0.5 rounded">.ics</code> — copy it</li>
-                    <li>Paste it below</li>
-                  </ol>
-                </div>
-                <p className="text-xs">
-                  <span className="font-medium text-foreground">Privacy:</span> this is a read-only feed. Nothing can be changed in Canvas from here.
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm space-y-3">
+                <p className="font-semibold text-foreground">Step-by-step (about 60 seconds):</p>
+                <ol className="list-decimal pl-5 space-y-1.5 text-muted-foreground">
+                  <li>Open your school's Canvas in another tab and sign in.</li>
+                  <li>Look at the URL — copy the part right after <code className="text-xs bg-background px-1.5 py-0.5 rounded">https://</code> (for example <code className="text-xs bg-background px-1.5 py-0.5 rounded">canvas.school.edu</code>). Paste it in <span className="font-medium text-foreground">Canvas domain</span> below.</li>
+                  <li>In Canvas, click <span className="font-medium text-foreground">Account</span> (top-left) → <span className="font-medium text-foreground">Settings</span>.</li>
+                  <li>Scroll to <span className="font-medium text-foreground">Approved Integrations</span> → click <span className="font-medium text-foreground">+ New Access Token</span>.</li>
+                  <li>Purpose: <code className="text-xs bg-background px-1.5 py-0.5 rounded">Command Center</code>. Leave expiry blank. Click <span className="font-medium text-foreground">Generate Token</span>.</li>
+                  <li>Copy the long token (Canvas only shows it once) and paste it in <span className="font-medium text-foreground">Access token</span> below.</li>
+                </ol>
+                <p className="text-xs text-muted-foreground">
+                  Read-only — nothing in Canvas can be changed from here. Revoke anytime from the same Canvas page.
                 </p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="canvas">Canvas feed URL</Label>
-                <Input
-                  id="canvas"
-                  placeholder="https://canvas.../feeds/calendars/...ics"
-                  value={canvasUrl}
-                  onChange={(e) => setCanvasUrl(e.target.value)}
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="canvas-domain">Canvas domain</Label>
+                  <Input
+                    id="canvas-domain"
+                    placeholder="canvas.school.edu"
+                    value={canvasDomain}
+                    onChange={(e) => setCanvasDomain(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="canvas-token">Access token</Label>
+                  <Input
+                    id="canvas-token"
+                    type="password"
+                    placeholder="Paste the long token from Canvas"
+                    value={canvasToken}
+                    onChange={(e) => setCanvasToken(e.target.value)}
+                  />
+                </div>
               </div>
+              <details className="text-sm">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                  No token? Use the calendar feed instead (no per-assignment links or files)
+                </summary>
+                <div className="mt-3 space-y-2">
+                  <Label htmlFor="canvas">Canvas Calendar Feed URL</Label>
+                  <Input
+                    id="canvas"
+                    placeholder="https://canvas.../feeds/calendars/...ics"
+                    value={canvasUrl}
+                    onChange={(e) => setCanvasUrl(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Canvas → Calendar → Calendar Feed (bottom-right) → copy the <code>.ics</code> URL.
+                  </p>
+                </div>
+              </details>
             </div>
           )}
 

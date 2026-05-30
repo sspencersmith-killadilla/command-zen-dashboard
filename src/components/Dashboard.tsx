@@ -55,10 +55,11 @@ export function Dashboard() {
   const { completeQuest } = useGamification();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
 
+  const canvasKey = `${cfg.canvasApiToken ? "api" : "ics"}:${cfg.canvasDomain}:${cfg.canvasFeedUrl}`;
   const canvasQ = useQuery({
-    queryKey: ["canvas-assignments", cfg.canvasFeedUrl],
+    queryKey: ["canvas-assignments", canvasKey],
     queryFn: () => fetchCanvas(),
-    enabled: !!cfg.canvasFeedUrl,
+    enabled: !!(cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain)),
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
   });
@@ -66,11 +67,21 @@ export function Dashboard() {
   const assignments = useMemo(() => {
     const raw = canvasQ.data?.assignments ?? [];
     return raw
-      .map((a) => ({ id: a.id, title: a.title, courseCode: a.courseCode, dueAt: new Date(a.dueAt) }))
+      .map((a) => ({
+        id: a.id,
+        title: a.title,
+        courseCode: a.courseCode,
+        dueAt: new Date(a.dueAt),
+        htmlUrl: a.htmlUrl,
+        files: a.files ?? [],
+      }))
       .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
   }, [canvasQ.data]);
 
-  const canvasError = cfg.canvasFeedUrl ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null) : null;
+  const canvasError = (cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain))
+    ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null)
+    : null;
+  const canvasConfigured = !!(cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain));
 
   useEffect(() => {
     const t = setTimeout(() => completeQuest("check-timeline"), 1200);
@@ -141,7 +152,7 @@ export function Dashboard() {
               <button
                 type="button"
                 onClick={() => canvasQ.refetch()}
-                disabled={canvasQ.isFetching || !cfg.canvasFeedUrl}
+                disabled={canvasQ.isFetching || !canvasConfigured}
                 className="inline-flex items-center gap-1.5 hover:text-foreground disabled:opacity-50"
                 aria-label="Refresh Canvas"
               >
@@ -169,8 +180,8 @@ export function Dashboard() {
             </div>
           )}
 
-          {!cfg.canvasFeedUrl ? (
-            <EmptyState text="Paste your Canvas Calendar Feed URL in Settings to import real assignments." />
+          {!canvasConfigured ? (
+            <EmptyState text="Connect Canvas in Settings — add your Canvas domain and access token to pull real assignments, with direct links and files." />
           ) : assignments.length === 0 ? (
             <EmptyState text={canvasQ.isLoading ? "Loading assignments from Canvas…" : "No upcoming assignments in the next 60 days."} />
           ) : (
@@ -200,7 +211,15 @@ export function Dashboard() {
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">{a.courseCode}</p>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                        {a.htmlUrl && (
+                          <Button asChild variant="outline" size="sm">
+                            <a href={a.htmlUrl} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              Open in Canvas
+                            </a>
+                          </Button>
+                        )}
                         {course && (
                           <Button asChild variant="outline" size="sm">
                             <a href={course.notebookUrl} target="_blank" rel="noopener noreferrer" onClick={() => completeQuest("open-notebook")}>
@@ -215,6 +234,27 @@ export function Dashboard() {
                         </Button>
                       </div>
                     </div>
+                    {a.files.length > 0 && (
+                      <div className="mt-4 pt-3 border-t border-border/60">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+                          Files from Canvas — click to download, then drag into NotebookLM
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {a.files.map((f) => (
+                            <a
+                              key={f.id}
+                              href={f.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:border-primary/40 hover:text-primary transition-colors"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              {f.name}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })()}
@@ -240,6 +280,18 @@ export function Dashboard() {
                       <div className="text-sm text-muted-foreground tabular-nums w-20 text-right">
                         {fmtDue(a.dueAt)}
                       </div>
+                      {a.htmlUrl && (
+                        <a
+                          href={a.htmlUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          aria-label="Open in Canvas"
+                          title="Open in Canvas"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      )}
                       {course && (
                         <a
                           href={course.notebookUrl}
@@ -248,8 +300,9 @@ export function Dashboard() {
                           onClick={() => completeQuest("open-notebook")}
                           className="text-muted-foreground hover:text-primary transition-colors"
                           aria-label="Open notebook"
+                          title="Open notebook"
                         >
-                          <ExternalLink className="h-4 w-4" />
+                          <BookOpen className="h-4 w-4" />
                         </a>
                       )}
                     </li>
@@ -260,7 +313,9 @@ export function Dashboard() {
           )}
 
           <p className="mt-5 text-xs text-muted-foreground">
-            Pulled live from your Canvas Calendar Feed. Tiered alerts: 2 weeks → 1 week → 2 days.
+            {cfg.canvasApiToken && cfg.canvasDomain
+              ? "Live from the Canvas API — direct links and file attachments included."
+              : "Live from your Canvas calendar feed. Add an access token in Settings to also get per-assignment links and files."}
           </p>
         </Card>
 

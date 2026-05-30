@@ -9,6 +9,8 @@ const DEFAULT: WinstonConfig = {
   onboarded: false,
   displayName: "",
   canvasFeedUrl: "",
+  canvasApiToken: "",
+  canvasDomain: "",
   googleConnected: false,
   notificationsEnabled: false,
   courses: [],
