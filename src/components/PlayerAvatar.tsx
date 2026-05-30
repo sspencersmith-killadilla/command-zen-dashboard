@@ -48,11 +48,18 @@ export function PlayerAvatar({
   const bodyWidth = parts.body_type === "broad" ? 36 : parts.body_type === "slim" ? 26 : 30;
   const bodyX = (64 - bodyWidth) / 2;
 
+  const tarnished = useTarnishFlag();
+
   return (
     <div
       className={`relative inline-block ${animate ? "companion-frame" : ""} ${className}`}
-      style={{ width: px, height: px }}
+      style={{
+        width: px,
+        height: px,
+        filter: tarnished ? "saturate(0.35) brightness(0.92)" : undefined,
+      }}
       aria-hidden
+      title={tarnished ? "Your gear is gathering dust — clear past-due work to polish it up." : undefined}
     >
       <div className={animate ? "absolute inset-0 companion-bob" : "absolute inset-0"}>
         <div className={animate ? "absolute inset-0 companion-sway" : "absolute inset-0"}>
