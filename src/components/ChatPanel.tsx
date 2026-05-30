@@ -220,6 +220,7 @@ export function ChatPanel() {
             const text = msg.text?.trim();
             if (!text || isBusy) return;
             sendMessage({ text });
+            completeQuest("chat-winston");
             setInput("");
           }}
         >
