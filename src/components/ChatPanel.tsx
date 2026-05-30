@@ -22,9 +22,9 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
-import { Trash2 } from "lucide-react";
+import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
-import { useWinstonConfig } from "@/lib/winston-store";
+import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
 
 function partsToText(parts: UIMessage["parts"]): string {
@@ -85,6 +85,29 @@ export function ChatPanel() {
 
   const isBusy = status === "submitted" || status === "streaming";
 
+  function quickAsk(text: string) {
+    if (isBusy) return;
+    sendMessage({ text });
+  }
+
+  const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string }[] = [
+    {
+      label: "Daily Reset",
+      icon: <Sunrise className="h-3.5 w-3.5" />,
+      prompt: DAILY_RESET_PROMPT,
+    },
+    {
+      label: "What's due this week?",
+      icon: <ListChecks className="h-3.5 w-3.5" />,
+      prompt: "Walk me through everything due in the next 7 days from my Canvas list, grouped by class, in priority order.",
+    },
+    {
+      label: "Break down my next assignment",
+      icon: <Target className="h-3.5 w-3.5" />,
+      prompt: "Take my single most urgent upcoming assignment and break it into concrete 25-minute work blocks I can knock out today.",
+    },
+  ];
+
   return (
     <Card
       className="border-border/60 overflow-hidden flex flex-col h-[640px]"
@@ -120,6 +143,22 @@ export function ChatPanel() {
           <Trash2 className="h-3.5 w-3.5" />
           Clear
         </Button>
+      </div>
+
+      {/* Quick actions — aimed at the companion, replaces the old Gemini copy card */}
+      <div className="flex flex-wrap gap-2 px-4 py-3 border-b border-border/60 bg-muted/40">
+        {QUICK_ACTIONS.map((qa) => (
+          <button
+            key={qa.label}
+            type="button"
+            onClick={() => quickAsk(qa.prompt)}
+            disabled={isBusy}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-50"
+          >
+            {qa.icon}
+            {qa.label}
+          </button>
+        ))}
       </div>
 
       <Conversation className="flex-1">

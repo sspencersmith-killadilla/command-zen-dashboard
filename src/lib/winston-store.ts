@@ -98,5 +98,9 @@ export function tierFor(dueAt: Date): AlertTier {
   return "horizon";
 }
 
-export const GEMINI_PROMPT =
-  "@Google Calendar, give me a hyper-focused overview of my schedule today and tell me the single most critical assignment I should start working on early so I stay ahead of deadlines.";
+/** Companion-aimed daily reset prompt. Sent into the chat, not copied to Gemini. */
+export const DAILY_RESET_PROMPT =
+  "Daily reset. Look at my real Canvas assignments and my classes — what is the single most important thing I should start on right now, and what's the smallest first step I can take in the next 15 minutes?";
+
+/** @deprecated kept for compatibility; use DAILY_RESET_PROMPT */
+export const GEMINI_PROMPT = DAILY_RESET_PROMPT;
