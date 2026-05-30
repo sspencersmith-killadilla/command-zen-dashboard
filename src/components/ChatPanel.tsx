@@ -156,7 +156,7 @@ export function ChatPanel() {
           <button
             key={qa.label}
             type="button"
-            onClick={() => quickAsk(qa.prompt)}
+            onClick={() => quickAsk(qa.prompt, qa.questId)}
             disabled={isBusy}
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-50"
           >
