@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
-import { COMPANION_LIST } from "@/lib/companions";
+import { COMPANION_LIST, THEMES, getCompanion, type ThemeId } from "@/lib/companions";
 
 const searchSchema = z.object({
   gcal: z.enum(["connected", "error"]).optional(),
@@ -134,43 +134,10 @@ function SettingsPage() {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-4 border-border/60">
-          <div>
-            <h2 className="font-semibold text-lg">Your companion</h2>
-            <p className="text-sm text-muted-foreground">
-              Pick the voice you want in your corner. Switch anytime.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {COMPANION_LIST.map((c) => {
-              const selected = cfg.companionId === c.id;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => update({ companionId: c.id })}
-                  className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
-                    selected
-                      ? "border-primary bg-primary/5"
-                      : "border-border/60 bg-card hover:border-border hover:bg-muted/40"
-                  }`}
-                >
-                  <CompanionAvatar companionId={c.id} size="md" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium flex items-center gap-2">
-                      {c.name}
-                      {selected && <Check className="h-3.5 w-3.5 text-primary" />}
-                    </div>
-                    <div className="text-xs text-muted-foreground">{c.species}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                      {c.tagline}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </Card>
+        <CompanionPicker
+          selectedId={cfg.companionId}
+          onSelect={(id) => update({ companionId: id })}
+        />
 
         <Card className="p-6 space-y-4 border-border/60">
           <div>
@@ -286,3 +253,79 @@ function Row({ title, subtitle, checked, onChange, disabled }: { title: string; 
     </div>
   );
 }
+
+function CompanionPicker({
+  selectedId,
+  onSelect,
+}: {
+  selectedId: string;
+  onSelect: (id: string) => void;
+}) {
+  const selected = getCompanion(selectedId);
+  const [activeTheme, setActiveTheme] = useState<ThemeId>(selected.theme);
+  const visible = COMPANION_LIST.filter((c) => c.theme === activeTheme);
+  const activeMeta = THEMES.find((t) => t.id === activeTheme)!;
+
+  return (
+    <Card className="p-6 space-y-4 border-border/60">
+      <div>
+        <h2 className="font-semibold text-lg">Your companion</h2>
+        <p className="text-sm text-muted-foreground">
+          Pick a theme, then the voice you want in your corner. Switch anytime.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {THEMES.map((t) => {
+          const isActive = t.id === activeTheme;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActiveTheme(t.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                isActive
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border/60 bg-card text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-xs text-muted-foreground -mt-1">{activeMeta.blurb}</p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {visible.map((c) => {
+          const isSelected = selectedId === c.id;
+          return (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => onSelect(c.id)}
+              className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
+                isSelected
+                  ? "border-primary bg-primary/5"
+                  : "border-border/60 bg-card hover:border-border hover:bg-muted/40"
+              }`}
+            >
+              <CompanionAvatar companionId={c.id} size="md" />
+              <div className="flex-1 min-w-0">
+                <div className="font-medium flex items-center gap-2">
+                  {c.name}
+                  {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
+                </div>
+                <div className="text-xs text-muted-foreground">{c.species}</div>
+                <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                  {c.tagline}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
