@@ -23,6 +23,13 @@ export const Route = createFileRoute("/api/chat")({
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+        // Look up the user's selected companion for the system prompt
+        const { data: cfgRow } = await supabaseAdmin
+          .from("user_configs")
+          .select("companion_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+        const companion = getCompanion(cfgRow?.companion_id ?? null);
 
         // Persist the latest user message (last in array)
         const lastUser = [...messages].reverse().find((m) => m.role === "user");
@@ -39,7 +46,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const result = streamText({
           model,
-          system: SYSTEM_PROMPT,
+          system: companion.persona + SYSTEM_SUFFIX,
           messages: await convertToModelMessages(messages),
         });
 
