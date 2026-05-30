@@ -1,72 +1,85 @@
-# Player avatar + earnable cosmetics — v1 plan
+## 1. Classic-game "mumble voice" per companion (Animalese-style)
 
-## What ships
-1. **Avatar builder** (8+ slots): body type, skin tone, hair style, hair color, eye style, brow style, mouth style, base outfit, background.
-2. **Layered pixel renderer** (`PlayerAvatar`) that composes base parts + equipped cosmetics on the fly.
-3. **Locker page** (`/locker`): grid of owned cosmetics, equip/unequip per slot, lock chips for unearned items.
-4. **Earning rules**: on-time assignment drops + theme-mastery sets.
-5. **Header integration**: your avatar appears next to the companion across the dashboard, with an "Edit avatar" button.
-6. **Seed catalog**: 10 universal items + 1 small themed set for 3 themes (Finance, Sports, Mythic). More added later on request.
+Each companion gets a distinct synthesized blip-voice — the Animal Crossing / Banjo-Kazooie effect where text scrolls and characters blurt one short blip per syllable. No external API, no secret, no per-play cost. Pure Web Audio API in the browser.
 
-## Data model
-**`user_avatar`** — one row per user (RLS, scoped to `auth.uid()`)
-- `body_type`, `skin_tone`, `hair_style`, `hair_color`, `eye_style`, `brow_style`, `mouth_style`, `outfit_base`, `background` (text)
-- `equipped jsonb` — `{ hat: "...", top: "...", accessory: "...", frame: "..." }`
-- `on_time_count int` — drives every-Nth drops
-- `mastery_progress jsonb` — `{ themeId: completedArcsCount }`
+**How it works.** A small `MumbleSynth` (in `src/lib/mumble.ts`) generates a short tone burst per "syllable" of text. Each burst is an oscillator (square / triangle / sawtooth / sine) feeding a band-pass filter + a tiny amplitude envelope (attack 5ms, decay 60–120ms). Tokenizing text into syllables: split on whitespace, then approximate syllables by counting vowel clusters (good enough for English; cheap and offline). Punctuation inserts a short pause; ALL-CAPS or `!` raises pitch a step.
 
-**`user_inventory`** — earned items
-- `user_id`, `item_id`, `source` ('on_time' | 'mastery' | 'seed'), `earned_at`
+**Per-companion voice config.** Add `voice: MumbleVoice` to the `Companion` type. Fields:
+- `waveform`: `square | sawtooth | triangle | sine`
+- `basePitchHz`: ~120–600
+- `pitchJitter`: random ± semitones per blip (0–4)
+- `filterHz`: band-pass center (300–4000)
+- `filterQ`: resonance (0.5–12)
+- `blipMs`: 50–160
+- `rateMs`: gap between blips (40–110)
+- `vibrato`: optional `{ hz, cents }`
+- `bitcrush`: optional `{ bits }` for chiptune grit
 
-**Cosmetic catalog** stays as a **static TS file** (`src/lib/cosmetics.ts`) — no DB table. Easier to iterate, no migrations to add new items.
+Voices are derived from the 5 persona archetypes and then tinted by theme. Examples:
+- *Sage* (Barnaby, Maestro Vance) — low triangle, slow rate, mild vibrato, narrow filter → measured, wise.
+- *Chill* (Bean, Halcyon) — soft sine, lower pitch, low filter Q, slow rate → mellow.
+- *Hype* (Roxie, Blitz) — bright square, high pitch + jitter, fast rate → frantic.
+- *Guardian* (Pip, Stationmaster Bell) — warm triangle, medium pitch, steady rate → solid.
+- *Trickster* (Lafitte, Glitch) — sawtooth with bitcrush, big pitch jitter, weirder filter → mischievous.
+- Theme tints layered on top: **cyber** companions get bitcrush + higher filter (chiptune); **cottage** get sine + low filter (warm wood-flute); **broadway** get vibrato; **railway** get a quick "chuff" double-blip; **heroes** comic theme gets bright square + reverb-ish slap.
 
-## Earning logic (server-side, in `createServerFn`)
-- **On-time completion**: when `clear-assignment` quest completes AND assignment due-date is today or later → `on_time_count++`. Every **3rd** on-time completion → random universal-pool drop.
-- **Theme mastery**: when a user completes the full 5-quest arc for the current theme for the **5th** day → unlock that theme's set (4 items: hat, top, accessory, frame).
-- All drops surface as a **toast + locker badge** ("New item earned").
+**Client API.**
+- `src/lib/mumble.ts` — pure module. Exports `playMumble(companionId, text, opts?)`, `stop()`, `pause()`. One shared `AudioContext`. Auto-stops prior playback when a new one starts.
+- `src/lib/use-mumble.ts` — React hook wrapping it with `{ isSpeaking, play, stop }` state.
 
-## UI shape
-```text
-/locker
-┌──────────────────────────────────────────────┐
-│  [Live PlayerAvatar preview]   Edit avatar →│
-├──────────────────────────────────────────────┤
-│  HAT      TOP     ACCESSORY    FRAME         │
-│ [grid of owned items per slot, locked = ░]   │
-└──────────────────────────────────────────────┘
+**UI integration.**
+- Small speaker button next to every assistant message in `ChatPanel.tsx` — tap to mumble the message.
+- "Auto-mumble" toggle in chat header; when on, new assistant messages mumble as they stream, synced to the typewriter reveal (1 blip per word/syllable as it appears, just like a JRPG).
+- Subtle pulsing ring on the companion sprite in the dashboard header while `isSpeaking` is true (reuse the `speaking` prop on `CompanionAvatar.tsx`).
+- A "Try voice" play button on the companion picker so users can preview a voice before equipping.
 
-/avatar-builder (modal-style page)
-8 stepper rows (Body / Skin / Hair style / Hair color /
-Eyes / Brows / Mouth / Outfit / Background)
-with ← → arrows and a live preview.
-```
+**Out of scope for v1:** real TTS, foreign-language syllable rules, downloadable audio.
 
-## Rendering approach (no AI sprite gen needed for v1)
-Each base part = a small flat-color SVG/CSS layer; the renderer stacks them inside a fixed 64×64 viewport with `image-rendering: pixelated`. Cosmetics are also CSS/SVG shapes (hat = trapezoid, frame = border, accessory = pin). This keeps the seed lean per the "tiny seed + add later" choice — real PNG sprites can drop in later by swapping the layer source from SVG to `img`.
+## 2. Ethnic diversity for human companions
 
-## Files touched
-**New**
-- `src/lib/cosmetics.ts` (catalog + slot defs + earning helpers)
-- `src/lib/avatar.functions.ts` (`getMyAvatar`, `updateAvatar`, `equipItem`, `unequipItem`)
-- `src/lib/avatar.server.ts` (drop-roll + mastery helpers)
-- `src/components/PlayerAvatar.tsx` (layered renderer)
-- `src/components/AvatarBuilder.tsx` (8-slot stepper UI)
-- `src/routes/_authenticated/locker.tsx`
-- `src/routes/_authenticated/avatar.tsx`
+The 15 human-flavored themes have 5 companions each = 75 human sprites. I will:
+1. Audit the existing 75 sprites by visual inspection in a scratch script and flag any roster that reads as ethnically homogeneous.
+2. Regenerate flagged sprites with explicit, varied ethnicity prompts (rotating across Black, East Asian, South Asian, Latino, Middle Eastern, Indigenous, White, mixed-heritage) so every 5-character roster covers a meaningful spread. Names, roles, palettes, and 16-bit pixel-art style stay the same — only the depicted person changes.
+3. Codify a "diversity rule" comment at the top of the `ENTRIES` array so future companions follow it.
 
-**Edited**
-- `src/components/Dashboard.tsx` (header: PlayerAvatar + Locker link)
-- `src/lib/gamification.ts` (hook into quest completion to trigger drops)
-- New migration: `user_avatar`, `user_inventory` tables + GRANTs + RLS
+## 3. Three new themes
 
-## What's NOT in v1
-- AI-generated PNG cosmetic sprites (deferred — system is sprite-ready)
-- Soft-punishments (separate request)
-- Trading / gifting between users
-- Cosmetic rarity tiers beyond `common/themed`
+Add to `src/lib/companions.ts` (THEMES + 5 ENTRIES each), `src/lib/gamification-themes.ts` (ThemePack: arc title, 5 daily-quest labels, 8-rank ladder, achievements, icon, palette), and `src/lib/cosmetics.ts` (4-item themed mastery set each). Each theme gets 5 new sprites.
 
-## Out-of-the-box behavior
-- New users: prompted to "Create your avatar" on first locker visit; gets 3 seed items automatically.
-- Existing users: avatar row auto-created with defaults on first request.
+**Heroes — Comic-book superhero universe.** Palette: ink black + four-color halftone red/yellow/blue.
+- Sage *Sentinel Prime* (veteran founding hero) · Chill *Drift* (bored speedster) · Hype *Vox* (sonic-blast rookie) · Guardian *Aegis* (shield-bearer) · Trickster *Quip* (wisecracking anti-hero).
+- Daily quests: Patrol the city · Brief HQ · Train in the danger room · Suit up · Save someone.
+- Ranks: Cadet → Rookie → Solo → Hero → Avenger → Captain → Icon → Legend.
 
-After plan approval I'll run the migration, then ship all files in one batch.
+**Reality TV — Confessionals, alliances, eliminations.** Palette: hot pink + champagne + spotlight white.
+- Sage *Host Sterling* · Chill *Producer Mae* · Hype *Brielle* (main-character contestant) · Guardian *Cam-Op Reggie* · Trickster *Villain Edit Vance*.
+- Daily quests: Read the brief · Pre-show interview · Strategy session · Confessional · Tribal council.
+- Ranks: Pre-show → Cast → Episode 1 → Jury → Final Three → Finale → Champion → All-Stars.
+
+**Modern Professional — calm adult productivity, no franchise / fantasy / mascot energy.** Palette: warm graphite + clay + sage.
+- Sage *Dr. Ana Reyes* (executive coach) · Chill *Sam Tran* (ops lead) · Hype *Jules Okafor* (startup founder) · Guardian *Mira Park* (therapist-trained coach) · Trickster *Theo Locke* (strategy consultant).
+- Daily quests: Plan the day · Clear the inbox · Do the deep-work block · Take the actual break · Close the loop.
+- Ranks: Apprentice → Associate → Manager → Lead → Director → VP → Partner → Principal.
+- Copy is grown-up — no XP-as-magic / no quest-mythology vibe. Mumble voices for this theme lean sine/triangle, low jitter — quiet, professional.
+
+## Technical Details
+
+**Files touched (build mode):**
+- `src/lib/mumble.ts` *(new)* — Web Audio synth + `playMumble` / `stop`.
+- `src/lib/use-mumble.ts` *(new)* — React hook with `{ isSpeaking, play, stop }`.
+- `src/lib/companions.ts` — add `voice: MumbleVoice` to type + every entry; add 3 themes + 15 companions; refresh diverse human sprite imports; add diversity rule comment.
+- `src/lib/gamification-themes.ts` — 3 new ThemePacks.
+- `src/lib/cosmetics.ts` — 3 new mastery sets.
+- `src/components/ChatPanel.tsx` — per-message speaker button, auto-mumble toggle, typewriter sync.
+- `src/components/CompanionAvatar.tsx` — `speaking?: boolean` for a subtle pulse ring.
+- `src/components/Dashboard.tsx` — wire `isSpeaking` to header chip.
+- `src/components/CompanionPicker.tsx` (or equivalent) — preview play button.
+- `src/assets/` — regenerated diverse human sprites + 15 new theme sprites.
+
+**No secrets, no server route, no extra cost.** All audio is generated locally in the browser.
+
+## Confirm before I build
+
+1. **Mumble scope** — speaker button on chat messages only, or also on the assignment hero card + daily-quest labels?
+2. **Diversity audit** — regenerate any sprite the audit flags automatically, or do you want to approve each replacement before it ships?
+3. **Modern Professional sprite style** — keep 16-bit pixel-art for consistency with every other theme (recommended), or render this one in a more photoreal pixel style to underline the "adult" tone?
