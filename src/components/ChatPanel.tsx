@@ -23,7 +23,9 @@ import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
 import { Trash2 } from "lucide-react";
-import { BarnabyAvatar } from "@/components/BarnabyAvatar";
+import { CompanionAvatar } from "@/components/CompanionAvatar";
+import { useWinstonConfig } from "@/lib/winston-store";
+import { getCompanion } from "@/lib/companions";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -33,6 +35,8 @@ export function ChatPanel() {
   const qc = useQueryClient();
   const fetchMessages = useServerFn(getMyChatMessages);
   const clearChat = useServerFn(clearMyChat);
+  const { cfg } = useWinstonConfig();
+  const companion = getCompanion(cfg.companionId);
 
   const { data: initialMessages, isLoading } = useQuery({
     queryKey: ["chat-messages"],
