@@ -22,7 +22,8 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
-import { Sparkles, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { BarnabyAvatar } from "@/components/BarnabyAvatar";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
