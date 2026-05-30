@@ -55,7 +55,13 @@ export type Companion = {
   sprite: string;
   /** Color used for the glow halo behind the sprite. */
   glow: string;
+  /** Player level required to unlock this companion. Lv 1 = starter. */
+  unlockLevel: number;
 };
+
+// Unlock tiers by archetype position within each theme.
+// One starter per theme (the Sage); others earned by leveling up.
+const UNLOCK = { sage: 1, chill: 2, hype: 3, guardian: 4, trickster: 5 } as const;
 
 // ---- Persona archetypes (shared across themes for voice consistency) ----
 
