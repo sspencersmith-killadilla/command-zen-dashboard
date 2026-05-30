@@ -102,8 +102,11 @@ export function ChatPanel() {
   const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sawInitialRef = useRef(false);
 
-  // Trigger A — new assistant message
+  // Trigger A — new assistant message: auto-play mumble voice once the
+  // message is fully streamed. The closeup speaking state is driven by
+  // Trigger B (speakingId), so this also opens the portrait.
   useEffect(() => {
+    if (status !== "ready") return;
     const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
     if (!lastAssistant) return;
     // Skip the very first batch (hydrated history)
@@ -114,13 +117,19 @@ export function ChatPanel() {
     }
     if (lastAssistant.id === lastAssistantIdRef.current) return;
     lastAssistantIdRef.current = lastAssistant.id;
-    if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-    setCloseup((c) => ({ open: true, speaking: c.speaking }));
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    idleTimerRef.current = setTimeout(() => {
-      setCloseup((c) => (c.speaking ? c : { open: false, speaking: false }));
-    }, 2000);
-  }, [messages]);
+    const text = partsToText(lastAssistant.parts);
+    if (text.trim()) {
+      speak(companion.id, text, lastAssistant.id);
+    } else {
+      // Fallback: still flash the closeup if the message had no text.
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      setCloseup((c) => ({ open: true, speaking: c.speaking }));
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = setTimeout(() => {
+        setCloseup((c) => (c.speaking ? c : { open: false, speaking: false }));
+      }, 2000);
+    }
+  }, [messages, status, speak, companion.id]);
 
   // Trigger B — voice playing
   useEffect(() => {
