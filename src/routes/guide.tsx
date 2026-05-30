@@ -356,29 +356,8 @@ function GuidePage() {
           </ul>
         </Section>
 
-        {/* 9. Locker */}
-        <Section id="locker" icon={Shirt} title="9. Locker & cosmetic drops">
-          <p>
-            The <Link to="/locker" className="underline">Locker</Link> is your
-            character's wardrobe. Items have four rarities —{" "}
-            <strong>Common, Rare, Epic, Legendary</strong> — and slot into four
-            categories: <strong>Hats</strong>, <strong>Tops</strong>,{" "}
-            <strong>Accessories</strong>, and <strong>Frames</strong>.
-          </p>
-          <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
-            <li><strong>On-time drops.</strong> Every 3 assignments submitted on time triggers a new cosmetic. The progress bar at the top of the Locker shows how close you are to the next drop.</li>
-            <li><strong>Theme mastery.</strong> Completing five full daily arcs inside a single world unlocks that theme's signature set, including its Legendary capstone (e.g. <em>Aurora Frame</em>, <em>Oracle's Diadem</em>, <em>Championship Ring</em>).</li>
-            <li><strong>Equip / unequip.</strong> Click any owned item to wear it; use the slot's <em>Unequip</em> button to clear it. Changes are instant and saved automatically.</li>
-            <li><strong>Filter by rarity</strong> with the pill row at the top to focus on what's still missing from your collection.</li>
-          </ul>
-          <p className="text-sm text-muted-foreground mt-3">
-            Your character — and any equipped items — is visible to your
-            companion and shows up on the dashboard hero.
-          </p>
-        </Section>
-
-        {/* 10. Chat */}
-        <Section id="chat" icon={MessageSquare} title="10. Chatting with your companion">
+        {/* 9. Chat */}
+        <Section id="chat" icon={MessageSquare} title="9. Chatting with your companion">
           <ul className="list-disc list-outside ml-5 space-y-2">
             <li>The chat panel lives on the right of the dashboard. Type anything — "what should I do first?", "I'm overwhelmed", "explain this prompt."</li>
             <li>Your companion knows your current assignments and your selected theme, and answers in their personal voice (rigorous, chill, hyped, protective, or roast — see section 5).</li>
