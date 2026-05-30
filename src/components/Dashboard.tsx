@@ -47,7 +47,7 @@ import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification, rankFor } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
-import { COMPANION_LIST, getCompanion } from "@/lib/companions";
+import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
