@@ -45,9 +45,12 @@ import {
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
-import { useGamification, rankFor } from "@/lib/gamification";
+import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
+import { useAvatar } from "@/lib/use-avatar";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { Shirt } from "lucide-react";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
