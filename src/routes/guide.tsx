@@ -27,7 +27,7 @@ import {
   Users,
   Zap,
   Map as MapIcon,
-  Shirt,
+  
   CalendarClock,
   Timer,
   Crown,
@@ -36,7 +36,7 @@ import {
 export const Route = createFileRoute("/guide")({
   head: () => ({
     meta: [
-      { title: "Field Manual — How Winston Works" },
+      { title: "Field Manual — How it works" },
       {
         name: "description",
         content:
@@ -73,13 +73,13 @@ function GuidePage() {
             The complete guide
           </Badge>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            How Winston works.
+            How it works.
           </h1>
           <p className="text-lg text-muted-foreground mt-3 max-w-2xl">
-            Winston is a quiet study companion that watches your Canvas
-            assignments, breaks the day into five small steps, and gives you a
-            character to do it with. This is the whole map — every system,
-            every theme, every face.
+            A quiet study companion that watches your Canvas assignments,
+            breaks the day into five small steps, and gives you a character
+            to do it with. This is the whole map — every system, every
+            theme, every face.
           </p>
 
           {/* Table of contents */}
@@ -93,11 +93,10 @@ function GuidePage() {
               ["#canvas", "6. Connecting Canvas", RefreshCw],
               ["#plan", "7. Study Planner", CalendarClock],
               ["#focus", "8. Focus timer", Timer],
-              ["#locker", "9. Locker & cosmetic drops", Shirt],
-              ["#chat", "10. Chatting with your companion", MessageSquare],
-              ["#settings", "11. Settings explained", SettingsIcon],
-              ["#bios", "12. Character biographies", BookOpen],
-              ["#faq", "13. FAQ & troubleshooting", Bell],
+              ["#chat", "9. Chatting with your companion", MessageSquare],
+              ["#settings", "10. Settings explained", SettingsIcon],
+              ["#bios", "11. Character biographies", BookOpen],
+              ["#faq", "12. FAQ & troubleshooting", Bell],
             ].map(([href, label, Icon]) => {
               const I = Icon as typeof Sparkles;
               return (
@@ -134,7 +133,7 @@ function GuidePage() {
             </li>
             <li>
               <strong>Connect Canvas.</strong> Paste your Canvas access token
-              once in <em>Settings</em>. Winston will pull your upcoming
+              once in <em>Settings</em>. The app will pull your upcoming
               assignments and auto-clear ones you've submitted. (See section 6
               for step-by-step token instructions.)
             </li>
@@ -150,8 +149,8 @@ function GuidePage() {
         {/* 2. Daily loop */}
         <Section id="daily-loop" icon={Calendar} title="2. The daily loop">
           <p>
-            Every day Winston gives you a five-step arc themed to your world.
-            The <strong>steps complete themselves</strong> as you actually
+            Every day you get a five-step arc themed to your world. The{" "}
+            <strong>steps complete themselves</strong> as you actually
             study — no self-reporting.
           </p>
           <div className="grid sm:grid-cols-2 gap-3 mt-4">
@@ -310,18 +309,18 @@ function GuidePage() {
               <li>Sign in to your Canvas at your school's URL (e.g. <code className="text-xs">school.instructure.com</code>).</li>
               <li>Click <strong>Account</strong> in the left sidebar, then <strong>Settings</strong>.</li>
               <li>Scroll to <strong>Approved Integrations</strong> and click <strong>+ New Access Token</strong>.</li>
-              <li>Purpose: <em>"Winston study companion"</em>. Leave the expiry blank (or set one if you prefer).</li>
+              <li>Purpose: <em>"Study companion"</em>. Leave the expiry blank (or set one if you prefer).</li>
               <li>Click <strong>Generate Token</strong>. <strong>Copy the long token immediately</strong> — Canvas won't show it again.</li>
             </ol>
           </Card>
           <Card className="p-4 mt-3">
             <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-              Paste it into Winston
+              Paste it in
             </div>
             <ol className="list-decimal list-outside ml-5 text-sm space-y-1.5">
               <li>Open <Link to="/settings" className="underline">Settings</Link>.</li>
               <li>In the <strong>Canvas</strong> section, paste your Canvas domain (just the host, e.g. <code className="text-xs">school.instructure.com</code>) and the token you copied.</li>
-              <li>Click <strong>Save</strong>. Winston validates the token and starts pulling upcoming assignments.</li>
+              <li>Click <strong>Save</strong>. The token is validated and upcoming assignments start pulling in.</li>
               <li>To rotate or revoke it later, regenerate the token in Canvas and paste the new value.</li>
             </ol>
           </Card>
@@ -335,7 +334,7 @@ function GuidePage() {
             <strong>Plan</strong> link in the dashboard header.
           </p>
           <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
-            <li><strong>Auto-generate.</strong> Hit <em>Auto-plan</em> and Winston slots your upcoming Canvas assignments into study blocks weighted by due date.</li>
+            <li><strong>Auto-generate.</strong> Hit <em>Auto-plan</em> and your upcoming Canvas assignments slot into study blocks weighted by due date.</li>
             <li><strong>Add a block manually.</strong> Title, optional notes, date — useful for review sessions or non-Canvas work.</li>
             <li><strong>Tick blocks done</strong> as you finish them; completed blocks fall out of the active list and feed your streak.</li>
             <li><strong>Delete</strong> anything that no longer fits — the plan is meant to be edited daily.</li>
@@ -357,29 +356,8 @@ function GuidePage() {
           </ul>
         </Section>
 
-        {/* 9. Locker */}
-        <Section id="locker" icon={Shirt} title="9. Locker & cosmetic drops">
-          <p>
-            The <Link to="/locker" className="underline">Locker</Link> is your
-            character's wardrobe. Items have four rarities —{" "}
-            <strong>Common, Rare, Epic, Legendary</strong> — and slot into four
-            categories: <strong>Hats</strong>, <strong>Tops</strong>,{" "}
-            <strong>Accessories</strong>, and <strong>Frames</strong>.
-          </p>
-          <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
-            <li><strong>On-time drops.</strong> Every 3 assignments submitted on time triggers a new cosmetic. The progress bar at the top of the Locker shows how close you are to the next drop.</li>
-            <li><strong>Theme mastery.</strong> Completing five full daily arcs inside a single world unlocks that theme's signature set, including its Legendary capstone (e.g. <em>Aurora Frame</em>, <em>Oracle's Diadem</em>, <em>Championship Ring</em>).</li>
-            <li><strong>Equip / unequip.</strong> Click any owned item to wear it; use the slot's <em>Unequip</em> button to clear it. Changes are instant and saved automatically.</li>
-            <li><strong>Filter by rarity</strong> with the pill row at the top to focus on what's still missing from your collection.</li>
-          </ul>
-          <p className="text-sm text-muted-foreground mt-3">
-            Your character — and any equipped items — is visible to your
-            companion and shows up on the dashboard hero.
-          </p>
-        </Section>
-
-        {/* 10. Chat */}
-        <Section id="chat" icon={MessageSquare} title="10. Chatting with your companion">
+        {/* 9. Chat */}
+        <Section id="chat" icon={MessageSquare} title="9. Chatting with your companion">
           <ul className="list-disc list-outside ml-5 space-y-2">
             <li>The chat panel lives on the right of the dashboard. Type anything — "what should I do first?", "I'm overwhelmed", "explain this prompt."</li>
             <li>Your companion knows your current assignments and your selected theme, and answers in their personal voice (rigorous, chill, hyped, protective, or roast — see section 5).</li>
@@ -388,8 +366,8 @@ function GuidePage() {
           </ul>
         </Section>
 
-        {/* 11. Settings */}
-        <Section id="settings" icon={SettingsIcon} title="11. Settings explained">
+        {/* 10. Settings */}
+        <Section id="settings" icon={SettingsIcon} title="10. Settings explained">
           <p>
             Open <Link to="/settings" className="underline">Settings</Link>{" "}
             from the dashboard header. Each change has a <strong>Save</strong>{" "}
@@ -400,18 +378,18 @@ function GuidePage() {
             <SettingRow label="Theme" body="The world you're in. Same as the Palette menu on the dashboard, with a confirmation prompt." />
             <SettingRow label="Companion" body="Your active companion. Same as the dashboard portrait dropdown." />
             <SettingRow label="Canvas domain & token" body="Connection to your school's Canvas. Stored encrypted server-side." />
-            <SettingRow label="Google Calendar" body="Optional. Lets Winston see your class times so its planning is realistic." />
-            <SettingRow label="Reset progress" body="Wipes XP, streaks, trophies, quest history, and cosmetic drops. Theme & companion are kept." />
+            <SettingRow label="Google Calendar" body="Optional. Lets the planner see your class times so its planning is realistic." />
+            <SettingRow label="Reset progress" body="Wipes XP, streaks, trophies, and quest history. Theme & companion are kept." />
           </div>
         </Section>
 
 
-        {/* 9. Bios */}
+        {/* 11. Bios */}
         <section id="bios" className="scroll-mt-20">
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="h-5 w-5 text-primary" />
             <h2 className="text-2xl font-semibold tracking-tight">
-              12. Character biographies
+              11. Character biographies
             </h2>
           </div>
           <p className="text-muted-foreground mb-8">
@@ -467,8 +445,8 @@ function GuidePage() {
           </div>
         </section>
 
-        {/* 13. FAQ */}
-        <Section id="faq" icon={Bell} title="13. FAQ & troubleshooting">
+        {/* 12. FAQ */}
+        <Section id="faq" icon={Bell} title="12. FAQ & troubleshooting">
           <FaqRow
             q="My assignments aren't showing up."
             a="Open Settings and re-save your Canvas domain and token. The domain should be just the host (school.instructure.com), no https:// and no path."
@@ -476,10 +454,6 @@ function GuidePage() {
           <FaqRow
             q="A quest didn't auto-complete."
             a="Quests fire on real actions: viewing the timeline, opening a notebook, copying the Daily Reset, chatting once, and Canvas marking an assignment submitted. If Canvas hasn't updated yet, the assignment-clear step will trigger on the next sync."
-          />
-          <FaqRow
-            q="I'm not getting any cosmetic drops."
-            a="Drops come from on-time Canvas submissions — one every 3. Check the on-time progress meter at the top of the Locker. Theme-mastery sets unlock separately once you've completed five daily arcs in that world."
           />
           <FaqRow
             q="Does the Focus timer keep running if I close the tab?"
@@ -491,7 +465,7 @@ function GuidePage() {
           />
           <FaqRow
             q="I want to start over."
-            a="Settings → Reset progress wipes XP, streaks, trophies, and cosmetic drops but keeps your theme and companion. To change the world, use the Palette menu (you'll be asked to confirm)."
+            a="Settings → Reset progress wipes XP, streaks, trophies, and quest history but keeps your theme and companion. To change the world, use the Palette menu (you'll be asked to confirm)."
           />
           <FaqRow
             q="A companion is locked."
@@ -499,7 +473,7 @@ function GuidePage() {
           />
           <FaqRow
             q="Can I switch back to my old theme?"
-            a="Yes. Switching is reversible and your XP, trophies, and Locker contents are preserved. The Palette menu lists every world."
+            a="Yes. Switching is reversible and your XP and trophies are preserved. The Palette menu lists every world."
           />
         </Section>
 
