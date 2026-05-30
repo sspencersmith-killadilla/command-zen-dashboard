@@ -27,7 +27,7 @@ import {
   Users,
   Zap,
   Map as MapIcon,
-  Shirt,
+  
   CalendarClock,
   Timer,
   Crown,
