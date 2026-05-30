@@ -247,15 +247,22 @@ export type Database = {
           body_type: string
           brow_style: string
           created_at: string
+          earrings: string
           equipped: Json
+          eye_color: string
           eye_style: string
+          facial_hair: string
+          freckles: string
+          glasses: string
           hair_color: string
           hair_style: string
           id: string
+          lip_color: string
           mastery_progress: Json
           mouth_style: string
           on_time_count: number
           outfit_base: string
+          outfit_color: string
           skin_tone: string
           updated_at: string
           user_id: string
@@ -265,15 +272,22 @@ export type Database = {
           body_type?: string
           brow_style?: string
           created_at?: string
+          earrings?: string
           equipped?: Json
+          eye_color?: string
           eye_style?: string
+          facial_hair?: string
+          freckles?: string
+          glasses?: string
           hair_color?: string
           hair_style?: string
           id?: string
+          lip_color?: string
           mastery_progress?: Json
           mouth_style?: string
           on_time_count?: number
           outfit_base?: string
+          outfit_color?: string
           skin_tone?: string
           updated_at?: string
           user_id: string
@@ -283,15 +297,22 @@ export type Database = {
           body_type?: string
           brow_style?: string
           created_at?: string
+          earrings?: string
           equipped?: Json
+          eye_color?: string
           eye_style?: string
+          facial_hair?: string
+          freckles?: string
+          glasses?: string
           hair_color?: string
           hair_style?: string
           id?: string
+          lip_color?: string
           mastery_progress?: Json
           mouth_style?: string
           on_time_count?: number
           outfit_base?: string
+          outfit_color?: string
           skin_tone?: string
           updated_at?: string
           user_id?: string
