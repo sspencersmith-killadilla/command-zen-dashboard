@@ -366,8 +366,8 @@ function GuidePage() {
           </ul>
         </Section>
 
-        {/* 11. Settings */}
-        <Section id="settings" icon={SettingsIcon} title="11. Settings explained">
+        {/* 10. Settings */}
+        <Section id="settings" icon={SettingsIcon} title="10. Settings explained">
           <p>
             Open <Link to="/settings" className="underline">Settings</Link>{" "}
             from the dashboard header. Each change has a <strong>Save</strong>{" "}
@@ -378,8 +378,8 @@ function GuidePage() {
             <SettingRow label="Theme" body="The world you're in. Same as the Palette menu on the dashboard, with a confirmation prompt." />
             <SettingRow label="Companion" body="Your active companion. Same as the dashboard portrait dropdown." />
             <SettingRow label="Canvas domain & token" body="Connection to your school's Canvas. Stored encrypted server-side." />
-            <SettingRow label="Google Calendar" body="Optional. Lets Winston see your class times so its planning is realistic." />
-            <SettingRow label="Reset progress" body="Wipes XP, streaks, trophies, quest history, and cosmetic drops. Theme & companion are kept." />
+            <SettingRow label="Google Calendar" body="Optional. Lets the planner see your class times so its planning is realistic." />
+            <SettingRow label="Reset progress" body="Wipes XP, streaks, trophies, and quest history. Theme & companion are kept." />
           </div>
         </Section>
 
