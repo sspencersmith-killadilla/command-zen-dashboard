@@ -56,11 +56,24 @@ export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
   const [copied, setCopied] = useState(false);
   const { completeQuest } = useGamification();
+  const fetchCanvas = useServerFn(fetchCanvasAssignments);
 
-  const assignments = useMemo(
-    () => getSimulatedAssignments(cfg.courses).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime()),
-    [cfg.courses]
-  );
+  const canvasQ = useQuery({
+    queryKey: ["canvas-assignments", cfg.canvasFeedUrl],
+    queryFn: () => fetchCanvas(),
+    enabled: !!cfg.canvasFeedUrl,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const assignments = useMemo(() => {
+    const raw = canvasQ.data?.assignments ?? [];
+    return raw
+      .map((a) => ({ id: a.id, title: a.title, courseCode: a.courseCode, dueAt: new Date(a.dueAt) }))
+      .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
+  }, [canvasQ.data]);
+
+  const canvasError = cfg.canvasFeedUrl ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null) : null;
 
   // Award XP just for showing up and scanning the timeline
   useEffect(() => {
@@ -69,7 +82,11 @@ export function Dashboard() {
   }, [completeQuest]);
 
   function matchCourse(courseCode: string) {
-    return cfg.courses.find((c) => c.name.toLowerCase() === courseCode.toLowerCase());
+    if (!courseCode) return undefined;
+    const code = courseCode.toLowerCase();
+    return cfg.courses.find(
+      (c) => c.name.toLowerCase() === code || code.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(code),
+    );
   }
 
   async function copyPrompt() {
