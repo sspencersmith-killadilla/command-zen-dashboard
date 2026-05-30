@@ -219,7 +219,7 @@ export function Dashboard() {
                   <span className="text-[10px] font-normal text-muted-foreground">Lv {playerLevel}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {COMPANION_LIST.map((c) => {
+                {themeCompanions.map((c) => {
                   const unlocked = playerLevel >= c.unlockLevel || c.id === cfg.companionId;
                   const isSel = c.id === cfg.companionId;
                   return (
@@ -245,8 +245,55 @@ export function Dashboard() {
                     </DropdownMenuItem>
                   );
                 })}
+                <DropdownMenuSeparator />
+                <div className="px-2 py-1.5 text-[11px] text-muted-foreground">
+                  Want a different vibe? Use <span className="font-medium text-foreground">Theme</span> to switch worlds.
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border px-3 py-1.5 transition-colors"
+                  aria-label="Switch theme"
+                >
+                  <Palette className="h-3.5 w-3.5 text-muted-foreground" />
+                  <div className="text-left leading-tight">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Theme</div>
+                    <div className="text-sm font-semibold">{currentTheme.label}</div>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72 max-h-[60vh] overflow-y-auto">
+                <DropdownMenuLabel>Switch theme</DropdownMenuLabel>
+                <div className="px-2 pb-2 text-[11px] text-muted-foreground">
+                  Changes the whole world: visuals, daily goals, and your companion roster.
+                </div>
+                <DropdownMenuSeparator />
+                {THEMES.map((t) => {
+                  const isSel = t.id === currentThemeId;
+                  return (
+                    <DropdownMenuItem
+                      key={t.id}
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        if (!isSel) setPendingTheme(t.id);
+                      }}
+                      className="flex items-start gap-2 py-2"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium flex items-center gap-1.5">
+                          {t.label}
+                          {isSel && <Check className="h-3 w-3 text-primary" />}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground truncate">{t.blurb}</div>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
             <Link
               to="/settings"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
