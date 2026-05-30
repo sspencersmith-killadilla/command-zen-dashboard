@@ -147,7 +147,16 @@ export const autoGenerateBlocks = createServerFn({ method: "POST" })
     );
 
     const now = Date.now();
-    const toInsert: Array<Record<string, unknown>> = [];
+    type InsertRow = {
+      user_id: string;
+      course_id: string;
+      title: string;
+      notes: string;
+      starts_at: string;
+      ends_at: string;
+      source: string;
+    };
+    const toInsert: InsertRow[] = [];
     for (const a of data.assignments) {
       if (taggedIds.has(a.id)) continue;
       const due = new Date(a.dueAt).getTime();
