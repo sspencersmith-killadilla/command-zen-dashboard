@@ -308,6 +308,7 @@ export function ChatPanel() {
           onSubmit={(msg) => {
             const text = msg.text?.trim();
             if (!text || isBusy) return;
+            unlockAudio(); // gesture: prime AudioContext for later auto-play
             sendMessage({ text });
             completeQuest("chat-winston");
             setInput("");
