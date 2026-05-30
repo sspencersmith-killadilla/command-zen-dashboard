@@ -210,24 +210,31 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                 title="Your class notebooks"
                 subtitle="Each class gets its own NotebookLM hub — your second brain for that course."
               />
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm space-y-1.5">
+                <p className="font-semibold text-foreground">Name each notebook with the exact course code Canvas uses.</p>
+                <p className="text-muted-foreground">
+                  Canvas tags assignments like <code className="text-xs bg-background px-1.5 py-0.5 rounded">[CS 374]</code>. If your notebook is also named <code className="text-xs bg-background px-1.5 py-0.5 rounded">CS 374</code>, every assignment for that class auto-links to it, and your companion can point you straight at the right notebook.
+                </p>
+              </div>
               <div className="rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground space-y-3">
                 <div>
-                  <p className="font-medium text-foreground mb-1.5">Don't have notebooks yet?</p>
+                  <p className="font-medium text-foreground mb-1.5">Setting up a notebook (one per class):</p>
                   <ol className="list-decimal pl-5 space-y-1">
                     <li>Go to <a href="https://notebooklm.google.com" target="_blank" rel="noreferrer" className="underline text-primary">notebooklm.google.com</a></li>
-                    <li>Click <span className="font-medium">+ Create new</span> and name it after the class (e.g. "CS 374")</li>
-                    <li>Upload your syllabus, lecture slides, and readings as sources</li>
+                    <li>Click <span className="font-medium">+ Create new</span> and name it with the course code (e.g. "CS 374")</li>
+                    <li>Upload as sources: <span className="font-medium text-foreground">syllabus, lecture slides, readings, problem-set instructions, past exams, and any study guides</span></li>
+                    <li>The more high-signal sources you add, the better your companion's answers about that class will be</li>
                   </ol>
                 </div>
                 <div>
                   <p className="font-medium text-foreground mb-1.5">Getting the URL:</p>
                   <ol className="list-decimal pl-5 space-y-1">
                     <li>Open the notebook</li>
-                    <li>Copy the URL from your browser's address bar — it looks like <code className="text-xs bg-background px-1.5 py-0.5 rounded">notebooklm.google.com/notebook/...</code></li>
+                    <li>Copy the URL from your address bar — it looks like <code className="text-xs bg-background px-1.5 py-0.5 rounded">notebooklm.google.com/notebook/...</code></li>
                     <li>Paste it below with the class name</li>
                   </ol>
                 </div>
-                <p className="text-xs">Add one per class. You can add more later from Settings.</p>
+                <p className="text-xs">Add one per class. You can always add or edit them later from Settings.</p>
               </div>
 
               <div className="space-y-2">
