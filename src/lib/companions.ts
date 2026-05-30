@@ -206,6 +206,15 @@ export type Companion = {
   glow: string;
   /** Player level required to unlock this companion. Lv 1 = starter. */
   unlockLevel: number;
+  /**
+   * Optional per-sprite tuning for the floating closeup portrait so the face
+   * lands dead-center in the circular frame. All values are percentages.
+   * Defaults: x=0 (sprite centerline), y=-28 (eyes at ~28% from top), zoom=220.
+   * - x: horizontal nudge of the sprite, in % of the frame width. Negative = left.
+   * - y: vertical translate, in % of the sprite height. More negative = face moves down.
+   * - zoom: sprite width/height, in % of the frame. Larger = tighter crop on the face.
+   */
+  faceOffset?: { x?: number; y?: number; zoom?: number };
 };
 
 // ---- Persona archetypes (shared across themes for voice consistency) ----
