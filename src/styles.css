@@ -178,19 +178,62 @@
   }
 }
 
-/* Barnaby sprite animations */
-@keyframes barnaby-bob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-3px); }
+/* Companion sprite animations — pixel-clean, GPU-friendly, no hardcoded face overlays. */
+@keyframes companion-bob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  25%      { transform: translate3d(0, -2px, 0); }
+  50%      { transform: translate3d(0, -4px, 0); }
+  75%      { transform: translate3d(0, -2px, 0); }
 }
-@keyframes barnaby-glow {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50%      { opacity: 0.85; transform: scale(1.08); }
+@keyframes companion-sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50%      { transform: rotate(1.5deg); }
 }
-@keyframes barnaby-blink {
-  0%, 92%, 100% { opacity: 0; }
-  94%, 97%      { opacity: 0.85; }
+@keyframes companion-breath {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
 }
-.barnaby-bob   { animation: barnaby-bob 2.4s ease-in-out infinite; }
-.barnaby-glow  { animation: barnaby-glow 2.4s ease-in-out infinite; }
-.barnaby-blink { animation: barnaby-blink 5s ease-in-out infinite; }
+@keyframes companion-glow {
+  0%, 100% { opacity: 0.5;  transform: scale(1); }
+  50%      { opacity: 0.95; transform: scale(1.12); }
+}
+@keyframes companion-wiggle {
+  0%, 88%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  92%           { transform: translate3d(-1px, 0, 0) rotate(-3deg); }
+  96%           { transform: translate3d(1px, 0, 0) rotate(3deg); }
+}
+
+.companion-frame {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation: companion-wiggle 6s ease-in-out infinite;
+}
+.companion-bob {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation: companion-bob 2.4s steps(4, end) infinite;
+}
+.companion-sprite {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation: companion-breath 3.2s ease-in-out infinite;
+}
+.companion-glow {
+  will-change: transform, opacity;
+  animation: companion-glow 2.8s ease-in-out infinite;
+}
+.companion-sway {
+  transform-origin: 50% 90%;
+  animation: companion-sway 4.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-frame,
+  .companion-bob,
+  .companion-sprite,
+  .companion-glow,
+  .companion-sway { animation: none; }
+}
