@@ -9,6 +9,10 @@ import {
   CloudLightning, CloudSun, Thermometer, Gauge,
   Map as MapIcon, Compass, Globe, Footprints, MapPin,
   Microscope, Telescope, Bone, BookOpen,
+  Car, Wrench, Bot, Code, Sofa, Palette, Mic, Drama, Video, Camera,
+  Gamepad2, Library as LibraryIcon, Plane, Briefcase, DollarSign, TrendingUp, Hammer,
+  Lightbulb, Clapperboard, Film, Joystick, Search, Luggage, LineChart, BarChart3,
+  Headphones, Music, Ruler,
 } from "lucide-react";
 
 /** A single themed daily quest tied to a stable quest id. */
