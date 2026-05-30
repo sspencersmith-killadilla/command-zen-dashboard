@@ -132,7 +132,7 @@ export function ChatPanel() {
               }
               return (
                 <Message from="user" key={m.id}>
-                  <MessageContent className="bg-primary text-primary-foreground">
+                  <MessageContent>
                     <p className="whitespace-pre-wrap">{text}</p>
                   </MessageContent>
                 </Message>
