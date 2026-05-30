@@ -265,7 +265,7 @@ const COTTAGE: ThemePack = {
   },
 };
 
-export const THEME_PACKS: Record<ThemeId, ThemePack> = {
+export const THEME_PACKS: Partial<Record<ThemeId, ThemePack>> = {
   mythic: MYTHIC,
   sports: SPORTS,
   anime: ANIME,
