@@ -103,6 +103,7 @@ const ENTRIES: Companion[] = [
     persona: SAGE("Barnaby", "an old owl-chimera scholar", "You have tutored centuries of students and cite 'the old texts' as a half-joke."),
     sprite: barnabySprite,
     glow: "oklch(0.7 0.2 260 / 0.55)",
+    unlockLevel: 1,
   },
   {
     id: "bean",
@@ -113,6 +114,7 @@ const ENTRIES: Companion[] = [
     persona: CHILL("Bean", "a laid-back bobcat-chimera", "Chill RPG / gamer / surf vibes."),
     sprite: beanSprite,
     glow: "oklch(0.78 0.16 200 / 0.55)",
+    unlockLevel: 2,
   },
   {
     id: "roxie",
@@ -123,6 +125,7 @@ const ENTRIES: Companion[] = [
     persona: HYPE("Roxie", "a fast-talking roadrunner-chimera", "Race / speedrun / split-time metaphors."),
     sprite: roxieSprite,
     glow: "oklch(0.72 0.22 350 / 0.55)",
+    unlockLevel: 3,
   },
   {
     id: "pip",
@@ -133,6 +136,7 @@ const ENTRIES: Companion[] = [
     persona: GUARDIAN("Pip", "a loyal terrier-chimera guardian", "Tank / guardian / party metaphors."),
     sprite: pipSprite,
     glow: "oklch(0.78 0.16 80 / 0.55)",
+    unlockLevel: 4,
   },
   {
     id: "lafitte",
@@ -143,6 +147,7 @@ const ENTRIES: Companion[] = [
     persona: TRICKSTER("Lafitte", "a sly mouse-chimera rogue", "Rogue / trickster / heist metaphors."),
     sprite: lafitteSprite,
     glow: "oklch(0.75 0.2 145 / 0.55)",
+    unlockLevel: 5,
   },
 
   // ===== SPORTS LEGENDS =====
@@ -155,6 +160,7 @@ const ENTRIES: Companion[] = [
     persona: SAGE("Coach Ursa", "a grizzled bear-chimera head coach", "You've coached three decades and use film-room / playbook metaphors."),
     sprite: coachUrsaSprite,
     glow: "oklch(0.7 0.18 60 / 0.55)",
+    unlockLevel: 1,
   },
   {
     id: "knox",
@@ -165,6 +171,7 @@ const ENTRIES: Companion[] = [
     persona: CHILL("Knox", "a wolf-chimera goalie", "Goalie / save / clean-sheet metaphors."),
     sprite: knoxSprite,
     glow: "oklch(0.78 0.14 220 / 0.55)",
+    unlockLevel: 2,
   },
   {
     id: "blitz",
@@ -175,6 +182,7 @@ const ENTRIES: Companion[] = [
     persona: HYPE("Blitz", "a falcon-chimera sprinter", "Track / split-time / starting-block metaphors."),
     sprite: blitzSprite,
     glow: "oklch(0.72 0.22 0 / 0.55)",
+    unlockLevel: 3,
   },
   {
     id: "titan",
@@ -185,6 +193,7 @@ const ENTRIES: Companion[] = [
     persona: GUARDIAN("Titan", "a tiger-chimera linebacker", "Defense / blocking / 'I got you' metaphors."),
     sprite: titanSprite,
     glow: "oklch(0.7 0.2 40 / 0.55)",
+    unlockLevel: 4,
   },
   {
     id: "juke",
@@ -195,6 +204,7 @@ const ENTRIES: Companion[] = [
     persona: TRICKSTER("Juke", "a fox-chimera point guard", "Hoops / crossover / fake-out metaphors."),
     sprite: jukeSprite,
     glow: "oklch(0.75 0.2 145 / 0.55)",
+    unlockLevel: 5,
   },
 
   // ===== FANTASY ANIME =====
@@ -207,6 +217,7 @@ const ENTRIES: Companion[] = [
     persona: SAGE("Kaito", "a dragon-kin elder mage", "You speak in arcane proverbs and reference 'the old scrolls.'"),
     sprite: kaitoSprite,
     glow: "oklch(0.65 0.22 290 / 0.55)",
+    unlockLevel: 1,
   },
   {
     id: "yuki",
@@ -217,6 +228,7 @@ const ENTRIES: Companion[] = [
     persona: CHILL("Yuki", "a white-wolf knight", "Bushido / kendo / stance metaphors, but understated."),
     sprite: yukiSprite,
     glow: "oklch(0.85 0.1 220 / 0.55)",
+    unlockLevel: 2,
   },
   {
     id: "hana",
@@ -227,6 +239,7 @@ const ENTRIES: Companion[] = [
     persona: HYPE("Hana", "a rabbit-chimera ninja", "Shinobi / leap / shadow-step metaphors."),
     sprite: hanaSprite,
     glow: "oklch(0.78 0.22 340 / 0.55)",
+    unlockLevel: 3,
   },
   {
     id: "ren",
@@ -237,6 +250,7 @@ const ENTRIES: Companion[] = [
     persona: GUARDIAN("Ren", "a nine-tailed kitsune swordsman", "Oath / honor / 'I have your back' metaphors."),
     sprite: renSprite,
     glow: "oklch(0.82 0.18 75 / 0.55)",
+    unlockLevel: 4,
   },
   {
     id: "mei",
@@ -247,6 +261,7 @@ const ENTRIES: Companion[] = [
     persona: TRICKSTER("Mei", "a cat-chimera ranger archer", "Bow / aim / 'you're flinching again' metaphors."),
     sprite: meiSprite,
     glow: "oklch(0.65 0.22 25 / 0.55)",
+    unlockLevel: 5,
   },
 
   // ===== CYBER / SCI-FI =====
@@ -259,6 +274,7 @@ const ENTRIES: Companion[] = [
     persona: SAGE("Oracle", "an owl-chimera AI oracle", "You quote diagnostics, system logs, and 'the projection.'"),
     sprite: oracleSprite,
     glow: "oklch(0.85 0.18 200 / 0.55)",
+    unlockLevel: 1,
   },
   {
     id: "halcyon",
@@ -269,6 +285,7 @@ const ENTRIES: Companion[] = [
     persona: CHILL("Halcyon", "a lynx-chimera ace pilot", "Cockpit / autopilot / 'we're trimmed out' metaphors."),
     sprite: halcyonSprite,
     glow: "oklch(0.75 0.16 195 / 0.55)",
+    unlockLevel: 2,
   },
   {
     id: "volt",
@@ -279,6 +296,7 @@ const ENTRIES: Companion[] = [
     persona: HYPE("Volt", "a mantis-chimera neon courier", "Sprint / parkour / 'next checkpoint' metaphors."),
     sprite: voltSprite,
     glow: "oklch(0.88 0.2 100 / 0.55)",
+    unlockLevel: 3,
   },
   {
     id: "bastion",
@@ -289,6 +307,7 @@ const ENTRIES: Companion[] = [
     persona: GUARDIAN("Bastion", "a shark-chimera tactical operator", "Squad / overwatch / 'on me' metaphors."),
     sprite: bastionSprite,
     glow: "oklch(0.55 0.18 240 / 0.55)",
+    unlockLevel: 4,
   },
   {
     id: "glitch",
@@ -299,6 +318,7 @@ const ENTRIES: Companion[] = [
     persona: TRICKSTER("Glitch", "a raven-chimera deck hacker", "Hack / patch / exploit metaphors."),
     sprite: glitchSprite,
     glow: "oklch(0.65 0.25 310 / 0.55)",
+    unlockLevel: 5,
   },
 
   // ===== COZY COTTAGECORE =====
@@ -311,6 +331,7 @@ const ENTRIES: Companion[] = [
     persona: SAGE("Hazel", "a badger-chimera village librarian", "You reference 'the ledger,' marginalia, and well-thumbed pages."),
     sprite: hazelSprite,
     glow: "oklch(0.72 0.14 70 / 0.55)",
+    unlockLevel: 1,
   },
   {
     id: "fern",
@@ -321,6 +342,7 @@ const ENTRIES: Companion[] = [
     persona: CHILL("Fern", "a deer-chimera herbalist", "Tea / steeping / 'it'll keep' metaphors."),
     sprite: fernSprite,
     glow: "oklch(0.75 0.14 145 / 0.55)",
+    unlockLevel: 2,
   },
   {
     id: "wren",
@@ -331,6 +353,7 @@ const ENTRIES: Companion[] = [
     persona: HYPE("Wren", "a sparrow-chimera traveling poet", "Verse / couplet / 'one stanza at a time' metaphors."),
     sprite: wrenSprite,
     glow: "oklch(0.8 0.16 40 / 0.55)",
+    unlockLevel: 3,
   },
   {
     id: "bram",
@@ -341,6 +364,7 @@ const ENTRIES: Companion[] = [
     persona: GUARDIAN("Bram", "a hedgehog-chimera village baker", "Bakery / 'fresh from the oven' / 'I saved you one' metaphors."),
     sprite: bramSprite,
     glow: "oklch(0.78 0.14 30 / 0.55)",
+    unlockLevel: 4,
   },
   {
     id: "clover",
@@ -351,6 +375,7 @@ const ENTRIES: Companion[] = [
     persona: TRICKSTER("Clover", "a hare-chimera market gardener", "Garden / weed / 'this row's a mess' metaphors."),
     sprite: cloverSprite,
     glow: "oklch(0.82 0.16 150 / 0.55)",
+    unlockLevel: 5,
   },
 ];
 
