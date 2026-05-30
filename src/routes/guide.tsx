@@ -465,7 +465,7 @@ function GuidePage() {
           />
           <FaqRow
             q="I want to start over."
-            a="Settings → Reset progress wipes XP, streaks, trophies, and cosmetic drops but keeps your theme and companion. To change the world, use the Palette menu (you'll be asked to confirm)."
+            a="Settings → Reset progress wipes XP, streaks, trophies, and quest history but keeps your theme and companion. To change the world, use the Palette menu (you'll be asked to confirm)."
           />
           <FaqRow
             q="A companion is locked."
@@ -473,7 +473,7 @@ function GuidePage() {
           />
           <FaqRow
             q="Can I switch back to my old theme?"
-            a="Yes. Switching is reversible and your XP, trophies, and Locker contents are preserved. The Palette menu lists every world."
+            a="Yes. Switching is reversible and your XP and trophies are preserved. The Palette menu lists every world."
           />
         </Section>
 
