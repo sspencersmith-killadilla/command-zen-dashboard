@@ -289,84 +289,50 @@ export function Dashboard() {
           <GamificationPanel />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Daily Reset */}
-          <Card className="p-6 lg:col-span-1 border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground" style={{ boxShadow: "var(--shadow-soft)" }}>
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="h-9 w-9 rounded-lg bg-white/15 flex items-center justify-center">
-                <Sparkles className="h-4.5 w-4.5" />
-              </div>
-              <div>
-                <h2 className="font-semibold text-lg">The Daily Reset</h2>
-                <p className="text-xs text-primary-foreground/70">Morning Gemini prompt</p>
-              </div>
+        {/* Second Brain — full width now that Daily Reset lives in the chat */}
+        <Card className="p-6 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
+          <div className="flex items-center gap-2.5 mb-5">
+            <div className="h-9 w-9 rounded-lg bg-accent/20 text-accent-foreground flex items-center justify-center">
+              <BookOpen className="h-4.5 w-4.5" />
             </div>
-
-            <div className="rounded-xl bg-black/15 backdrop-blur p-4 text-sm leading-relaxed text-primary-foreground/95 mb-5">
-              "{GEMINI_PROMPT}"
+            <div>
+              <h2 className="font-semibold text-lg">My Second Brain</h2>
+              <p className="text-xs text-muted-foreground">Quick-launch your class notebooks</p>
             </div>
+          </div>
 
-            <Button onClick={copyPrompt} size="lg" variant="secondary" className="w-full gap-2 font-medium">
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4 animate-check-pop" />
-                  Copied — paste into Gemini
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  One-Click Copy (+20 XP)
-                </>
-              )}
-            </Button>
-          </Card>
-
-          {/* Second Brain */}
-          <Card className="p-6 lg:col-span-2 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="h-9 w-9 rounded-lg bg-accent/20 text-accent-foreground flex items-center justify-center">
-                <BookOpen className="h-4.5 w-4.5" />
-              </div>
-              <div>
-                <h2 className="font-semibold text-lg">My Second Brain</h2>
-                <p className="text-xs text-muted-foreground">Quick-launch your class notebooks</p>
-              </div>
-            </div>
-
-            {cfg.courses.length === 0 ? (
-              <EmptyState text="No notebooks linked yet." />
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {cfg.courses.map((c, i) => {
-                  const linked = assignments.filter((a) => a.courseCode === c.name).length;
-                  return (
-                    <a
-                      key={c.id}
-                      href={c.notebookUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => completeQuest("open-notebook")}
-                      className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-muted/30 transition-all animate-fade-up"
-                      style={{ animationDelay: `${i * 50}ms` }}
-                    >
-                      <div className="flex items-start justify-between gap-3 mb-3">
-                        <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center text-sm font-semibold text-accent-foreground">
-                          {c.name.slice(0, 2).toUpperCase()}
-                        </div>
-                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          {cfg.courses.length === 0 ? (
+            <EmptyState text="No notebooks linked yet. Add one per class in Settings — name it with the same course code Canvas uses (e.g. CS 374) so assignments auto-link." />
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {cfg.courses.map((c, i) => {
+                const linked = assignments.filter((a) => a.courseCode === c.name).length;
+                return (
+                  <a
+                    key={c.id}
+                    href={c.notebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => completeQuest("open-notebook")}
+                    className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-muted/30 transition-all animate-fade-up"
+                    style={{ animationDelay: `${i * 50}ms` }}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center text-sm font-semibold text-accent-foreground">
+                        {c.name.slice(0, 2).toUpperCase()}
                       </div>
-                      <div className="font-medium text-foreground truncate">{c.name}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {linked} linked assignment{linked === 1 ? "" : "s"}
-                      </div>
-                    </a>
-                  );
-                })}
-              </div>
-            )}
-          </Card>
-
-        </div>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <div className="font-medium text-foreground truncate">{c.name}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {linked} linked assignment{linked === 1 ? "" : "s"}
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </Card>
       </main>
     </div>
   );
