@@ -26,6 +26,7 @@ import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
+import { useGamification } from "@/lib/gamification";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
