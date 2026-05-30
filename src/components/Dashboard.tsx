@@ -267,6 +267,11 @@ export function Dashboard() {
               </div>
             )}
           </Card>
+
+          {/* Chat */}
+          <div className="lg:col-span-3">
+            <ChatPanel />
+          </div>
         </div>
       </main>
     </div>
