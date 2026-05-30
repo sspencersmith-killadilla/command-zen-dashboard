@@ -27,6 +27,10 @@ import {
   Users,
   Zap,
   Map as MapIcon,
+  Shirt,
+  CalendarClock,
+  Timer,
+  Crown,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/guide")({
