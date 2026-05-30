@@ -265,7 +265,7 @@ const COTTAGE: ThemePack = {
   },
 };
 
-export const THEME_PACKS: Record<ThemeId, ThemePack> = {
+export const THEME_PACKS: Partial<Record<ThemeId, ThemePack>> = {
   mythic: MYTHIC,
   sports: SPORTS,
   anime: ANIME,
@@ -274,7 +274,7 @@ export const THEME_PACKS: Record<ThemeId, ThemePack> = {
 };
 
 export function getThemePack(theme: ThemeId | string | null | undefined): ThemePack {
-  if (theme && theme in THEME_PACKS) return THEME_PACKS[theme as ThemeId];
+  if (theme && theme in THEME_PACKS) return THEME_PACKS[theme as ThemeId]!;
   return MYTHIC;
 }
 
