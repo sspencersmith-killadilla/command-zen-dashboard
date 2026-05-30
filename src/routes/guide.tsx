@@ -36,7 +36,7 @@ import {
 export const Route = createFileRoute("/guide")({
   head: () => ({
     meta: [
-      { title: "Field Manual — How Winston Works" },
+      { title: "Field Manual — How it works" },
       {
         name: "description",
         content:
