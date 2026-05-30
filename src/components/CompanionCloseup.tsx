@@ -81,11 +81,12 @@ export function CompanionCloseup({
                 position: "absolute",
                 left: "50%",
                 top: "50%",
-                width: "210%",
-                height: "210%",
-                // Sprites place the face in the upper-middle of the canvas.
-                // Shift up-left of center so the face lands in the circle's middle.
-                transform: "translate(-50%, -38%)",
+                width: "220%",
+                height: "220%",
+                // Sprites place the eyes/face at ~28% from the top of the
+                // square canvas. translateY(-28%) puts that feature line at
+                // the circle's vertical midpoint regardless of zoom level.
+                transform: "translate(-50%, -28%)",
                 imageRendering: "pixelated",
                 filter: "drop-shadow(0 3px 0 oklch(0.15 0.04 260 / 0.5))",
               }}
