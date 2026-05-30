@@ -586,6 +586,65 @@ export function Dashboard() {
           <ChatPanel />
         </div>
 
+        {/* Perfect-Day bonus — locked while anything is past due */}
+        <Card
+          className="p-5 mb-6 border-border/60 flex items-center justify-between gap-4 flex-wrap"
+          style={{ boxShadow: "var(--shadow-soft)" }}
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                consequences.perfectDayLocked
+                  ? "bg-muted text-muted-foreground"
+                  : consequences.perfectDayClaimed
+                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                    : "bg-primary/15 text-primary"
+              }`}
+            >
+              {consequences.perfectDayLocked ? (
+                <Lock className="h-5 w-5" />
+              ) : consequences.perfectDayClaimed ? (
+                <Check className="h-5 w-5" />
+              ) : (
+                <Sparkles className="h-5 w-5" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="font-semibold leading-tight">
+                Perfect Day Bonus{" "}
+                <span className="text-xs text-muted-foreground font-normal">
+                  +{PERFECT_DAY_XP} XP
+                </span>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {consequences.perfectDayLocked
+                  ? `Locked — ${consequences.pastDueCount} past-due item${consequences.pastDueCount === 1 ? "" : "s"} blocking the bonus. Clear them to unlock.`
+                  : consequences.perfectDayClaimed
+                    ? "Claimed today. Streak protected — see you tomorrow."
+                    : consequences.freezeAvailable
+                      ? "Free for the taking. Streak freeze still available this week."
+                      : "Free for the taking. (Streak freeze already used this week.)"}
+              </div>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant={consequences.canClaimPerfectDay ? "default" : "outline"}
+            disabled={!consequences.canClaimPerfectDay}
+            onClick={() => {
+              if (consequences.claimPerfectDay()) {
+                toast.success(`+${PERFECT_DAY_XP} XP — perfect day claimed`);
+              }
+            }}
+          >
+            {consequences.perfectDayClaimed
+              ? "Claimed"
+              : consequences.perfectDayLocked
+                ? "Locked"
+                : "Claim bonus"}
+          </Button>
+        </Card>
+
         {/* Gamification HUD */}
         <div className="mb-6">
           <GamificationPanel />
