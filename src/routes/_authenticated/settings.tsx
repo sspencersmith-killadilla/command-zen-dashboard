@@ -17,6 +17,9 @@ import {
 } from "@/lib/google-calendar.functions";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CompanionAvatar } from "@/components/CompanionAvatar";
+import { COMPANIONS, useCompanions } from "@/lib/companions";
+import { Lock } from "lucide-react";
 
 const searchSchema = z.object({
   gcal: z.enum(["connected", "error"]).optional(),
@@ -223,6 +226,14 @@ function SettingsPage() {
           <Button onClick={addCourse} variant="secondary" disabled={!draftName.trim() || !draftUrl.trim()}>
             <Plus className="h-4 w-4 mr-1.5" /> Add class
           </Button>
+        </Card>
+
+        <Card className="p-6 border-border/60 space-y-4">
+          <div>
+            <h2 className="font-semibold text-lg">Study companion</h2>
+            <p className="text-sm text-muted-foreground">Swap to any companion you've earned.</p>
+          </div>
+          <CompanionSwap />
         </Card>
 
         <Card className="p-6 border-border/60">
