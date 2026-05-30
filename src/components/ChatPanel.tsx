@@ -22,9 +22,9 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
-import { Trash2 } from "lucide-react";
+import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
-import { useWinstonConfig } from "@/lib/winston-store";
+import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
 
 function partsToText(parts: UIMessage["parts"]): string {
