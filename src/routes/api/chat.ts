@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/chat")({
           await supabaseAdmin.from("chat_messages").insert({
             user_id: userId,
             role: "user",
-            parts: lastUser.parts as unknown as object,
+            parts: lastUser.parts as never,
           });
         }
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/api/chat")({
         const result = streamText({
           model,
           system: SYSTEM_PROMPT,
-          messages: convertToModelMessages(messages),
+          messages: await convertToModelMessages(messages),
         });
 
         return result.toUIMessageStreamResponse({
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/api/chat")({
               await supabaseAdmin.from("chat_messages").insert({
                 user_id: userId,
                 role: "assistant",
-                parts: assistantMsg.parts as unknown as object,
+                parts: assistantMsg.parts as never,
               });
             }
           },
