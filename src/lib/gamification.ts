@@ -105,7 +105,7 @@ export const DAILY_QUESTS = [
   { id: "check-timeline", label: "Scout the timeline", xp: 10 },
   { id: "open-notebook", label: "Crack open a notebook", xp: 15 },
   { id: "copy-prompt", label: "Run the Daily Reset", xp: 20 },
-  { id: "chat-winston", label: "Strategize with Winston", xp: 15 },
+  { id: "chat-winston", label: "Strategize with Barnaby", xp: 15 },
   { id: "clear-assignment", label: "Knock out an assignment", xp: 40 },
 ];
 

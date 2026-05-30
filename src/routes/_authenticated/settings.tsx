@@ -127,7 +127,7 @@ function SettingsPage() {
               id="name"
               value={cfg.displayName}
               onChange={(e) => update({ displayName: e.target.value })}
-              placeholder="e.g. Winston"
+              placeholder="e.g. Barnaby"
             />
           </div>
         </Card>
