@@ -234,6 +234,11 @@ export function Dashboard() {
           </p>
         </Card>
 
+        {/* Chat with your companion — featured */}
+        <div className="mb-6">
+          <ChatPanel />
+        </div>
+
         {/* Gamification HUD */}
         <div className="mb-6">
           <GamificationPanel />
