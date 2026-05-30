@@ -581,6 +581,27 @@ export function Dashboard() {
           )}
         </Card>
       </main>
+
+      <AlertDialog open={!!pendingTheme} onOpenChange={(o) => !o && setPendingTheme(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Switch theme to {pendingThemeMeta?.label}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This changes the whole world — visuals, daily goal storylines, and your
+              companion roster. Your current companion <span className="font-medium text-foreground">{currentCompanion.name}</span> will be
+              swapped for a starter from the new theme. XP and progress are kept.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep {currentTheme.label}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmThemeSwitch}>
+              Yes, switch theme
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
