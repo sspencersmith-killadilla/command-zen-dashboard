@@ -1,12 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { fetchCanvasAssignmentsFromUrl } from "./canvas.server";
+import { fetchCanvasAssignmentsFromConfig, type CanvasFile } from "./canvas.server";
 
 export type CanvasAssignment = {
   id: string;
   title: string;
   courseCode: string;
   dueAt: string;
+  htmlUrl?: string;
+  files?: CanvasFile[];
 };
 
 export const fetchCanvasAssignments = createServerFn({ method: "GET" })
@@ -15,9 +17,13 @@ export const fetchCanvasAssignments = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("user_configs")
-      .select("canvas_feed_url")
+      .select("canvas_feed_url,canvas_api_token,canvas_domain")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) return { assignments: [], error: error.message };
-    return fetchCanvasAssignmentsFromUrl(data?.canvas_feed_url?.trim() ?? "");
+    return fetchCanvasAssignmentsFromConfig({
+      apiToken: data?.canvas_api_token ?? "",
+      domain: data?.canvas_domain ?? "",
+      feedUrl: data?.canvas_feed_url ?? "",
+    });
   });
