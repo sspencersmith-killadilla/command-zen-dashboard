@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +8,6 @@ import { Switch } from "@/components/ui/switch";
 import {
   CalendarClock,
   BookOpen,
-  Copy,
   Check,
   ExternalLink,
   Settings,
@@ -20,7 +19,6 @@ import {
 import {
   useWinstonConfig,
   tierFor,
-  GEMINI_PROMPT,
   type AlertTier,
 } from "@/lib/winston-store";
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
