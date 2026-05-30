@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
 import { Route as AuthenticatedAvatarRouteImport } from './routes/_authenticated/avatar'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
@@ -42,6 +43,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedLockerRoute = AuthenticatedLockerRouteImport.update({
+  id: '/locker',
+  path: '/locker',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedGuideRoute = AuthenticatedGuideRouteImport.update({
   id: '/guide',
   path: '/guide',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/avatar': typeof AuthenticatedAvatarRoute
   '/guide': typeof AuthenticatedGuideRoute
+  '/locker': typeof AuthenticatedLockerRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/avatar': typeof AuthenticatedAvatarRoute
   '/guide': typeof AuthenticatedGuideRoute
+  '/locker': typeof AuthenticatedLockerRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/avatar': typeof AuthenticatedAvatarRoute
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
+  '/_authenticated/locker': typeof AuthenticatedLockerRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/avatar'
     | '/guide'
+    | '/locker'
     | '/settings'
     | '/api/chat'
     | '/api/oauth/google-calendar/callback'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/avatar'
     | '/guide'
+    | '/locker'
     | '/settings'
     | '/api/chat'
     | '/'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/avatar'
     | '/_authenticated/guide'
+    | '/_authenticated/locker'
     | '/_authenticated/settings'
     | '/api/chat'
     | '/_authenticated/'
@@ -163,6 +175,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/locker': {
+      id: '/_authenticated/locker'
+      path: '/locker'
+      fullPath: '/locker'
+      preLoaderRoute: typeof AuthenticatedLockerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/guide': {
       id: '/_authenticated/guide'
       path: '/guide'
@@ -190,6 +209,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedAvatarRoute: typeof AuthenticatedAvatarRoute
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
+  AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
@@ -197,6 +217,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAvatarRoute: AuthenticatedAvatarRoute,
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
+  AuthenticatedLockerRoute: AuthenticatedLockerRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
