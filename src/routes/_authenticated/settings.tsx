@@ -141,19 +141,70 @@ function SettingsPage() {
           onSelect={(id) => update({ companionId: id })}
         />
 
-        <Card className="p-6 space-y-4 border-border/60">
+        <Card className="p-6 space-y-5 border-border/60">
           <div>
-            <h2 className="font-semibold text-lg">Canvas feed</h2>
-            <p className="text-sm text-muted-foreground">Update this each new semester.</p>
+            <h2 className="font-semibold text-lg">Canvas connection</h2>
+            <p className="text-sm text-muted-foreground">
+              Give the app read access to your Canvas so it can pull real assignments, descriptions, and files.
+            </p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="canvas">Canvas Calendar Feed URL</Label>
-            <Input
-              id="canvas"
-              value={cfg.canvasFeedUrl}
-              onChange={(e) => update({ canvasFeedUrl: e.target.value })}
-              placeholder="https://canvas.../feeds/calendars/...ics"
-            />
+
+          <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm space-y-3">
+            <p className="font-semibold text-foreground">How to get your Canvas access token (about 60 seconds):</p>
+            <ol className="list-decimal pl-5 space-y-1.5 text-muted-foreground">
+              <li>Log in to your school's Canvas in another tab.</li>
+              <li>Look at the URL — copy the part right after <code className="text-xs bg-background px-1.5 py-0.5 rounded">https://</code> (e.g. <code className="text-xs bg-background px-1.5 py-0.5 rounded">canvas.school.edu</code>). Paste it in <span className="font-medium text-foreground">Canvas domain</span> below.</li>
+              <li>In Canvas, click <span className="font-medium text-foreground">Account</span> (top-left) → <span className="font-medium text-foreground">Settings</span>.</li>
+              <li>Scroll down to <span className="font-medium text-foreground">Approved Integrations</span> and click <span className="font-medium text-foreground">+ New Access Token</span>.</li>
+              <li>Purpose: type <code className="text-xs bg-background px-1.5 py-0.5 rounded">Command Center</code>. Leave the expiry blank. Click <span className="font-medium text-foreground">Generate Token</span>.</li>
+              <li>Copy the long token shown (Canvas only shows it once) and paste it in <span className="font-medium text-foreground">Canvas access token</span> below.</li>
+              <li>Save. You're done — assignments and direct links will appear on your dashboard.</li>
+            </ol>
+            <p className="text-xs text-muted-foreground pt-1">
+              The token is read-only from your side — nothing in Canvas can be changed from here. You can revoke it anytime from the same Canvas page.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="canvas-domain">Canvas domain</Label>
+              <Input
+                id="canvas-domain"
+                value={cfg.canvasDomain}
+                onChange={(e) => update({ canvasDomain: e.target.value })}
+                placeholder="canvas.school.edu"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="canvas-token">Canvas access token</Label>
+              <Input
+                id="canvas-token"
+                type="password"
+                value={cfg.canvasApiToken}
+                onChange={(e) => update({ canvasApiToken: e.target.value })}
+                placeholder="Paste the long token from Canvas"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-border/60">
+            <details className="text-sm">
+              <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                Don't want to use a token? Use the calendar feed instead (no assignment links or files)
+              </summary>
+              <div className="mt-3 space-y-2">
+                <Label htmlFor="canvas">Canvas Calendar Feed URL</Label>
+                <Input
+                  id="canvas"
+                  value={cfg.canvasFeedUrl}
+                  onChange={(e) => update({ canvasFeedUrl: e.target.value })}
+                  placeholder="https://canvas.../feeds/calendars/...ics"
+                />
+                <p className="text-xs text-muted-foreground">
+                  In Canvas: Calendar → Calendar Feed (bottom-right) → copy the <code>.ics</code> URL.
+                </p>
+              </div>
+            </details>
           </div>
         </Card>
 
