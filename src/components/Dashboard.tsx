@@ -151,6 +151,21 @@ export function Dashboard() {
     if (credited) saveCleared(cleared);
   }, [rawAssignments, completeQuest, recordOnTime]);
 
+  // Soft consequences: penalty/refund tracking, mood, perfect-day, tarnish.
+  const consequenceItems = useMemo(
+    () =>
+      rawAssignments.map((a) => ({
+        id: a.id,
+        dueAt: new Date(a.dueAt),
+        submitted: a.submitted,
+      })),
+    [rawAssignments],
+  );
+  const consequences = useConsequences({
+    assignments: consequenceItems,
+    onXpDelta: applyXpDelta,
+  });
+
   // Theme mastery: when all 5 daily quests are done for the current theme,
   // record one arc-complete day. Fires once per day per theme via a localStorage flag.
   useEffect(() => {
