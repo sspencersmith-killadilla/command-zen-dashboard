@@ -73,13 +73,13 @@ function GuidePage() {
             The complete guide
           </Badge>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            How Winston works.
+            How it works.
           </h1>
           <p className="text-lg text-muted-foreground mt-3 max-w-2xl">
-            Winston is a quiet study companion that watches your Canvas
-            assignments, breaks the day into five small steps, and gives you a
-            character to do it with. This is the whole map — every system,
-            every theme, every face.
+            A quiet study companion that watches your Canvas assignments,
+            breaks the day into five small steps, and gives you a character
+            to do it with. This is the whole map — every system, every
+            theme, every face.
           </p>
 
           {/* Table of contents */}
