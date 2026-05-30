@@ -285,11 +285,23 @@ function SettingsPage() {
           </Button>
         </Card>
 
-        <Card className="p-6 border-border/60">
+        <Card className="p-6 border-border/60 flex items-center justify-between flex-wrap gap-3">
           <Button variant="ghost" onClick={resetOnboarding} className="text-muted-foreground">
             <RotateCcw className="h-4 w-4 mr-1.5" /> Re-run onboarding
           </Button>
+          <Button
+            onClick={() => {
+              toast.success("Settings saved");
+              navigate({ to: "/" });
+            }}
+          >
+            <Check className="h-4 w-4 mr-1.5" /> Save & return to Dashboard
+          </Button>
         </Card>
+
+        <p className="text-xs text-muted-foreground text-center -mt-2">
+          Changes save automatically as you edit. Use the button above when you're done — no need to re-run setup.
+        </p>
       </main>
     </div>
   );
