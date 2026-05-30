@@ -17,17 +17,28 @@ export function CompanionAvatar({
   companionId,
   size = "md",
   className = "",
+  mood = "happy",
 }: {
   companionId?: string;
   size?: Size;
   className?: string;
+  mood?: "happy" | "concerned" | "sad";
 }) {
   const companion = getCompanion(companionId);
   const px = SIZE_PX[size];
+  // Soft-consequence mood: desaturate + droop. Never grayscale to zero.
+  const moodFilter =
+    mood === "sad"
+      ? "saturate(0.35) brightness(0.92)"
+      : mood === "concerned"
+        ? "saturate(0.7)"
+        : "none";
+  const moodTilt =
+    mood === "sad" ? "rotate(-4deg)" : mood === "concerned" ? "rotate(-1.5deg)" : "none";
   return (
     <div
       className={`relative inline-block companion-frame ${className}`}
-      style={{ width: px, height: px }}
+      style={{ width: px, height: px, filter: moodFilter }}
       aria-hidden
     >
       <div
@@ -35,9 +46,10 @@ export function CompanionAvatar({
         style={{
           background: `radial-gradient(circle, ${companion.glow} 0%, transparent 65%)`,
           filter: "blur(6px)",
+          opacity: mood === "happy" ? 1 : 0.55,
         }}
       />
-      <div className="absolute inset-0 companion-bob">
+      <div className="absolute inset-0 companion-bob" style={{ transform: moodTilt }}>
         <div className="absolute inset-0 companion-sway">
           <img
             src={companion.sprite}
