@@ -85,6 +85,29 @@ export function ChatPanel() {
 
   const isBusy = status === "submitted" || status === "streaming";
 
+  function quickAsk(text: string) {
+    if (isBusy) return;
+    sendMessage({ text });
+  }
+
+  const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string }[] = [
+    {
+      label: "Daily Reset",
+      icon: <Sunrise className="h-3.5 w-3.5" />,
+      prompt: DAILY_RESET_PROMPT,
+    },
+    {
+      label: "What's due this week?",
+      icon: <ListChecks className="h-3.5 w-3.5" />,
+      prompt: "Walk me through everything due in the next 7 days from my Canvas list, grouped by class, in priority order.",
+    },
+    {
+      label: "Break down my next assignment",
+      icon: <Target className="h-3.5 w-3.5" />,
+      prompt: "Take my single most urgent upcoming assignment and break it into concrete 25-minute work blocks I can knock out today.",
+    },
+  ];
+
   return (
     <Card
       className="border-border/60 overflow-hidden flex flex-col h-[640px]"
