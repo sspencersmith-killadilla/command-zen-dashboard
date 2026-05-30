@@ -73,24 +73,33 @@ export function CompanionCloseup({
               transformOrigin: "50% 30%",
             }}
           >
-            <img
-              src={companion.sprite}
-              alt=""
-              draggable={false}
-              style={{
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-                width: "220%",
-                height: "220%",
-                // Sprites place the eyes/face at ~28% from the top of the
-                // square canvas. translateY(-28%) puts that feature line at
-                // the circle's vertical midpoint regardless of zoom level.
-                transform: "translate(-50%, -28%)",
-                imageRendering: "pixelated",
-                filter: "drop-shadow(0 3px 0 oklch(0.15 0.04 260 / 0.5))",
-              }}
-            />
+            {(() => {
+              const fo = companion.faceOffset ?? {};
+              const x = fo.x ?? 0;
+              const y = fo.y ?? -28;
+              const zoom = fo.zoom ?? 220;
+              return (
+                <img
+                  src={companion.sprite}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    position: "absolute",
+                    left: `${50 + x}%`,
+                    top: "50%",
+                    width: `${zoom}%`,
+                    height: `${zoom}%`,
+                    // Sprites place the eyes/face at ~28% from the top of the
+                    // square canvas. translateY(-28%) puts that feature line at
+                    // the circle's vertical midpoint regardless of zoom level.
+                    // Per-companion faceOffset overrides outliers (e.g. Kaito).
+                    transform: `translate(-50%, ${y}%)`,
+                    imageRendering: "pixelated",
+                    filter: "drop-shadow(0 3px 0 oklch(0.15 0.04 260 / 0.5))",
+                  }}
+                />
+              );
+            })()}
           </div>
         </div>
         {/* name plate */}
