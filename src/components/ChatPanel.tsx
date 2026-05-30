@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Conversation,
   ConversationContent,
-  ConversationEmptyState,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import { Message, MessageContent } from "@/components/ai-elements/message";
@@ -23,7 +22,8 @@ import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
 import { Trash2 } from "lucide-react";
-import { BarnabyAvatar } from "@/components/BarnabyAvatar";
+import { CompanionAvatar } from "@/components/CompanionAvatar";
+import { useCompanions } from "@/lib/companions";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -33,6 +33,7 @@ export function ChatPanel() {
   const qc = useQueryClient();
   const fetchMessages = useServerFn(getMyChatMessages);
   const clearChat = useServerFn(clearMyChat);
+  const { active, activeId } = useCompanions();
 
   const { data: initialMessages, isLoading } = useQuery({
     queryKey: ["chat-messages"],
@@ -50,15 +51,15 @@ export function ChatPanel() {
           if (token) headers.set("Authorization", `Bearer ${token}`);
           return fetch(input, { ...init, headers });
         },
+        body: { companionId: activeId },
       }),
-    []
+    [activeId]
   );
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport,
   });
 
-  // Hydrate persisted messages once they load
   const hydratedRef = useRef(false);
   useEffect(() => {
     if (!hydratedRef.current && initialMessages && initialMessages.length > 0) {
@@ -80,6 +81,7 @@ export function ChatPanel() {
   });
 
   const isBusy = status === "submitted" || status === "streaming";
+  const name = active?.name ?? "Companion";
 
   return (
     <Card
@@ -88,10 +90,12 @@ export function ChatPanel() {
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 bg-card">
         <div className="flex items-center gap-3">
-          <BarnabyAvatar size="md" />
+          {activeId && <CompanionAvatar id={activeId} size="md" />}
           <div>
-            <h2 className="font-semibold text-lg leading-tight">Barnaby</h2>
-            <p className="text-xs text-muted-foreground">Your study companion · Lv. ∞</p>
+            <h2 className="font-semibold text-lg leading-tight">{name}</h2>
+            <p className="text-xs text-muted-foreground">
+              {active ? `${active.species} · ${active.tagline}` : "Your study companion"}
+            </p>
           </div>
         </div>
         <Button
@@ -112,11 +116,11 @@ export function ChatPanel() {
             <div className="text-sm text-muted-foreground p-4">Loading…</div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center text-center py-8 px-6 gap-4">
-              <BarnabyAvatar size="lg" />
+              {activeId && <CompanionAvatar id={activeId} size="lg" />}
               <div>
-                <h3 className="font-semibold text-base">Barnaby is ready.</h3>
+                <h3 className="font-semibold text-base">{name} is ready.</h3>
                 <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-                  Ask him to break down an assignment, plan your day, or quiz you on a concept.
+                  Ask {name} to break down an assignment, plan your day, or quiz you on a concept.
                 </p>
               </div>
             </div>
@@ -166,7 +170,7 @@ export function ChatPanel() {
           <PromptInputTextarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Barnaby anything…"
+            placeholder={`Ask ${name} anything…`}
             autoFocus
           />
           <PromptInputFooter className="justify-end">
