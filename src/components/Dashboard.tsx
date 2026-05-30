@@ -345,12 +345,32 @@ export function Dashboard() {
             </DropdownMenu>
 
             <Link
+              to="/avatar"
+              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border pl-1 pr-3 py-1 transition-colors"
+              aria-label="Customize avatar"
+              title="Customize your avatar"
+            >
+              <PlayerAvatar parts={avatarState} equipped={avatarState.equipped} size="sm" />
+              <span className="hidden sm:inline text-xs font-medium text-muted-foreground">You</span>
+            </Link>
+
+            <Link
+              to="/locker"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
+              aria-label="Locker"
+            >
+              <Shirt className="h-4 w-4" />
+              <span className="hidden sm:inline">Locker</span>
+            </Link>
+
+            <Link
               to="/guide"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
             >
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Guide</span>
             </Link>
+
 
             <Link
               to="/settings"
