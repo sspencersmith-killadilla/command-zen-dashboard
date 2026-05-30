@@ -384,12 +384,12 @@ function GuidePage() {
         </Section>
 
 
-        {/* 9. Bios */}
+        {/* 11. Bios */}
         <section id="bios" className="scroll-mt-20">
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="h-5 w-5 text-primary" />
             <h2 className="text-2xl font-semibold tracking-tight">
-              12. Character biographies
+              11. Character biographies
             </h2>
           </div>
           <p className="text-muted-foreground mb-8">
