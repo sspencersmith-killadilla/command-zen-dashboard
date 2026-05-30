@@ -96,8 +96,9 @@ function saveCleared(s: Set<string>) {
 
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { state, completeQuest } = useGamification();
+  const { state, completeQuest, todayQuestsDone } = useGamification();
   const playerLevel = rankFor(state.xp).level;
+  const { state: avatarState, recordOnTime, recordMastery } = useAvatar();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
   const currentCompanion = getCompanion(cfg.companionId);
   const currentThemeId = currentCompanion.theme;
