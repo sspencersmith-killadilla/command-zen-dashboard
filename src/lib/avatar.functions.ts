@@ -26,9 +26,16 @@ type Row = {
   hair_style: string;
   hair_color: string;
   eye_style: string;
+  eye_color: string;
   brow_style: string;
+  facial_hair: string;
   mouth_style: string;
+  lip_color: string;
+  freckles: string;
+  glasses: string;
+  earrings: string;
   outfit_base: string;
+  outfit_color: string;
   background: string;
   equipped: unknown;
   on_time_count: number;
@@ -36,29 +43,34 @@ type Row = {
 };
 
 const SELECT =
-  "body_type,skin_tone,hair_style,hair_color,eye_style,brow_style,mouth_style,outfit_base,background,equipped,on_time_count,mastery_progress";
+  "body_type,skin_tone,hair_style,hair_color,eye_style,eye_color,brow_style,facial_hair,mouth_style,lip_color,freckles,glasses,earrings,outfit_base,outfit_color,background,equipped,on_time_count,mastery_progress";
 
 function rowToParts(r: Row): AvatarParts {
   return {
-    body_type:   r.body_type,
-    skin_tone:   r.skin_tone,
-    hair_style:  r.hair_style,
-    hair_color:  r.hair_color,
-    eye_style:   r.eye_style,
-    brow_style:  r.brow_style,
-    mouth_style: r.mouth_style,
-    outfit_base: r.outfit_base,
-    background:  r.background,
+    body_type:    r.body_type,
+    skin_tone:    r.skin_tone,
+    hair_style:   r.hair_style,
+    hair_color:   r.hair_color,
+    eye_style:    r.eye_style,
+    eye_color:    r.eye_color ?? DEFAULT_AVATAR.eye_color,
+    brow_style:   r.brow_style,
+    facial_hair:  r.facial_hair ?? DEFAULT_AVATAR.facial_hair,
+    mouth_style:  r.mouth_style,
+    lip_color:    r.lip_color ?? DEFAULT_AVATAR.lip_color,
+    freckles:     r.freckles ?? DEFAULT_AVATAR.freckles,
+    glasses:      r.glasses ?? DEFAULT_AVATAR.glasses,
+    earrings:     r.earrings ?? DEFAULT_AVATAR.earrings,
+    outfit_base:  r.outfit_base,
+    outfit_color: r.outfit_color ?? DEFAULT_AVATAR.outfit_color,
+    background:   r.background,
   };
 }
 
-/** Fetch (and lazily create) the current user's avatar + inventory. */
 export const getMyAvatar = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<AvatarState> => {
     const { supabase, userId } = context;
 
-    // Avatar row (create if missing — also grants seed inventory).
     let { data, error } = await supabase
       .from("user_avatar")
       .select(SELECT)
@@ -74,7 +86,6 @@ export const getMyAvatar = createServerFn({ method: "GET" })
         .single();
       if (insErr) throw new Error(insErr.message);
       data = inserted;
-      // Grant seed inventory (idempotent — UNIQUE constraint protects us).
       if (SEED_INVENTORY.length > 0) {
         await supabase
           .from("user_inventory")
@@ -100,18 +111,23 @@ export const getMyAvatar = createServerFn({ method: "GET" })
     };
   });
 
-// ---- Update base parts ----
-
 const partsPatchSchema = z.object({
-  body_type:   z.string().max(40).optional(),
-  skin_tone:   z.string().max(40).optional(),
-  hair_style:  z.string().max(40).optional(),
-  hair_color:  z.string().max(40).optional(),
-  eye_style:   z.string().max(40).optional(),
-  brow_style:  z.string().max(40).optional(),
-  mouth_style: z.string().max(40).optional(),
-  outfit_base: z.string().max(40).optional(),
-  background:  z.string().max(40).optional(),
+  body_type:    z.string().max(40).optional(),
+  skin_tone:    z.string().max(40).optional(),
+  hair_style:   z.string().max(40).optional(),
+  hair_color:   z.string().max(40).optional(),
+  eye_style:    z.string().max(40).optional(),
+  eye_color:    z.string().max(40).optional(),
+  brow_style:   z.string().max(40).optional(),
+  facial_hair:  z.string().max(40).optional(),
+  mouth_style:  z.string().max(40).optional(),
+  lip_color:    z.string().max(40).optional(),
+  freckles:     z.string().max(40).optional(),
+  glasses:      z.string().max(40).optional(),
+  earrings:     z.string().max(40).optional(),
+  outfit_base:  z.string().max(40).optional(),
+  outfit_color: z.string().max(40).optional(),
+  background:   z.string().max(40).optional(),
 });
 
 export const updateAvatarParts = createServerFn({ method: "POST" })
@@ -127,8 +143,6 @@ export const updateAvatarParts = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ---- Equip / unequip ----
-
 const equipSchema = z.object({
   slot: z.enum(["hat", "top", "accessory", "frame"]),
   itemId: z.string().min(1).max(64).nullable(),
@@ -140,7 +154,6 @@ export const equipItem = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // If equipping (not unequipping), verify ownership first.
     if (data.itemId) {
       const { data: ownsRow, error: ownErr } = await supabase
         .from("user_inventory")
@@ -171,8 +184,6 @@ export const equipItem = createServerFn({ method: "POST" })
     return { ok: true, equipped };
   });
 
-// ---- Earning: on-time assignment completion ----
-
 export type DropResult = { newItems: string[] };
 
 export const recordOnTimeCompletion = createServerFn({ method: "POST" })
@@ -194,7 +205,6 @@ export const recordOnTimeCompletion = createServerFn({ method: "POST" })
       .update({ on_time_count: next })
       .eq("user_id", userId);
 
-    // Drop on every Nth.
     if (next % ON_TIME_DROP_EVERY !== 0) return { newItems: [] };
 
     const { data: owned } = await supabase
@@ -210,8 +220,6 @@ export const recordOnTimeCompletion = createServerFn({ method: "POST" })
       .insert({ user_id: userId, item_id: drop, source: "on_time" });
     return { newItems: [drop] };
   });
-
-// ---- Earning: theme mastery (full arc completed for a theme that day) ----
 
 const masterySchema = z.object({ theme: z.string().min(1).max(40) });
 
