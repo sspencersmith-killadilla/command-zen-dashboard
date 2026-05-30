@@ -3,7 +3,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getCompanion } from "@/lib/companions";
-import { fetchCanvasAssignmentsFromUrl } from "@/lib/canvas.server";
+import { fetchCanvasAssignmentsFromConfig } from "@/lib/canvas.server";
 
 type CourseHub = { id: string; name: string; notebookUrl: string };
 
@@ -70,16 +70,18 @@ export const Route = createFileRoute("/api/chat")({
         // Pull the user's full study context in one round-trip
         const { data: cfgRow } = await supabaseAdmin
           .from("user_configs")
-          .select("companion_id,display_name,canvas_feed_url,courses")
+          .select("companion_id,display_name,canvas_feed_url,canvas_api_token,canvas_domain,courses")
           .eq("user_id", userId)
           .maybeSingle();
 
         const companion = getCompanion(cfgRow?.companion_id ?? null);
         const courses: CourseHub[] = Array.isArray(cfgRow?.courses) ? (cfgRow.courses as CourseHub[]) : [];
 
-        const { assignments, error: canvasError } = await fetchCanvasAssignmentsFromUrl(
-          cfgRow?.canvas_feed_url?.trim() ?? "",
-        );
+        const { assignments, error: canvasError } = await fetchCanvasAssignmentsFromConfig({
+          apiToken: cfgRow?.canvas_api_token ?? "",
+          domain: cfgRow?.canvas_domain ?? "",
+          feedUrl: cfgRow?.canvas_feed_url ?? "",
+        });
 
         const contextBlock = buildContextBlock({
           displayName: cfgRow?.display_name ?? "",
