@@ -320,7 +320,7 @@ function GuidePage() {
             <ol className="list-decimal list-outside ml-5 text-sm space-y-1.5">
               <li>Open <Link to="/settings" className="underline">Settings</Link>.</li>
               <li>In the <strong>Canvas</strong> section, paste your Canvas domain (just the host, e.g. <code className="text-xs">school.instructure.com</code>) and the token you copied.</li>
-              <li>Click <strong>Save</strong>. Winston validates the token and starts pulling upcoming assignments.</li>
+              <li>Click <strong>Save</strong>. The token is validated and upcoming assignments start pulling in.</li>
               <li>To rotate or revoke it later, regenerate the token in Canvas and paste the new value.</li>
             </ol>
           </Card>
