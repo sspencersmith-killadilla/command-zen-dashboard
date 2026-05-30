@@ -23,7 +23,6 @@ import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
 import { Sparkles, Trash2 } from "lucide-react";
-import alchemyLogo from "@/assets/alchemy-mark.png";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -88,9 +87,8 @@ export function ChatPanel() {
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 bg-card">
         <div className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-lg bg-[image:var(--gradient-hero)] flex items-center justify-center overflow-hidden">
-            <img src={alchemyLogo} alt="" className="h-6 w-6 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-            <Sparkles className="h-4 w-4 text-primary-foreground absolute" aria-hidden />
+          <div className="h-9 w-9 rounded-lg bg-[image:var(--gradient-hero)] flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-primary-foreground" aria-hidden />
           </div>
           <div>
             <h2 className="font-semibold text-lg leading-tight">Winston</h2>
