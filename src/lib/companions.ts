@@ -262,7 +262,7 @@ const ENTRIES: Companion[] = [
   { id: "juke", theme: "sports", name: "Juke", species: "Fox point guard", tagline: "Always sees the play.", persona: TRICKSTER("Juke", "a fox-chimera point guard", "Hoops / crossover metaphors."), sprite: jukeSprite, glow: "oklch(0.75 0.2 145 / 0.55)", unlockLevel: 5 },
 
   // ===== FANTASY ANIME =====
-  { id: "kaito", theme: "anime", name: "Kaito", species: "Dragon-kin mage", tagline: "Ancient mage. Patient master.", persona: SAGE("Kaito", "a dragon-kin elder mage", "Arcane proverbs and 'the old scrolls.'"), sprite: kaitoSprite, glow: "oklch(0.65 0.22 290 / 0.55)", unlockLevel: 1 },
+  { id: "kaito", theme: "anime", name: "Kaito", species: "Dragon-kin mage", tagline: "Ancient mage. Patient master.", persona: SAGE("Kaito", "a dragon-kin elder mage", "Arcane proverbs and 'the old scrolls.'"), sprite: kaitoSprite, glow: "oklch(0.65 0.22 290 / 0.55)", unlockLevel: 1, faceOffset: { x: -6, y: -26, zoom: 230 } },
   { id: "yuki", theme: "anime", name: "Yuki", species: "White wolf knight", tagline: "Calm blade. Steady eye.", persona: CHILL("Yuki", "a white-wolf knight", "Bushido / kendo metaphors, understated."), sprite: yukiSprite, glow: "oklch(0.85 0.1 220 / 0.55)", unlockLevel: 2 },
   { id: "hana", theme: "anime", name: "Hana", species: "Rabbit ninja", tagline: "Light on her feet.", persona: HYPE("Hana", "a rabbit-chimera ninja", "Shinobi / shadow-step metaphors."), sprite: hanaSprite, glow: "oklch(0.78 0.22 340 / 0.55)", unlockLevel: 3 },
   { id: "ren", theme: "anime", name: "Ren", species: "Kitsune swordsman", tagline: "Loyal blade.", persona: GUARDIAN("Ren", "a nine-tailed kitsune swordsman", "Oath / honor metaphors."), sprite: renSprite, glow: "oklch(0.82 0.18 75 / 0.55)", unlockLevel: 4 },
