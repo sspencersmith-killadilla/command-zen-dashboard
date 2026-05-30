@@ -145,6 +145,22 @@ export function ChatPanel() {
         </Button>
       </div>
 
+      {/* Quick actions — aimed at the companion, replaces the old Gemini copy card */}
+      <div className="flex flex-wrap gap-2 px-4 py-3 border-b border-border/60 bg-muted/40">
+        {QUICK_ACTIONS.map((qa) => (
+          <button
+            key={qa.label}
+            type="button"
+            onClick={() => quickAsk(qa.prompt)}
+            disabled={isBusy}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-50"
+          >
+            {qa.icon}
+            {qa.label}
+          </button>
+        ))}
+      </div>
+
       <Conversation className="flex-1">
         <ConversationContent>
           {isLoading && !hydratedRef.current ? (
