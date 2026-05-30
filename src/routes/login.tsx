@@ -75,7 +75,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-background">
       <Card className="w-full max-w-md p-8 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
         <div className="text-center mb-6">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[image:var(--gradient-hero)] mb-4">
