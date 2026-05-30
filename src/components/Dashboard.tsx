@@ -294,6 +294,9 @@ export function Dashboard() {
                     </DropdownMenuItem>
                   );
                 })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link
               to="/settings"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
