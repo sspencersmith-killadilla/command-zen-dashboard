@@ -275,7 +275,7 @@ export function Dashboard() {
           )}
 
           <p className="mt-5 text-xs text-muted-foreground">
-            Tiered alerts: 2 weeks → 1 week → 2 days. Push delivery via Twilio / FCM when enabled.
+            Pulled live from your Canvas Calendar Feed. Tiered alerts: 2 weeks → 1 week → 2 days.
           </p>
         </Card>
 
