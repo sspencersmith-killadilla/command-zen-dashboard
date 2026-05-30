@@ -19,6 +19,7 @@ import { Route as AuthenticatedRecallRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
+import { Route as AuthenticatedFocusRouteImport } from './routes/_authenticated/focus'
 import { Route as AuthenticatedAvatarRouteImport } from './routes/_authenticated/avatar'
 import { Route as AuthenticatedRecallDeckRouteImport } from './routes/_authenticated/recall.$deck'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
@@ -72,6 +73,11 @@ const AuthenticatedGuideRoute = AuthenticatedGuideRouteImport.update({
   path: '/guide',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedFocusRoute = AuthenticatedFocusRouteImport.update({
+  id: '/focus',
+  path: '/focus',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAvatarRoute = AuthenticatedAvatarRouteImport.update({
   id: '/avatar',
   path: '/avatar',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/avatar': typeof AuthenticatedAvatarRoute
+  '/focus': typeof AuthenticatedFocusRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/avatar': typeof AuthenticatedAvatarRoute
+  '/focus': typeof AuthenticatedFocusRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/avatar': typeof AuthenticatedAvatarRoute
+  '/_authenticated/focus': typeof AuthenticatedFocusRoute
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/locker': typeof AuthenticatedLockerRoute
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/avatar'
+    | '/focus'
     | '/guide'
     | '/locker'
     | '/plan'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/avatar'
+    | '/focus'
     | '/guide'
     | '/locker'
     | '/plan'
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/avatar'
+    | '/_authenticated/focus'
     | '/_authenticated/guide'
     | '/_authenticated/locker'
     | '/_authenticated/plan'
@@ -258,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/focus': {
+      id: '/_authenticated/focus'
+      path: '/focus'
+      fullPath: '/focus'
+      preLoaderRoute: typeof AuthenticatedFocusRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/avatar': {
       id: '/_authenticated/avatar'
       path: '/avatar'
@@ -295,6 +314,7 @@ const AuthenticatedRecallRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAvatarRoute: typeof AuthenticatedAvatarRoute
+  AuthenticatedFocusRoute: typeof AuthenticatedFocusRoute
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
   AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
   AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
@@ -306,6 +326,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAvatarRoute: AuthenticatedAvatarRoute,
+  AuthenticatedFocusRoute: AuthenticatedFocusRoute,
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
   AuthenticatedLockerRoute: AuthenticatedLockerRoute,
   AuthenticatedPlanRoute: AuthenticatedPlanRoute,
