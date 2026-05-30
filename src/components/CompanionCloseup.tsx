@@ -32,7 +32,7 @@ export function CompanionCloseup({
 
   return (
     <div
-      className="fixed z-50 pointer-events-none bottom-6 right-6 sm:bottom-10 sm:right-10"
+      className="fixed z-50 pointer-events-none top-24 right-6 sm:top-28 sm:right-10"
       aria-hidden
     >
       <div
@@ -80,10 +80,12 @@ export function CompanionCloseup({
               style={{
                 position: "absolute",
                 left: "50%",
-                top: "8%",
-                width: "260%",
-                height: "260%",
-                transform: "translateX(-50%)",
+                top: "50%",
+                width: "210%",
+                height: "210%",
+                // Sprites place the face in the upper-middle of the canvas.
+                // Shift up-left of center so the face lands in the circle's middle.
+                transform: "translate(-50%, -38%)",
                 imageRendering: "pixelated",
                 filter: "drop-shadow(0 3px 0 oklch(0.15 0.04 260 / 0.5))",
               }}
