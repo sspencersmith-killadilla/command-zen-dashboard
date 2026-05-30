@@ -103,7 +103,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
                 <Input
                   id="name"
                   autoFocus
-                  placeholder="e.g. Winston"
+                  placeholder="e.g. Barnaby"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                 />

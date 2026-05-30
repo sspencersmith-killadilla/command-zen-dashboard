@@ -109,7 +109,7 @@ function LoginPage() {
           {mode === "signup" && (
             <div className="space-y-1.5">
               <Label htmlFor="name">Your name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Winston" />
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Barnaby" />
             </div>
           )}
           <div className="space-y-1.5">
