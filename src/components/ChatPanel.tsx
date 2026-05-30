@@ -86,13 +86,11 @@ export function ChatPanel() {
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 bg-card">
-        <div className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-lg bg-[image:var(--gradient-hero)] flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-primary-foreground" aria-hidden />
-          </div>
+        <div className="flex items-center gap-3">
+          <BarnabyAvatar size="md" />
           <div>
-            <h2 className="font-semibold text-lg leading-tight">Winston</h2>
-            <p className="text-xs text-muted-foreground">Your alchemist study companion</p>
+            <h2 className="font-semibold text-lg leading-tight">Barnaby</h2>
+            <p className="text-xs text-muted-foreground">Your study companion · Lv. ∞</p>
           </div>
         </div>
         <Button
@@ -112,10 +110,16 @@ export function ChatPanel() {
           {isLoading && !hydratedRef.current ? (
             <div className="text-sm text-muted-foreground p-4">Loading…</div>
           ) : messages.length === 0 ? (
-            <ConversationEmptyState
-              title="Equivalent exchange."
-              description="Ask Winston to break down an assignment, plan your day, or quiz you on a concept."
-            />
+            <div className="flex flex-col items-center text-center py-8 px-6 gap-4">
+              <BarnabyAvatar size="lg" />
+              <div>
+                <h3 className="font-semibold text-base">Barnaby is ready.</h3>
+                <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+                  Ask him to break down an assignment, plan your day, or quiz you on a concept.
+                </p>
+              </div>
+            </div>
+          )
           ) : (
             messages.map((m) => {
               const text = partsToText(m.parts);
