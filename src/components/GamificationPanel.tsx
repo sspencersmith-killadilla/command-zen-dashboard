@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Flame, Trophy, Zap, Lock, Check } from "lucide-react";
 import {
   ACHIEVEMENTS,
