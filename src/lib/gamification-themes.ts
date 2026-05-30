@@ -661,6 +661,69 @@ const FINANCE: ThemePack = {
   achievementNames: mkAchievements("First Print", "Opening Bell", "Research Stack"),
 };
 
+const HEROES: ThemePack = {
+  arcTitle: "Today's Patrol",
+  arcSubtitle: "Five calls on the radio. Save the city by sundown.",
+  arcCompletePhrase: "Patrol over. City sleeps tonight because of you.",
+  accent: "oklch(0.72 0.24 25)",
+  bgHue: "25",
+  hudLabel: "Hero Comm",
+  ranks: mkRanks(
+    ["Cadet", "Rookie", "Solo", "Hero", "Avenger", "Captain", "Icon", "Legend"],
+    ["Mask issued", "First save", "First solo case", "Known by name", "On the team", "Leads the team", "Statue downtown", "Origin retold forever"],
+  ),
+  quests: [
+    { id: Q.timeline, label: "Patrol the city", outcome: "Sector clear", icon: Star, xp: 10 },
+    { id: Q.notebook, label: "Brief at HQ", outcome: "Intel reviewed", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Train in the danger room", outcome: "Form sharpened", icon: Dumbbell, xp: 20 },
+    { id: Q.chat, label: "Suit up with the team", outcome: "Comms hot", icon: Shield, xp: 15 },
+    { id: Q.assignment, label: "Answer one call", outcome: "Civilians safe", icon: Rocket, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Save", "Suit Up", "HQ Briefing"),
+};
+
+const REALITY: ThemePack = {
+  arcTitle: "Today's Call Sheet",
+  arcSubtitle: "Five segments to shoot. Don't break the fourth wall.",
+  arcCompletePhrase: "And… we're clear. Print it.",
+  accent: "oklch(0.72 0.25 340)",
+  bgHue: "330",
+  hudLabel: "Production Slate",
+  ranks: mkRanks(
+    ["Pre-show", "Cast", "Episode 1", "Jury", "Final Three", "Finale", "Champion", "All-Stars"],
+    ["Casting tape", "Make it in", "Aired first", "Voted off, then jury", "Endgame", "Live finale", "Confetti", "They invite you back"],
+  ),
+  quests: [
+    { id: Q.timeline, label: "Read the call sheet", outcome: "Call reviewed", icon: Clapperboard, xp: 10 },
+    { id: Q.notebook, label: "Pre-show interview", outcome: "Soundbite captured", icon: Mic, xp: 15 },
+    { id: Q.reset, label: "Strategy session", outcome: "Alliance set", icon: Lightbulb, xp: 20 },
+    { id: Q.chat, label: "Hit the confessional", outcome: "Confessional in the can", icon: Camera, xp: 15 },
+    { id: Q.assignment, label: "Survive tribal council", outcome: "Still in the house", icon: Trophy, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Confessional", "Pre-Show Ready", "Watched the Cuts"),
+};
+
+const MODERN: ThemePack = {
+  arcTitle: "Today's Plan",
+  arcSubtitle: "Five things that actually matter today. Nothing more.",
+  arcCompletePhrase: "Done for today. Real done — log off.",
+  accent: "oklch(0.65 0.08 30)",
+  bgHue: "30",
+  hudLabel: "Today",
+  ranks: mkRanks(
+    ["Apprentice", "Associate", "Manager", "Lead", "Director", "VP", "Partner", "Principal"],
+    ["Learning the role", "Owns the work", "Owns the team", "Owns the function", "Owns the org", "Sets the direction", "Owns the firm", "Defines the practice"],
+  ),
+  quests: [
+    { id: Q.timeline, label: "Plan the day", outcome: "Plan set", icon: Clipboard, xp: 10 },
+    { id: Q.notebook, label: "Clear the inbox", outcome: "Inbox at zero-ish", icon: BookOpen, xp: 15 },
+    { id: Q.reset, label: "Deep-work block", outcome: "One real hour", icon: Target, xp: 20 },
+    { id: Q.chat, label: "Take the actual break", outcome: "Stepped away", icon: Sprout, xp: 15 },
+    { id: Q.assignment, label: "Close one loop", outcome: "One thing finished", icon: Briefcase, xp: 40 },
+  ],
+  achievementNames: mkAchievements("First Win", "Real Reset", "Notes Kept"),
+};
+
 export const THEME_PACKS: Partial<Record<ThemeId, ThemePack>> = {
   mythic: MYTHIC,
   sports: SPORTS,
@@ -682,6 +745,9 @@ export const THEME_PACKS: Partial<Record<ThemeId, ThemePack>> = {
   weather: WEATHER,
   cartography: CARTOGRAPHY,
   museum: MUSEUM,
+  heroes: HEROES,
+  reality: REALITY,
+  modern: MODERN,
 };
 
 export function getThemePack(theme: ThemeId | string | null | undefined): ThemePack {
