@@ -1,10 +1,18 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   CalendarClock,
   BookOpen,
@@ -15,6 +23,8 @@ import {
   Sparkles,
   RefreshCw,
   AlertCircle,
+  ChevronDown,
+  Lock,
 } from "lucide-react";
 import {
   useWinstonConfig,
@@ -24,7 +34,9 @@ import {
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
-import { useGamification } from "@/lib/gamification";
+import { useGamification, rankFor } from "@/lib/gamification";
+import { CompanionAvatar } from "@/components/CompanionAvatar";
+import { COMPANION_LIST, getCompanion } from "@/lib/companions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -50,10 +62,30 @@ function fmtDue(d: Date) {
   return `in ${days}d`;
 }
 
+const CLEARED_KEY = "winston.cleared-assignments.v1";
+function loadCleared(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(CLEARED_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+function saveCleared(s: Set<string>) {
+  try {
+    localStorage.setItem(CLEARED_KEY, JSON.stringify([...s]));
+  } catch {
+    /* ignore */
+  }
+}
+
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { completeQuest } = useGamification();
+  const { state, completeQuest } = useGamification();
+  const playerLevel = rankFor(state.xp).level;
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
+  const currentCompanion = getCompanion(cfg.companionId);
 
   const canvasKey = `${cfg.canvasApiToken ? "api" : "ics"}:${cfg.canvasDomain}:${cfg.canvasFeedUrl}`;
   const canvasQ = useQuery({
@@ -64,9 +96,29 @@ export function Dashboard() {
     refetchOnWindowFocus: false,
   });
 
+  const rawAssignments = canvasQ.data?.assignments ?? [];
+
+  // Auto-credit XP when Canvas reports a submitted assignment we hadn't
+  // previously seen as submitted. No self-reporting.
+  const clearedRef = useRef<Set<string>>(loadCleared());
+  useEffect(() => {
+    const cleared = clearedRef.current;
+    let credited = false;
+    for (const a of rawAssignments) {
+      if (a.submitted && !cleared.has(a.id)) {
+        cleared.add(a.id);
+        if (!credited) {
+          completeQuest("clear-assignment");
+          credited = true;
+        }
+      }
+    }
+    if (credited) saveCleared(cleared);
+  }, [rawAssignments, completeQuest]);
+
   const assignments = useMemo(() => {
-    const raw = canvasQ.data?.assignments ?? [];
-    return raw
+    return rawAssignments
+      .filter((a) => !a.submitted) // hide submitted from the live task list
       .map((a) => ({
         id: a.id,
         title: a.title,
@@ -76,7 +128,12 @@ export function Dashboard() {
         files: a.files ?? [],
       }))
       .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
-  }, [canvasQ.data]);
+  }, [rawAssignments]);
+
+  const recentlySubmitted = useMemo(
+    () => rawAssignments.filter((a) => a.submitted).slice(0, 5),
+    [rawAssignments],
+  );
 
   const canvasError = (cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain))
     ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null)
@@ -95,6 +152,7 @@ export function Dashboard() {
       (c) => c.name.toLowerCase() === code || code.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(code),
     );
   }
+
 
   return (
     <div className="min-h-screen bg-background">
