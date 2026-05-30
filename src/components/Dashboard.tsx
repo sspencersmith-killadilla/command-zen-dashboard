@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import {
   GEMINI_PROMPT,
   type AlertTier,
 } from "@/lib/winston-store";
+import { GamificationPanel } from "@/components/GamificationPanel";
+import { useGamification } from "@/lib/gamification";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -48,11 +50,18 @@ function fmtDue(d: Date) {
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
   const [copied, setCopied] = useState(false);
+  const { completeQuest } = useGamification();
 
   const assignments = useMemo(
     () => getSimulatedAssignments(cfg.courses).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime()),
     [cfg.courses]
   );
+
+  // Award XP just for showing up and scanning the timeline
+  useEffect(() => {
+    const t = setTimeout(() => completeQuest("check-timeline"), 1200);
+    return () => clearTimeout(t);
+  }, [completeQuest]);
 
   function matchCourse(courseCode: string) {
     return cfg.courses.find((c) => c.name.toLowerCase() === courseCode.toLowerCase());
@@ -63,6 +72,7 @@ export function Dashboard() {
       await navigator.clipboard.writeText(GEMINI_PROMPT);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+      completeQuest("copy-prompt");
     } catch {
       /* ignore */
     }
@@ -101,6 +111,10 @@ export function Dashboard() {
           <p className="text-lg text-muted-foreground mt-2">
             Everything's synced. Here's what matters.
           </p>
+        </div>
+
+        <div className="mb-6">
+          <GamificationPanel />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -232,6 +246,7 @@ export function Dashboard() {
                       href={c.notebookUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => completeQuest("open-notebook")}
                       className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-muted/30 transition-all animate-fade-up"
                       style={{ animationDelay: `${i * 50}ms` }}
                     >
