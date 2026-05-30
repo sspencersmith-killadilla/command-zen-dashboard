@@ -318,6 +318,20 @@ export function ChatPanel() {
         companionId={companion.id}
         open={closeup.open}
         intensity={closeup.speaking ? "speaking" : "idle"}
+        canSpeak={messages.some((m) => m.role === "assistant")}
+        isSpeaking={!!speakingId}
+        onToggleSpeak={() => {
+          if (speakingId) {
+            stopMumble();
+            return;
+          }
+          const last = [...messages].reverse().find((m) => m.role === "assistant");
+          if (!last) return;
+          const text = partsToText(last.parts);
+          if (!text.trim()) return;
+          unlockAudio();
+          speak(companion.id, text, last.id);
+        }}
       />
     </Card>
   );
