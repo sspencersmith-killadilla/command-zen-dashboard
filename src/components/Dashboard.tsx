@@ -298,6 +298,14 @@ export function Dashboard() {
             </DropdownMenu>
 
             <Link
+              to="/guide"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Guide</span>
+            </Link>
+
+            <Link
               to="/settings"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
             >
