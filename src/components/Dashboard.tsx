@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -12,14 +14,16 @@ import {
   Settings,
   Bell,
   Sparkles,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import {
   useWinstonConfig,
-  getSimulatedAssignments,
   tierFor,
   GEMINI_PROMPT,
   type AlertTier,
 } from "@/lib/winston-store";
+import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification } from "@/lib/gamification";
@@ -52,11 +56,24 @@ export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
   const [copied, setCopied] = useState(false);
   const { completeQuest } = useGamification();
+  const fetchCanvas = useServerFn(fetchCanvasAssignments);
 
-  const assignments = useMemo(
-    () => getSimulatedAssignments(cfg.courses).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime()),
-    [cfg.courses]
-  );
+  const canvasQ = useQuery({
+    queryKey: ["canvas-assignments", cfg.canvasFeedUrl],
+    queryFn: () => fetchCanvas(),
+    enabled: !!cfg.canvasFeedUrl,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const assignments = useMemo(() => {
+    const raw = canvasQ.data?.assignments ?? [];
+    return raw
+      .map((a) => ({ id: a.id, title: a.title, courseCode: a.courseCode, dueAt: new Date(a.dueAt) }))
+      .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
+  }, [canvasQ.data]);
+
+  const canvasError = cfg.canvasFeedUrl ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null) : null;
 
   // Award XP just for showing up and scanning the timeline
   useEffect(() => {
@@ -65,7 +82,11 @@ export function Dashboard() {
   }, [completeQuest]);
 
   function matchCourse(courseCode: string) {
-    return cfg.courses.find((c) => c.name.toLowerCase() === courseCode.toLowerCase());
+    if (!courseCode) return undefined;
+    const code = courseCode.toLowerCase();
+    return cfg.courses.find(
+      (c) => c.name.toLowerCase() === code || code.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(code),
+    );
   }
 
   async function copyPrompt() {
@@ -131,18 +152,42 @@ export function Dashboard() {
                 <h2 className="font-bold text-2xl leading-tight">Up Next</h2>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Bell className="h-3.5 w-3.5" />
-              Alerts
-              <Switch
-                checked={cfg.notificationsEnabled}
-                onCheckedChange={(v) => update({ notificationsEnabled: v })}
-              />
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <button
+                type="button"
+                onClick={() => canvasQ.refetch()}
+                disabled={canvasQ.isFetching || !cfg.canvasFeedUrl}
+                className="inline-flex items-center gap-1.5 hover:text-foreground disabled:opacity-50"
+                aria-label="Refresh Canvas"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${canvasQ.isFetching ? "animate-spin" : ""}`} />
+                {canvasQ.isFetching ? "Syncing…" : "Refresh"}
+              </button>
+              <span className="flex items-center gap-2">
+                <Bell className="h-3.5 w-3.5" />
+                Alerts
+                <Switch
+                  checked={cfg.notificationsEnabled}
+                  onCheckedChange={(v) => update({ notificationsEnabled: v })}
+                />
+              </span>
             </div>
           </div>
 
-          {assignments.length === 0 ? (
-            <EmptyState text="No assignments yet. Add a class in Settings to populate your timeline." />
+          {canvasError && (
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <div>
+                <div className="font-medium">Canvas sync failed</div>
+                <div className="text-xs opacity-80">{canvasError}</div>
+              </div>
+            </div>
+          )}
+
+          {!cfg.canvasFeedUrl ? (
+            <EmptyState text="Paste your Canvas Calendar Feed URL in Settings to import real assignments." />
+          ) : assignments.length === 0 ? (
+            <EmptyState text={canvasQ.isLoading ? "Loading assignments from Canvas…" : "No upcoming assignments in the next 60 days."} />
           ) : (
             <>
               {(() => {
@@ -230,7 +275,7 @@ export function Dashboard() {
           )}
 
           <p className="mt-5 text-xs text-muted-foreground">
-            Tiered alerts: 2 weeks → 1 week → 2 days. Push delivery via Twilio / FCM when enabled.
+            Pulled live from your Canvas Calendar Feed. Tiered alerts: 2 weeks → 1 week → 2 days.
           </p>
         </Card>
 
