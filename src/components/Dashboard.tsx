@@ -82,6 +82,10 @@ export function Dashboard() {
     }
   }
 
+  if (!hasChosen) {
+    return <CompanionPicker />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/60 bg-card/50 backdrop-blur sticky top-0 z-10">
