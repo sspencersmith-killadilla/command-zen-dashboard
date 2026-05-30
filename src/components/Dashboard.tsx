@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -12,14 +14,16 @@ import {
   Settings,
   Bell,
   Sparkles,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import {
   useWinstonConfig,
-  getSimulatedAssignments,
   tierFor,
   GEMINI_PROMPT,
   type AlertTier,
 } from "@/lib/winston-store";
+import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification } from "@/lib/gamification";
