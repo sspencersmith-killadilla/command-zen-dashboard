@@ -103,6 +103,27 @@ function getCtx(): AudioContext {
   return _ctx;
 }
 
+/**
+ * Call from inside a user gesture (click/submit/keydown) BEFORE any async
+ * work so Chrome/Safari unlock the AudioContext. Subsequent playMumble()
+ * calls — even ones triggered after `await` — will then produce audio.
+ */
+export function unlockAudio(): void {
+  try {
+    const ctx = getCtx();
+    if (ctx.state === "suspended") void ctx.resume();
+    // Schedule a near-silent tick so the context is definitely "running".
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    g.gain.value = 0.0001;
+    osc.connect(g).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.01);
+  } catch {
+    /* noop */
+  }
+}
+
 // Track active playback so a new play stops the previous.
 let activeTimer: ReturnType<typeof setTimeout> | null = null;
 let activeNodes: AudioNode[] = [];
