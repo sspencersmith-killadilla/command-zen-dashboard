@@ -5,6 +5,8 @@ import type { ThemeId } from "./companions";
 
 export type Slot = "hat" | "top" | "accessory" | "frame";
 
+export type Rarity = "common" | "rare" | "epic" | "legendary";
+
 export type CosmeticItem = {
   id: string;
   name: string;
@@ -14,7 +16,38 @@ export type CosmeticItem = {
   color: string;
   color2?: string;
   source: "seed" | "on_time" | "mastery";
+  rarity: Rarity;
   blurb: string;
+};
+
+export const RARITY_META: Record<Rarity, { label: string; ring: string; chip: string; text: string; glow?: string }> = {
+  common: {
+    label: "Common",
+    ring: "border-border/60",
+    chip: "bg-muted text-muted-foreground border-border/60",
+    text: "text-muted-foreground",
+  },
+  rare: {
+    label: "Rare",
+    ring: "border-sky-400/60",
+    chip: "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/40",
+    text: "text-sky-600 dark:text-sky-300",
+    glow: "shadow-[0_0_18px_-6px_rgba(56,189,248,0.6)]",
+  },
+  epic: {
+    label: "Epic",
+    ring: "border-violet-400/60",
+    chip: "bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/40",
+    text: "text-violet-600 dark:text-violet-300",
+    glow: "shadow-[0_0_22px_-6px_rgba(167,139,250,0.7)]",
+  },
+  legendary: {
+    label: "Legendary",
+    ring: "border-amber-400/70",
+    chip: "bg-gradient-to-r from-amber-500/20 to-rose-500/20 text-amber-700 dark:text-amber-300 border-amber-500/50",
+    text: "text-amber-600 dark:text-amber-300",
+    glow: "shadow-[0_0_28px_-4px_rgba(251,191,36,0.65)]",
+  },
 };
 
 // ------------------------------------------------------------------
