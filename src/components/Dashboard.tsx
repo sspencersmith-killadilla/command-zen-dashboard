@@ -337,10 +337,10 @@ export function Dashboard() {
                             </a>
                           </Button>
                         )}
-                        <Button size="sm" onClick={() => completeQuest("clear-assignment")} className="gap-1.5">
-                          <Check className="h-3.5 w-3.5" />
-                          Clear (+40 XP)
-                        </Button>
+                        <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground px-2.5 py-1.5 rounded-md bg-muted/60 border border-border/60">
+                          <RefreshCw className="h-3 w-3" />
+                          Auto-clears when submitted in Canvas
+                        </span>
                       </div>
                     </div>
                     {a.files.length > 0 && (
