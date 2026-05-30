@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +14,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   CalendarClock,
   BookOpen,
   Check,
@@ -25,6 +35,7 @@ import {
   AlertCircle,
   ChevronDown,
   Lock,
+  Palette,
 } from "lucide-react";
 import {
   useWinstonConfig,
@@ -36,7 +47,7 @@ import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification, rankFor } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
-import { COMPANION_LIST, getCompanion } from "@/lib/companions";
+import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -86,6 +97,23 @@ export function Dashboard() {
   const playerLevel = rankFor(state.xp).level;
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
   const currentCompanion = getCompanion(cfg.companionId);
+  const currentThemeId = currentCompanion.theme;
+  const currentTheme = THEMES.find((t) => t.id === currentThemeId)!;
+  const themeCompanions = useMemo(
+    () => COMPANION_LIST.filter((c) => c.theme === currentThemeId),
+    [currentThemeId],
+  );
+  const [pendingTheme, setPendingTheme] = useState<ThemeId | null>(null);
+  const pendingThemeMeta = pendingTheme ? THEMES.find((t) => t.id === pendingTheme) : null;
+  const confirmThemeSwitch = () => {
+    if (!pendingTheme) return;
+    const first =
+      COMPANION_LIST.filter((c) => c.theme === pendingTheme)
+        .sort((a, b) => a.unlockLevel - b.unlockLevel)[0];
+    if (first) update({ companionId: first.id });
+    setPendingTheme(null);
+  };
+
 
   const canvasKey = `${cfg.canvasApiToken ? "api" : "ics"}:${cfg.canvasDomain}:${cfg.canvasFeedUrl}`;
   const canvasQ = useQuery({
@@ -191,7 +219,7 @@ export function Dashboard() {
                   <span className="text-[10px] font-normal text-muted-foreground">Lv {playerLevel}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {COMPANION_LIST.map((c) => {
+                {themeCompanions.map((c) => {
                   const unlocked = playerLevel >= c.unlockLevel || c.id === cfg.companionId;
                   const isSel = c.id === cfg.companionId;
                   return (
@@ -217,8 +245,58 @@ export function Dashboard() {
                     </DropdownMenuItem>
                   );
                 })}
+                <DropdownMenuSeparator />
+                <div className="px-2 py-1.5 text-[11px] text-muted-foreground">
+                  Want a different vibe? Use <span className="font-medium text-foreground">Theme</span> to switch worlds.
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border px-3 py-1.5 transition-colors"
+                  aria-label="Switch theme"
+                >
+                  <Palette className="h-3.5 w-3.5 text-muted-foreground" />
+                  <div className="text-left leading-tight">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Theme</div>
+                    <div className="text-sm font-semibold">{currentTheme.label}</div>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72 max-h-[60vh] overflow-y-auto">
+                <DropdownMenuLabel>Switch theme</DropdownMenuLabel>
+                <div className="px-2 pb-2 text-[11px] text-muted-foreground">
+                  Changes the whole world: visuals, daily goals, and your companion roster.
+                </div>
+                <DropdownMenuSeparator />
+                {THEMES.map((t) => {
+                  const isSel = t.id === currentThemeId;
+                  return (
+                    <DropdownMenuItem
+                      key={t.id}
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        if (!isSel) setPendingTheme(t.id);
+                      }}
+                      className="flex items-start gap-2 py-2"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium flex items-center gap-1.5">
+                          {t.label}
+                          {isSel && <Check className="h-3 w-3 text-primary" />}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground truncate">{t.blurb}</div>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link
               to="/settings"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
@@ -503,6 +581,27 @@ export function Dashboard() {
           )}
         </Card>
       </main>
+
+      <AlertDialog open={!!pendingTheme} onOpenChange={(o) => !o && setPendingTheme(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Switch theme to {pendingThemeMeta?.label}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This changes the whole world — visuals, daily goal storylines, and your
+              companion roster. Your current companion <span className="font-medium text-foreground">{currentCompanion.name}</span> will be
+              swapped for a starter from the new theme. XP and progress are kept.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep {currentTheme.label}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmThemeSwitch}>
+              Yes, switch theme
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
