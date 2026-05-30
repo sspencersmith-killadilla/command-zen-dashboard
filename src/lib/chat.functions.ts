@@ -14,9 +14,9 @@ export const getMyChatMessages = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return (data ?? []).map((row) => ({
       id: row.id,
-      role: row.role as UIMessage["role"],
-      parts: row.parts as UIMessage["parts"],
-    })) as UIMessage[];
+      role: row.role as "user" | "assistant" | "system",
+      parts: row.parts,
+    }));
   });
 
 export const clearMyChat = createServerFn({ method: "POST" })
