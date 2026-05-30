@@ -22,7 +22,7 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
-import { Trash2, Sunrise, ListChecks, Target, Volume2, Square } from "lucide-react";
+import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { CompanionCloseup } from "@/components/CompanionCloseup";
 import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
@@ -262,23 +262,12 @@ export function ChatPanel() {
             messages.map((m) => {
               const text = partsToText(m.parts);
               if (m.role === "assistant") {
-                const isSpeakingThis = speakingId === m.id;
                 return (
                   <Message from="assistant" key={m.id}>
                     <MessageContent className="px-0 py-1">
                       <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
                         <ReactMarkdown>{text}</ReactMarkdown>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => isSpeakingThis ? stopMumble() : speak(companion.id, text, m.id)}
-                        className="mt-1 inline-flex items-center gap-1 rounded-full border border-border/60 bg-card/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
-                        aria-label={isSpeakingThis ? `Stop ${companion.name}'s voice` : `Hear ${companion.name} say this`}
-                        title={isSpeakingThis ? "Stop" : `${companion.name}'s voice`}
-                      >
-                        {isSpeakingThis ? <Square className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
-                        {isSpeakingThis ? "stop" : "voice"}
-                      </button>
                     </MessageContent>
                   </Message>
                 );
@@ -329,6 +318,20 @@ export function ChatPanel() {
         companionId={companion.id}
         open={closeup.open}
         intensity={closeup.speaking ? "speaking" : "idle"}
+        canSpeak={messages.some((m) => m.role === "assistant")}
+        isSpeaking={!!speakingId}
+        onToggleSpeak={() => {
+          if (speakingId) {
+            stopMumble();
+            return;
+          }
+          const last = [...messages].reverse().find((m) => m.role === "assistant");
+          if (!last) return;
+          const text = partsToText(last.parts);
+          if (!text.trim()) return;
+          unlockAudio();
+          speak(companion.id, text, last.id);
+        }}
       />
     </Card>
   );
