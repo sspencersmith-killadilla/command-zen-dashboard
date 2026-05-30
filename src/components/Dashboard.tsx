@@ -421,10 +421,30 @@ export function Dashboard() {
             </>
           )}
 
+          {recentlySubmitted.length > 0 && (
+            <div className="mt-5 pt-5 border-t border-border/60">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-semibold mb-2">
+                Recently submitted
+              </div>
+              <ul className="flex flex-wrap gap-2">
+                {recentlySubmitted.map((a) => (
+                  <li
+                    key={a.id}
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-foreground"
+                    title={`${a.courseCode} — submitted in Canvas`}
+                  >
+                    <Check className="h-3 w-3 text-emerald-500" />
+                    <span className="max-w-[18ch] truncate">{a.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <p className="mt-5 text-xs text-muted-foreground">
             {cfg.canvasApiToken && cfg.canvasDomain
-              ? "Live from the Canvas API — direct links and file attachments included."
-              : "Live from your Canvas calendar feed. Add an access token in Settings to also get per-assignment links and files."}
+              ? "Live from the Canvas API — assignments clear automatically when you submit them. No manual check-offs."
+              : "Live from your Canvas calendar feed. Add an access token in Settings so submitted assignments auto-clear."}
           </p>
         </Card>
 
