@@ -97,6 +97,23 @@ export function Dashboard() {
   const playerLevel = rankFor(state.xp).level;
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
   const currentCompanion = getCompanion(cfg.companionId);
+  const currentThemeId = currentCompanion.theme;
+  const currentTheme = THEMES.find((t) => t.id === currentThemeId)!;
+  const themeCompanions = useMemo(
+    () => COMPANION_LIST.filter((c) => c.theme === currentThemeId),
+    [currentThemeId],
+  );
+  const [pendingTheme, setPendingTheme] = useState<ThemeId | null>(null);
+  const pendingThemeMeta = pendingTheme ? THEMES.find((t) => t.id === pendingTheme) : null;
+  const confirmThemeSwitch = () => {
+    if (!pendingTheme) return;
+    const first =
+      COMPANION_LIST.filter((c) => c.theme === pendingTheme)
+        .sort((a, b) => a.unlockLevel - b.unlockLevel)[0];
+    if (first) update({ companionId: first.id });
+    setPendingTheme(null);
+  };
+
 
   const canvasKey = `${cfg.canvasApiToken ? "api" : "ics"}:${cfg.canvasDomain}:${cfg.canvasFeedUrl}`;
   const canvasQ = useQuery({
