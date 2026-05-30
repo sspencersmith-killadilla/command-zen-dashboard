@@ -323,7 +323,7 @@ export function GamificationPanel() {
             })}
           </div>
           <p className="text-[11px] mt-3" style={{ color: `oklch(0.65 0.03 ${bgHue})` }}>
-            Tap a step to claim it. Finish all five to complete today's arc.
+            Steps complete themselves as you work — open a notebook, chat with your companion, submit an assignment in Canvas.
           </p>
         </div>
       </div>
