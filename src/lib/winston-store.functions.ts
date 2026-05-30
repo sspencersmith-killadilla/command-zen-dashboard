@@ -26,7 +26,7 @@ const patchSchema = z.object({
   canvasFeedUrl: z.string().max(2048).optional(),
   notificationsEnabled: z.boolean().optional(),
   courses: z.array(courseSchema).max(50).optional(),
-  companionId: z.enum(["barnaby", "bean", "roxie", "pip", "lafitte"]).optional(),
+  companionId: z.string().min(1).max(64).regex(/^[a-z0-9-]+$/).optional(),
 });
 
 function rowToConfig(row: {
