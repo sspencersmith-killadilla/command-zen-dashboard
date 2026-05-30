@@ -139,7 +139,7 @@ const SPORTS: ThemePack = {
     { title: "Hall of Famer", subtitle: "Level 8 · Jersey retired", minXp: 3000 },
   ],
   quests: [
-    { id: Q.timeline, label: "Watch the film", outcome: "Film reviewed", icon: Whistle, xp: 10 },
+    { id: Q.timeline, label: "Watch the film", outcome: "Film reviewed", icon: Clipboard, xp: 10 },
     { id: Q.notebook, label: "Hit the playbook", outcome: "Plays studied", icon: Target, xp: 15 },
     { id: Q.reset, label: "Run the warm-up", outcome: "Warmed up", icon: Dumbbell, xp: 20 },
     { id: Q.chat, label: "Huddle with coach", outcome: "Huddle done", icon: Medal, xp: 15 },
