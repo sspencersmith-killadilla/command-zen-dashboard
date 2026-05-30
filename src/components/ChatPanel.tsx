@@ -29,6 +29,7 @@ import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
 import { useGamification } from "@/lib/gamification";
 import { useMumble } from "@/lib/use-mumble";
+import { unlockAudio } from "@/lib/mumble";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
