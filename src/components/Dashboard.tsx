@@ -141,12 +141,24 @@ export function Dashboard() {
         cleared.add(a.id);
         if (!credited) {
           completeQuest("clear-assignment");
+          recordOnTime();
           credited = true;
         }
       }
     }
     if (credited) saveCleared(cleared);
-  }, [rawAssignments, completeQuest]);
+  }, [rawAssignments, completeQuest, recordOnTime]);
+
+  // Theme mastery: when all 5 daily quests are done for the current theme,
+  // record one arc-complete day. Fires once per day per theme via a localStorage flag.
+  useEffect(() => {
+    if (todayQuestsDone.length < DAILY_QUESTS.length) return;
+    if (typeof window === "undefined") return;
+    const key = `winston.mastery.${currentThemeId}.${new Date().toISOString().slice(0, 10)}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
+    recordMastery(currentThemeId);
+  }, [todayQuestsDone.length, currentThemeId, recordMastery]);
 
   const assignments = useMemo(() => {
     return rawAssignments
