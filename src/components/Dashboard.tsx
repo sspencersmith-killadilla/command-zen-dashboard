@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import {
   GEMINI_PROMPT,
   type AlertTier,
 } from "@/lib/winston-store";
+import { GamificationPanel } from "@/components/GamificationPanel";
+import { useGamification } from "@/lib/gamification";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
