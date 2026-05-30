@@ -22,7 +22,7 @@ import {
   Moon,
   Star,
   Mountain,
-  Whistle,
+  Clipboard,
   Medal,
   Target,
   Dumbbell,
