@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 
-// FMA-flavored alchemist ranks. XP-gated.
+// Video-game inspired progression. Universal RPG feel — no franchise lock-in.
 export type Rank = {
   title: string;
   subtitle: string;
@@ -8,33 +8,33 @@ export type Rank = {
 };
 
 export const RANKS: Rank[] = [
-  { title: "Apprentice", subtitle: "Novice Transmuter", minXp: 0 },
-  { title: "Certified Alchemist", subtitle: "Equivalent Exchange Initiate", minXp: 100 },
-  { title: "State Alchemist", subtitle: "Silver Pocketwatch Earned", minXp: 300 },
-  { title: "Crystal Alchemist", subtitle: "Master of Form", minXp: 600 },
-  { title: "Flame Alchemist", subtitle: "Snap Ignition Approved", minXp: 1000 },
-  { title: "Fullmetal Alchemist", subtitle: "Hero of the People", minXp: 1500 },
-  { title: "Philosopher", subtitle: "Truth Glimpsed", minXp: 2500 },
+  { title: "Rookie", subtitle: "Level 1 · Tutorial cleared", minXp: 0 },
+  { title: "Scout", subtitle: "Level 2 · Side quests unlocked", minXp: 80 },
+  { title: "Engineer", subtitle: "Level 3 · Workshop online", minXp: 200 },
+  { title: "Specialist", subtitle: "Level 4 · Elite skill tree", minXp: 450 },
+  { title: "Veteran", subtitle: "Level 5 · Boss-tier focus", minXp: 800 },
+  { title: "Champion", subtitle: "Level 6 · Tournament ready", minXp: 1300 },
+  { title: "Grandmaster", subtitle: "Level 7 · NG+ unlocked", minXp: 2000 },
+  { title: "Legend", subtitle: "Level 8 · Speedrun the semester", minXp: 3000 },
 ];
 
 export type Achievement = {
   id: string;
   name: string;
   hint: string;
-  // condition is evaluated against the GameState
   unlocked: (s: GameState) => boolean;
 };
 
 export type GameState = {
   xp: number;
   streak: number;
-  lastActiveDay: string; // YYYY-MM-DD
-  copies: number; // Gemini prompt copies
+  lastActiveDay: string;
+  copies: number;
   notebooksOpened: number;
-  quests: Record<string, string>; // questId -> YYYY-MM-DD completed
+  quests: Record<string, string>;
 };
 
-const KEY = "winston.gamification.v1";
+const KEY = "winston.gamification.v2";
 
 const DEFAULT_STATE: GameState = {
   xp: 0,
@@ -53,7 +53,12 @@ function load(): GameState {
   if (typeof window === "undefined") return DEFAULT_STATE;
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return DEFAULT_STATE;
+    if (!raw) {
+      // migrate from v1 if present
+      const v1 = localStorage.getItem("winston.gamification.v1");
+      if (v1) return { ...DEFAULT_STATE, ...JSON.parse(v1) };
+      return DEFAULT_STATE;
+    }
     return { ...DEFAULT_STATE, ...JSON.parse(raw) };
   } catch {
     return DEFAULT_STATE;
@@ -69,42 +74,47 @@ function save(s: GameState) {
 }
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { id: "first-step", name: "First Transmutation", hint: "Earn your first 10 XP", unlocked: (s) => s.xp >= 10 },
-  { id: "daily-reset", name: "Equivalent Exchange", hint: "Copy the Daily Reset prompt", unlocked: (s) => s.copies >= 1 },
-  { id: "library-rat", name: "Central Library Rat", hint: "Open 5 notebooks", unlocked: (s) => s.notebooksOpened >= 5 },
-  { id: "streak-3", name: "Three-Day Array", hint: "3-day streak", unlocked: (s) => s.streak >= 3 },
-  { id: "streak-7", name: "Briggs Discipline", hint: "7-day streak", unlocked: (s) => s.streak >= 7 },
-  { id: "flame", name: "Flame Alchemist", hint: "Reach 1000 XP", unlocked: (s) => s.xp >= 1000 },
-  { id: "fullmetal", name: "Fullmetal", hint: "Reach 1500 XP", unlocked: (s) => s.xp >= 1500 },
+  { id: "first-step", name: "First Blood", hint: "Earn your first 10 XP", unlocked: (s) => s.xp >= 10 },
+  { id: "daily-reset", name: "Power-Up", hint: "Run the Daily Reset", unlocked: (s) => s.copies >= 1 },
+  { id: "library-rat", name: "Loot Hunter", hint: "Open 5 notebooks", unlocked: (s) => s.notebooksOpened >= 5 },
+  { id: "streak-3", name: "Combo x3", hint: "3-day streak", unlocked: (s) => s.streak >= 3 },
+  { id: "streak-7", name: "Hot Streak", hint: "7-day streak", unlocked: (s) => s.streak >= 7 },
+  { id: "streak-14", name: "Unstoppable", hint: "14-day streak", unlocked: (s) => s.streak >= 14 },
+  { id: "level-5", name: "Veteran", hint: "Reach 800 XP", unlocked: (s) => s.xp >= 800 },
+  { id: "level-7", name: "Grandmaster", hint: "Reach 2000 XP", unlocked: (s) => s.xp >= 2000 },
 ];
 
-export function rankFor(xp: number): { current: Rank; next: Rank | null; progress: number } {
+export function rankFor(xp: number): { current: Rank; next: Rank | null; level: number; progress: number } {
   let current = RANKS[0];
   let next: Rank | null = RANKS[1] ?? null;
+  let level = 1;
   for (let i = 0; i < RANKS.length; i++) {
     if (xp >= RANKS[i].minXp) {
       current = RANKS[i];
       next = RANKS[i + 1] ?? null;
+      level = i + 1;
     }
   }
   const floor = current.minXp;
   const ceil = next?.minXp ?? floor + 1;
   const progress = Math.min(100, Math.max(0, ((xp - floor) / (ceil - floor)) * 100));
-  return { current, next, progress };
+  return { current, next, level, progress };
 }
 
 export const DAILY_QUESTS = [
-  { id: "open-notebook", label: "Open a notebook", xp: 15 },
+  { id: "check-timeline", label: "Scout the timeline", xp: 10 },
+  { id: "open-notebook", label: "Crack open a notebook", xp: 15 },
   { id: "copy-prompt", label: "Run the Daily Reset", xp: 20 },
-  { id: "check-timeline", label: "Review your timeline", xp: 10 },
+  { id: "chat-winston", label: "Strategize with Winston", xp: 15 },
+  { id: "clear-assignment", label: "Knock out an assignment", xp: 40 },
 ];
 
 export function useGamification() {
   const [state, setState] = useState<GameState>(DEFAULT_STATE);
+  const [lastGain, setLastGain] = useState<{ xp: number; at: number } | null>(null);
 
   useEffect(() => {
     const loaded = load();
-    // Streak rollover on mount
     const t = today();
     if (loaded.lastActiveDay && loaded.lastActiveDay !== t) {
       const last = new Date(loaded.lastActiveDay);
@@ -127,7 +137,7 @@ export function useGamification() {
     if (!quest) return;
     const t = today();
     persist((s) => {
-      if (s.quests[questId] === t) return s; // already done today
+      if (s.quests[questId] === t) return s;
       const newStreak = s.lastActiveDay === t ? s.streak : s.streak + 1;
       const patch: Partial<GameState> = {
         xp: s.xp + quest.xp,
@@ -137,6 +147,7 @@ export function useGamification() {
       };
       if (questId === "copy-prompt") patch.copies = s.copies + 1;
       if (questId === "open-notebook") patch.notebooksOpened = s.notebooksOpened + 1;
+      setLastGain({ xp: quest.xp, at: Date.now() });
       return { ...s, ...patch };
     });
   }, [persist]);
@@ -146,5 +157,5 @@ export function useGamification() {
   const t = today();
   const todayQuestsDone = DAILY_QUESTS.filter((q) => state.quests[q.id] === t).map((q) => q.id);
 
-  return { state, completeQuest, reset, todayQuestsDone };
+  return { state, completeQuest, reset, todayQuestsDone, lastGain };
 }
