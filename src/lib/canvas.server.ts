@@ -13,6 +13,7 @@ export type ParsedAssignment = {
   dueAt: string; // ISO
   htmlUrl?: string; // direct link to the assignment in Canvas
   files?: CanvasFile[]; // attachments parsed out of the description HTML
+  submitted?: boolean; // whether the user has already submitted this assignment
 };
 
 // ────────────────────────────────────────────────────────────────────────────
