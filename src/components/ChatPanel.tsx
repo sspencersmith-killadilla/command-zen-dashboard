@@ -38,6 +38,7 @@ export function ChatPanel() {
   const clearChat = useServerFn(clearMyChat);
   const { cfg } = useWinstonConfig();
   const companion = getCompanion(cfg.companionId);
+  const { completeQuest } = useGamification();
 
   const { data: initialMessages, isLoading } = useQuery({
     queryKey: ["chat-messages"],
