@@ -45,9 +45,12 @@ import {
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
-import { useGamification, rankFor } from "@/lib/gamification";
+import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
+import { useAvatar } from "@/lib/use-avatar";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { Shirt } from "lucide-react";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -93,8 +96,9 @@ function saveCleared(s: Set<string>) {
 
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { state, completeQuest } = useGamification();
+  const { state, completeQuest, todayQuestsDone } = useGamification();
   const playerLevel = rankFor(state.xp).level;
+  const { state: avatarState, recordOnTime, recordMastery } = useAvatar();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
   const currentCompanion = getCompanion(cfg.companionId);
   const currentThemeId = currentCompanion.theme;
@@ -137,12 +141,24 @@ export function Dashboard() {
         cleared.add(a.id);
         if (!credited) {
           completeQuest("clear-assignment");
+          recordOnTime();
           credited = true;
         }
       }
     }
     if (credited) saveCleared(cleared);
-  }, [rawAssignments, completeQuest]);
+  }, [rawAssignments, completeQuest, recordOnTime]);
+
+  // Theme mastery: when all 5 daily quests are done for the current theme,
+  // record one arc-complete day. Fires once per day per theme via a localStorage flag.
+  useEffect(() => {
+    if (todayQuestsDone.length < DAILY_QUESTS.length) return;
+    if (typeof window === "undefined") return;
+    const key = `winston.mastery.${currentThemeId}.${new Date().toISOString().slice(0, 10)}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
+    recordMastery(currentThemeId);
+  }, [todayQuestsDone.length, currentThemeId, recordMastery]);
 
   const assignments = useMemo(() => {
     return rawAssignments
