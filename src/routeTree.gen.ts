@@ -15,6 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
+import { Route as AuthenticatedAvatarRouteImport } from './routes/_authenticated/avatar'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
 
 const LoginRoute = LoginRouteImport.update({
@@ -46,6 +47,11 @@ const AuthenticatedGuideRoute = AuthenticatedGuideRouteImport.update({
   path: '/guide',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAvatarRoute = AuthenticatedAvatarRouteImport.update({
+  id: '/avatar',
+  path: '/avatar',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const ApiOauthGoogleCalendarCallbackRoute =
   ApiOauthGoogleCalendarCallbackRouteImport.update({
     id: '/api/oauth/google-calendar/callback',
@@ -56,6 +62,7 @@ const ApiOauthGoogleCalendarCallbackRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
+  '/avatar': typeof AuthenticatedAvatarRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/avatar': typeof AuthenticatedAvatarRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/avatar': typeof AuthenticatedAvatarRoute
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -84,6 +93,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/avatar'
     | '/guide'
     | '/settings'
     | '/api/chat'
@@ -91,6 +101,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/avatar'
     | '/guide'
     | '/settings'
     | '/api/chat'
@@ -100,6 +111,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/login'
+    | '/_authenticated/avatar'
     | '/_authenticated/guide'
     | '/_authenticated/settings'
     | '/api/chat'
@@ -158,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/avatar': {
+      id: '/_authenticated/avatar'
+      path: '/avatar'
+      fullPath: '/avatar'
+      preLoaderRoute: typeof AuthenticatedAvatarRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/api/oauth/google-calendar/callback': {
       id: '/api/oauth/google-calendar/callback'
       path: '/api/oauth/google-calendar/callback'
@@ -169,12 +188,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAvatarRoute: typeof AuthenticatedAvatarRoute
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAvatarRoute: AuthenticatedAvatarRoute,
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
@@ -193,3 +214,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
