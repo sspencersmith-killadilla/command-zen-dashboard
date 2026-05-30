@@ -119,7 +119,6 @@ export function ChatPanel() {
                 </p>
               </div>
             </div>
-          )
           ) : (
             messages.map((m) => {
               const text = partsToText(m.parts);
@@ -146,7 +145,7 @@ export function ChatPanel() {
           {status === "submitted" && (
             <Message from="assistant">
               <MessageContent className="px-0 py-1">
-                <Shimmer>Transmuting…</Shimmer>
+                <Shimmer>Thinking…</Shimmer>
               </MessageContent>
             </Message>
           )}
