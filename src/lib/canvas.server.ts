@@ -13,6 +13,7 @@ export type ParsedAssignment = {
   dueAt: string; // ISO
   htmlUrl?: string; // direct link to the assignment in Canvas
   files?: CanvasFile[]; // attachments parsed out of the description HTML
+  submitted?: boolean; // whether the user has already submitted this assignment
 };
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -116,12 +117,19 @@ function normalizeDomain(raw: string): string {
 }
 
 type CanvasCourse = { id: number; name: string; course_code: string };
+type CanvasSubmissionApi = {
+  workflow_state?: string; // "submitted" | "graded" | "unsubmitted" | "pending_review"
+  submitted_at?: string | null;
+  missing?: boolean;
+};
 type CanvasAssignmentApi = {
   id: number;
   name: string;
   due_at: string | null;
   html_url: string;
   description: string | null;
+  submission?: CanvasSubmissionApi | null;
+  has_submitted_submissions?: boolean;
 };
 
 function extractFilesFromDescription(html: string, domain: string): CanvasFile[] {
@@ -158,6 +166,13 @@ async function canvasGet<T>(domain: string, path: string, token: string): Promis
   return res.json() as Promise<T>;
 }
 
+function isSubmitted(sub: CanvasSubmissionApi | null | undefined): boolean {
+  if (!sub) return false;
+  if (sub.submitted_at) return true;
+  const st = sub.workflow_state;
+  return st === "submitted" || st === "graded" || st === "pending_review";
+}
+
 async function fetchFromApi(
   domain: string,
   token: string,
@@ -175,15 +190,18 @@ async function fetchFromApi(
     await Promise.all(
       courses.map(async (course) => {
         try {
+          // include[]=submission gives us per-user submission state so we can
+          // hide assignments the student has already turned in.
           const items = await canvasGet<CanvasAssignmentApi[]>(
             domain,
-            `/api/v1/courses/${course.id}/assignments?bucket=upcoming&per_page=50&order_by=due_at`,
+            `/api/v1/courses/${course.id}/assignments?bucket=upcoming&per_page=50&order_by=due_at&include[]=submission`,
             token,
           );
           for (const a of items) {
             if (!a.due_at) continue;
             const t = new Date(a.due_at).getTime();
             if (isNaN(t) || t < now - 24 * 60 * 60 * 1000 || t > horizon) continue;
+            const submitted = isSubmitted(a.submission);
             all.push({
               id: String(a.id),
               title: a.name,
@@ -191,6 +209,7 @@ async function fetchFromApi(
               dueAt: new Date(a.due_at).toISOString(),
               htmlUrl: a.html_url,
               files: a.description ? extractFilesFromDescription(a.description, domain) : [],
+              submitted,
             });
           }
         } catch {
@@ -200,7 +219,7 @@ async function fetchFromApi(
     );
 
     all.sort((a, b) => a.dueAt.localeCompare(b.dueAt));
-    return { assignments: all.slice(0, 25), error: null };
+    return { assignments: all.slice(0, 40), error: null };
   } catch (e) {
     return {
       assignments: [],

@@ -64,7 +64,7 @@ function rankForXp(xp: number, ranks: { title: string; subtitle: string; minXp: 
 }
 
 export function GamificationPanel() {
-  const { state, completeQuest, todayQuestsDone, lastGain } = useGamification();
+  const { state, todayQuestsDone, lastGain } = useGamification();
   const { cfg } = useWinstonConfig();
   const companion = getCompanion(cfg.companionId);
   const pack = useMemo(() => getThemePack(companion.theme), [companion.theme]);
@@ -241,13 +241,12 @@ export function GamificationPanel() {
               const Icon = q.icon;
               return (
                 <li key={q.id}>
-                  <button
-                    onClick={() => completeQuest(q.id)}
-                    disabled={done}
-                    className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg border text-left transition-all hover:translate-x-0.5 disabled:opacity-80 disabled:cursor-not-allowed"
+                  <div
+                    className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg border text-left transition-all"
                     style={{
                       borderColor: done ? `${accent}` : `oklch(0.3 0.03 ${bgHue})`,
                       background: done ? `oklch(0.85 0.18 90 / 0.0)` : `oklch(0.2 0.03 ${bgHue})`,
+                      opacity: done ? 0.85 : 1,
                     }}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
@@ -275,7 +274,7 @@ export function GamificationPanel() {
                     <span className="text-xs font-bold tabular-nums shrink-0" style={{ color: accent }}>
                       +{q.xp}
                     </span>
-                  </button>
+                  </div>
                 </li>
               );
             })}
@@ -324,7 +323,7 @@ export function GamificationPanel() {
             })}
           </div>
           <p className="text-[11px] mt-3" style={{ color: `oklch(0.65 0.03 ${bgHue})` }}>
-            Tap a step to claim it. Finish all five to complete today's arc.
+            Steps complete themselves as you work — open a notebook, chat with your companion, submit an assignment in Canvas.
           </p>
         </div>
       </div>

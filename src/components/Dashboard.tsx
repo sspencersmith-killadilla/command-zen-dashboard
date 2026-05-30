@@ -1,10 +1,18 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   CalendarClock,
   BookOpen,
@@ -15,6 +23,8 @@ import {
   Sparkles,
   RefreshCw,
   AlertCircle,
+  ChevronDown,
+  Lock,
 } from "lucide-react";
 import {
   useWinstonConfig,
@@ -24,7 +34,9 @@ import {
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
-import { useGamification } from "@/lib/gamification";
+import { useGamification, rankFor } from "@/lib/gamification";
+import { CompanionAvatar } from "@/components/CompanionAvatar";
+import { COMPANION_LIST, getCompanion } from "@/lib/companions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -50,10 +62,30 @@ function fmtDue(d: Date) {
   return `in ${days}d`;
 }
 
+const CLEARED_KEY = "winston.cleared-assignments.v1";
+function loadCleared(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(CLEARED_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+function saveCleared(s: Set<string>) {
+  try {
+    localStorage.setItem(CLEARED_KEY, JSON.stringify([...s]));
+  } catch {
+    /* ignore */
+  }
+}
+
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { completeQuest } = useGamification();
+  const { state, completeQuest } = useGamification();
+  const playerLevel = rankFor(state.xp).level;
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
+  const currentCompanion = getCompanion(cfg.companionId);
 
   const canvasKey = `${cfg.canvasApiToken ? "api" : "ics"}:${cfg.canvasDomain}:${cfg.canvasFeedUrl}`;
   const canvasQ = useQuery({
@@ -64,9 +96,29 @@ export function Dashboard() {
     refetchOnWindowFocus: false,
   });
 
+  const rawAssignments = canvasQ.data?.assignments ?? [];
+
+  // Auto-credit XP when Canvas reports a submitted assignment we hadn't
+  // previously seen as submitted. No self-reporting.
+  const clearedRef = useRef<Set<string>>(loadCleared());
+  useEffect(() => {
+    const cleared = clearedRef.current;
+    let credited = false;
+    for (const a of rawAssignments) {
+      if (a.submitted && !cleared.has(a.id)) {
+        cleared.add(a.id);
+        if (!credited) {
+          completeQuest("clear-assignment");
+          credited = true;
+        }
+      }
+    }
+    if (credited) saveCleared(cleared);
+  }, [rawAssignments, completeQuest]);
+
   const assignments = useMemo(() => {
-    const raw = canvasQ.data?.assignments ?? [];
-    return raw
+    return rawAssignments
+      .filter((a) => !a.submitted) // hide submitted from the live task list
       .map((a) => ({
         id: a.id,
         title: a.title,
@@ -76,7 +128,12 @@ export function Dashboard() {
         files: a.files ?? [],
       }))
       .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
-  }, [canvasQ.data]);
+  }, [rawAssignments]);
+
+  const recentlySubmitted = useMemo(
+    () => rawAssignments.filter((a) => a.submitted).slice(0, 5),
+    [rawAssignments],
+  );
 
   const canvasError = (cfg.canvasFeedUrl || (cfg.canvasApiToken && cfg.canvasDomain))
     ? canvasQ.data?.error ?? (canvasQ.error instanceof Error ? canvasQ.error.message : null)
@@ -96,6 +153,7 @@ export function Dashboard() {
     );
   }
 
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/60 bg-card/50 backdrop-blur sticky top-0 z-10">
@@ -111,13 +169,64 @@ export function Dashboard() {
               <div className="font-semibold leading-tight">Command Center</div>
             </div>
           </div>
-          <Link
-            to="/settings"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Link>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card hover:bg-muted/40 hover:border-border pl-1 pr-3 py-1 transition-colors"
+                  aria-label="Switch companion"
+                >
+                  <CompanionAvatar companionId={currentCompanion.id} size="sm" />
+                  <div className="text-left leading-tight">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Companion</div>
+                    <div className="text-sm font-semibold">{currentCompanion.name}</div>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuLabel className="flex items-center justify-between">
+                  <span>Switch companion</span>
+                  <span className="text-[10px] font-normal text-muted-foreground">Lv {playerLevel}</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {COMPANION_LIST.map((c) => {
+                  const unlocked = playerLevel >= c.unlockLevel || c.id === cfg.companionId;
+                  const isSel = c.id === cfg.companionId;
+                  return (
+                    <DropdownMenuItem
+                      key={c.id}
+                      disabled={!unlocked}
+                      onSelect={() => unlocked && update({ companionId: c.id })}
+                      className="flex items-center gap-2.5 py-2"
+                    >
+                      <div className={unlocked ? "" : "grayscale opacity-60"}>
+                        <CompanionAvatar companionId={c.id} size="sm" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium flex items-center gap-1.5">
+                          {c.name}
+                          {isSel && <Check className="h-3 w-3 text-primary" />}
+                          {!unlocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground truncate">
+                          {unlocked ? c.tagline : `Unlocks at Level ${c.unlockLevel}`}
+                        </div>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link
+              to="/settings"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Settings</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -228,10 +337,10 @@ export function Dashboard() {
                             </a>
                           </Button>
                         )}
-                        <Button size="sm" onClick={() => completeQuest("clear-assignment")} className="gap-1.5">
-                          <Check className="h-3.5 w-3.5" />
-                          Clear (+40 XP)
-                        </Button>
+                        <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground px-2.5 py-1.5 rounded-md bg-muted/60 border border-border/60">
+                          <RefreshCw className="h-3 w-3" />
+                          Auto-clears when submitted in Canvas
+                        </span>
                       </div>
                     </div>
                     {a.files.length > 0 && (
@@ -312,10 +421,30 @@ export function Dashboard() {
             </>
           )}
 
+          {recentlySubmitted.length > 0 && (
+            <div className="mt-5 pt-5 border-t border-border/60">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-semibold mb-2">
+                Recently submitted
+              </div>
+              <ul className="flex flex-wrap gap-2">
+                {recentlySubmitted.map((a) => (
+                  <li
+                    key={a.id}
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-foreground"
+                    title={`${a.courseCode} — submitted in Canvas`}
+                  >
+                    <Check className="h-3 w-3 text-emerald-500" />
+                    <span className="max-w-[18ch] truncate">{a.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <p className="mt-5 text-xs text-muted-foreground">
             {cfg.canvasApiToken && cfg.canvasDomain
-              ? "Live from the Canvas API — direct links and file attachments included."
-              : "Live from your Canvas calendar feed. Add an access token in Settings to also get per-assignment links and files."}
+              ? "Live from the Canvas API — assignments clear automatically when you submit them. No manual check-offs."
+              : "Live from your Canvas calendar feed. Add an access token in Settings so submitted assignments auto-clear."}
           </p>
         </Card>
 

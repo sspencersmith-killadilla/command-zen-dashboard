@@ -26,6 +26,7 @@ import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
+import { useGamification } from "@/lib/gamification";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -37,6 +38,7 @@ export function ChatPanel() {
   const clearChat = useServerFn(clearMyChat);
   const { cfg } = useWinstonConfig();
   const companion = getCompanion(cfg.companionId);
+  const { completeQuest } = useGamification();
 
   const { data: initialMessages, isLoading } = useQuery({
     queryKey: ["chat-messages"],
@@ -85,16 +87,19 @@ export function ChatPanel() {
 
   const isBusy = status === "submitted" || status === "streaming";
 
-  function quickAsk(text: string) {
+  function quickAsk(text: string, questId?: string) {
     if (isBusy) return;
     sendMessage({ text });
+    completeQuest("chat-winston");
+    if (questId) completeQuest(questId);
   }
 
-  const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string }[] = [
+  const QUICK_ACTIONS: { label: string; icon: React.ReactNode; prompt: string; questId?: string }[] = [
     {
       label: "Daily Reset",
       icon: <Sunrise className="h-3.5 w-3.5" />,
       prompt: DAILY_RESET_PROMPT,
+      questId: "copy-prompt",
     },
     {
       label: "What's due this week?",
@@ -151,7 +156,7 @@ export function ChatPanel() {
           <button
             key={qa.label}
             type="button"
-            onClick={() => quickAsk(qa.prompt)}
+            onClick={() => quickAsk(qa.prompt, qa.questId)}
             disabled={isBusy}
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-50"
           >
@@ -215,6 +220,7 @@ export function ChatPanel() {
             const text = msg.text?.trim();
             if (!text || isBusy) return;
             sendMessage({ text });
+            completeQuest("chat-winston");
             setInput("");
           }}
         >

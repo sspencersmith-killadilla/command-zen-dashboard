@@ -9,6 +9,7 @@ export type CanvasAssignment = {
   dueAt: string;
   htmlUrl?: string;
   files?: CanvasFile[];
+  submitted?: boolean;
 };
 
 export const fetchCanvasAssignments = createServerFn({ method: "GET" })
