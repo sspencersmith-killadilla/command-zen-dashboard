@@ -230,10 +230,49 @@
   animation: companion-sway 4.8s ease-in-out infinite;
 }
 
+@keyframes closeup-enter {
+  0%   { opacity: 0; transform: scale(0.55) translateY(20px); }
+  60%  { opacity: 1; transform: scale(1.04) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes closeup-exit {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.85) translateY(8px); }
+}
+@keyframes closeup-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+@keyframes closeup-jaw {
+  0%, 100% { transform: scaleY(1)    translateY(0); }
+  25%      { transform: scaleY(1.05) translateY(1px); }
+  50%      { transform: scaleY(0.97) translateY(-0.5px); }
+  75%      { transform: scaleY(1.03) translateY(0.5px); }
+}
+@keyframes closeup-dot {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30%           { opacity: 1;    transform: translateY(-2px); }
+}
+
+.closeup-bob { animation: closeup-bob 1.8s ease-in-out infinite; }
+.closeup-jaw { animation: closeup-jaw 220ms ease-in-out infinite; }
+.closeup-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: closeup-dot 900ms ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .companion-frame,
   .companion-bob,
   .companion-sprite,
   .companion-glow,
-  .companion-sway { animation: none; }
+  .companion-sway,
+  .closeup-bob,
+  .closeup-jaw,
+  .closeup-dot { animation: none; }
 }
+

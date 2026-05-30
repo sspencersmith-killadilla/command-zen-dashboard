@@ -1,96 +1,63 @@
 ## Goal
 
-Replace the current stepper-only avatar builder with a visually striking, adult-appropriate builder: an editorial-quality illustrated portrait on the left, and a rich tabbed control panel on the right with swatches, thumbnails, and live preview on every change.
+When the helper companion sends a new message or its voice is playing, briefly show a large floating close-up of its face that bobs and jaw-bounces, then smoothly zooms back out.
 
 ## What changes
 
-### 1. Expand the cosmetic catalog (`src/lib/cosmetics.ts`)
+### 1. New component: `src/components/CompanionCloseup.tsx`
 
-Add new option arrays so users have meaningful choices, not 5 cartoon presets:
+A presentational overlay that renders the companion sprite zoomed in on the face.
 
-- `SKIN_TONES`: keep 6, retune to refined illustration palette
-- `HAIR_STYLES`: add `pixie`, `bob`, `curly`, `braids`, `ponytail`, `undercut`, `slick`, `locs` (total ~14)
-- `HAIR_COLORS`: add `platinum`, `chestnut`, `burgundy`, `ash`, `lavender` (total ~13)
-- `EYE_STYLES`: add `almond`, `hooded`, `monolid`, `upturned`, `downturned` (total ~10)
-- `EYE_COLORS`: NEW — brown, hazel, green, blue, grey, amber
-- `BROW_STYLES`: add `arched`, `bold`, `feathered` (total ~7)
-- `FACIAL_HAIR`: NEW slot — none, stubble, goatee, mustache, full-beard, soul-patch
-- `MOUTH_STYLES`: add `slight-smile`, `pursed`, `serious` (total ~8)
-- `LIP_COLORS`: NEW — natural, berry, red, mauve, gloss
-- `FRECKLES`: NEW toggle — none, light, heavy
-- `GLASSES`: NEW — none, round-metal, square-acetate, aviator, cat-eye, reading
-- `EARRINGS`: NEW — none, stud, hoop, drop
-- `OUTFIT_BASES`: expand to ~12 (turtleneck, oxford-shirt, leather-jacket, knit-sweater, denim-jacket, trench, silk-blouse, henley, tank, suit)
-- `OUTFIT_COLORS`: NEW palette of 10 colors decoupled from style
-- `BACKGROUNDS`: expand to ~12 (add studio-grey, gradient-peach, gradient-indigo, terrazzo, soft-blur, deep-emerald)
+- Props: `companionId`, `open` (boolean), `intensity` ("idle" | "speaking"), `onClose?`.
+- Layout:
+  - `fixed` positioned, centered top-right of the chat panel area (bottom-right on desktop, with safe-area padding). Uses a portal-less fixed div with `z-50`.
+  - Circular masked frame ~180px, soft glow ring (reuses `companion.glow`), subtle drop shadow.
+  - Inner `<img>` of the sprite scaled ~2.4× and translated up so the face fills the circle (sprites are top-aligned faces — confirmed in `CompanionAvatar.tsx`).
+- Animation layers (CSS keyframes added to `src/styles.css`):
+  - `closeup-enter`: scale 0.6 → 1, opacity 0 → 1, 240ms ease-out.
+  - `closeup-exit`: reverse, 200ms ease-in.
+  - `closeup-bob`: vertical translate ±2px, 1.6s infinite — always on.
+  - `closeup-jaw`: when `intensity="speaking"`, the inner image gets a fast `scaleY(1 → 1.04 → 0.98 → 1)` cycle on its lower half via `transform-origin: 50% 30%` plus a tiny `translateY` jitter every ~140ms to imply a moving jaw without a real mouth layer.
+  - Idle mode (auto-closeup on new message but no voice playing): bob only, no jaw bounce.
+- Respects `prefers-reduced-motion`: disables jaw bounce and bob, keeps fade only.
 
-Update `AvatarParts` type, `DEFAULT_AVATAR`, and `STEPPER_OPTIONS` accordingly. Add a DB migration column-set or store new fields inside the existing JSON parts column (check `avatar.functions.ts` first; reuse JSON if available).
+### 2. Wire into `src/components/ChatPanel.tsx`
 
-### 2. Rewrite `src/components/PlayerAvatar.tsx`
+The chat panel already knows:
+- which companion is active (`companion`)
+- which message is currently being voiced (`speakingId` from `useMumble`)
+- the message list
 
-Keep the hand-drawn SVG approach but level it up to editorial portrait quality:
+Add local state + effects:
 
-- Larger viewBox (200×240) for a true bust framing — head, neck, shoulders, upper torso
-- Layered shading: base tone + mid-tone + highlight using soft `<filter>` blurs
-- Proper hairline that respects forehead per style
-- Separate sub-components for: `Background`, `Body`, `Outfit`, `Neck`, `Head`, `Ears`, `Freckles`, `Eyes` (sclera + iris colored + pupil + highlight + lash line), `Brows`, `Nose`, `Lips` (with color), `FacialHair`, `Hair` (front-layer + back-layer for long styles), `Glasses`, `Earrings`, `Hat`, `Accessory`, `Frame`
-- All strokes use ink-brown `#1f1a17` at varying widths for hand-drawn feel
-- Add subtle grain overlay via `<feTurbulence>` for paper texture
-- Smooth crossfade animation on part changes (CSS transition on opacity layers)
+- `const [closeup, setCloseup] = useState<{ open: boolean; speaking: boolean }>({ open: false, speaking: false })`.
+- **Trigger A — new helper message**: track the last seen assistant message id with a ref. When a new assistant message appears (id changes, role is assistant), open the closeup in idle mode and auto-close after 1800ms via a timeout. Skip on the very first mount so it doesn't fire for history.
+- **Trigger B — voice playing**: watch `speakingId`. When it transitions from null → some id, open the closeup with `speaking: true` and cancel any pending auto-close. When it transitions back to null, fade out after a short 250ms tail.
+- Both triggers: if voice starts during an idle closeup, upgrade to speaking and clear the auto-close timer. The closeup stays open until voice ends.
+- Render `<CompanionCloseup companionId={companion.id} open={closeup.open} intensity={closeup.speaking ? "speaking" : "idle"} />` at the root of the panel.
 
-### 3. Redesign `src/routes/_authenticated/avatar.tsx`
+### 3. CSS keyframes
 
-Replace the stepper rows with a real builder UI:
+Append to `src/styles.css`:
 
-```text
-+-------------------------------------------------+
-| ← Dashboard            Avatar Studio   Locker→  |
-+-------------------------------------------------+
-|                  |                              |
-|   [BIG LIVE      |  [Tabs: Face | Hair | Style |
-|    PORTRAIT      |         Accessories | Scene]|
-|    ~360px,       |                              |
-|    centered      |  Active tab body:            |
-|    on tinted     |   - Swatch grid (skin/hair/  |
-|    surface]      |     eye/lip/outfit colors)   |
-|                  |   - Thumbnail grid (hair     |
-|   "Randomize"    |     styles, outfit shapes,   |
-|   "Save"         |     glasses, hats)           |
-|                  |   - Toggle chips (freckles,  |
-|                  |     facial hair, earrings)   |
-+-------------------------------------------------+
+```css
+@keyframes closeup-enter { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes closeup-exit  { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.85); } }
+@keyframes closeup-bob   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes closeup-jaw   { 0%,100% { transform: scaleY(1) translateY(0); } 40% { transform: scaleY(1.04) translateY(1px); } 70% { transform: scaleY(0.98) translateY(0); } }
 ```
 
-Tabs and their controls:
-- **Face** — skin tone (color swatches), eye style (icon grid), eye color (swatches), brow style (icon grid), freckles (chips), nose (subtle, optional)
-- **Hair** — hair style (thumbnail grid showing silhouette), hair color (swatches), facial hair (icon grid)
-- **Style** — outfit base (thumbnail grid), outfit color (swatches), lip color (swatches)
-- **Accessories** — glasses (icon grid), earrings (chips), equipped hat / pin / frame from locker
-- **Scene** — background (large color/gradient swatches), body type (3 silhouettes)
+Plus `prefers-reduced-motion` overrides that zero out bob/jaw.
 
-Each control:
-- Swatch = rounded square w/ color, ring on selection, hover scale
-- Thumbnail = mini SVG render of just that part on a neutral head, ring on selection
-- Live preview updates instantly via existing `updateParts` optimistic mutation
-- "Randomize" button rolls all parts; "Reset" restores defaults
+## Out of scope
 
-Visual treatment: dark editorial surface (`bg-card` with subtle gradient), serif display heading "Avatar Studio", generous spacing, Awwwards-grade restraint. No childish emojis.
+- No new sprite art or per-companion mouth assets.
+- No audio waveform analysis — jaw bounce is a fixed cadence while `speakingId` is set.
+- No changes to the Dashboard sidebar avatar; only the chat experience gets the closeup.
+- No global "agent is speaking" indicator outside the chat panel.
 
-### 4. Database
+## Technical notes
 
-Inspect `src/lib/avatar.functions.ts` for current persistence shape. If parts are stored as discrete columns, add a migration adding columns: `eye_color`, `lip_color`, `facial_hair`, `freckles`, `glasses`, `earrings`, `outfit_color`. If stored as JSON, no migration needed.
-
-### Technical notes
-
-- Reuse `useAvatar()` hook unchanged — only the part keys grow
-- Mini-thumbnail components render the same SVG primitives at small scale for the option grids (no extra assets)
-- Keep `EquippedMap`-driven hat/top/accessory/frame layering on top of base parts
-- Accessibility: each option button has `aria-label` and `aria-pressed`
-- All colors via design tokens where possible; raw hex only in cosmetic data
-
-### Out of scope
-
-- New AI-generated portrait rendering (staying with SVG)
-- Photo upload / camera capture
-- Body / outfit beyond bust framing
-- Animation beyond gentle bob already present
+- Uses existing `companions.ts` `sprite` + `glow` fields, no new data.
+- Pure presentational + state; no DB or server changes.
+- Cleanup: clear any pending timeouts on unmount and when `companion.id` changes (switching companions closes the closeup immediately).
