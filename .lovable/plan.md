@@ -1,66 +1,96 @@
 ## Goal
-Turn the command center from "calm dashboard" into an end-to-end academic success coach: plan the work, surface what matters next, drill it into long-term memory, and protect the body that has to do it.
 
-## What we'll add
+Replace the current stepper-only avatar builder with a visually striking, adult-appropriate builder: an editorial-quality illustrated portrait on the left, and a rich tabbed control panel on the right with swatches, thumbnails, and live preview on every change.
 
-### 1. Smart Study Planner
-- New route `/_authenticated/plan` with a daily "Today" view and a weekly grid.
-- Pulls Canvas assignments (already wired) + course weights from `user_configs.courses`, then auto-generates study blocks sized by `weight × days_until_due × estimated_effort`.
-- Drag-to-reschedule; blocks sync to Google Calendar via the existing `google_calendar_tokens` connection.
-- Companion (Barnaby/etc.) greets with "Here's your 3 most important blocks today."
+## What changes
 
-### 2. Assignment Triage + Grade Forecast
-- New route `/_authenticated/triage`: one ranked inbox of every open Canvas item.
-  Score = `weight × urgency × (1 − completion)`, with one-click "Start now" → opens a Focus session pre-loaded with that assignment.
-- Per-course grade card with a "what do I need on the final?" calculator and end-of-term GPA projection.
-- Color-coded risk: green / amber / red so the user instantly sees which class is slipping.
+### 1. Expand the cosmetic catalog (`src/lib/cosmetics.ts`)
 
-### 3. Flashcards & Active Recall
-- New route `/_authenticated/recall` + `flashcard_decks` and `flashcard_cards` tables (user-scoped, RLS by `auth.uid()`).
-- "Generate deck from notes" action calls a `createServerFn` that pipes pasted notes / NotebookLM exports through Lovable AI (`google/gemini-2.5-flash`) to produce Q/A cards.
-- SM-2 spaced-repetition review queue; each completed review awards XP through the existing gamification system and contributes to a daily streak.
+Add new option arrays so users have meaningful choices, not 5 cartoon presets:
 
-### 4. Focus Sessions + Wellness Coaching (incl. nutrition & exercise)
-- Focus: Pomodoro-style timer (25/5 default, configurable), session log in a new `focus_sessions` table, optional "block distracting sites" reminder, companion check-in on completion.
-- Weekly Sunday reflection: companion asks 4 questions (wins, slips, blockers, top 3 goals), stored in `weekly_reflections`.
-- Wellness panel on the dashboard with daily nudges:
-  - **Sleep**: target bedtime based on first class tomorrow.
-  - **Movement**: 20–30 min/day goal, simple log (walk / gym / sport), streak.
-  - **Nutrition**: hydration counter (8 cups), 3 meals + protein/veg check-in, "fuel before exam" reminders the morning of any high-weight assignment.
-  - **Burnout guardrail**: if >3 focus sessions/day for 4+ days with poor sleep logs, companion suggests a rest day.
-- All wellness data stored in `wellness_logs` (date, sleep_hours, water_cups, meals_logged, movement_minutes, mood 1–5).
+- `SKIN_TONES`: keep 6, retune to refined illustration palette
+- `HAIR_STYLES`: add `pixie`, `bob`, `curly`, `braids`, `ponytail`, `undercut`, `slick`, `locs` (total ~14)
+- `HAIR_COLORS`: add `platinum`, `chestnut`, `burgundy`, `ash`, `lavender` (total ~13)
+- `EYE_STYLES`: add `almond`, `hooded`, `monolid`, `upturned`, `downturned` (total ~10)
+- `EYE_COLORS`: NEW — brown, hazel, green, blue, grey, amber
+- `BROW_STYLES`: add `arched`, `bold`, `feathered` (total ~7)
+- `FACIAL_HAIR`: NEW slot — none, stubble, goatee, mustache, full-beard, soul-patch
+- `MOUTH_STYLES`: add `slight-smile`, `pursed`, `serious` (total ~8)
+- `LIP_COLORS`: NEW — natural, berry, red, mauve, gloss
+- `FRECKLES`: NEW toggle — none, light, heavy
+- `GLASSES`: NEW — none, round-metal, square-acetate, aviator, cat-eye, reading
+- `EARRINGS`: NEW — none, stud, hoop, drop
+- `OUTFIT_BASES`: expand to ~12 (turtleneck, oxford-shirt, leather-jacket, knit-sweater, denim-jacket, trench, silk-blouse, henley, tank, suit)
+- `OUTFIT_COLORS`: NEW palette of 10 colors decoupled from style
+- `BACKGROUNDS`: expand to ~12 (add studio-grey, gradient-peach, gradient-indigo, terrazzo, soft-blur, deep-emerald)
 
-## New routes
+Update `AvatarParts` type, `DEFAULT_AVATAR`, and `STEPPER_OPTIONS` accordingly. Add a DB migration column-set or store new fields inside the existing JSON parts column (check `avatar.functions.ts` first; reuse JSON if available).
+
+### 2. Rewrite `src/components/PlayerAvatar.tsx`
+
+Keep the hand-drawn SVG approach but level it up to editorial portrait quality:
+
+- Larger viewBox (200×240) for a true bust framing — head, neck, shoulders, upper torso
+- Layered shading: base tone + mid-tone + highlight using soft `<filter>` blurs
+- Proper hairline that respects forehead per style
+- Separate sub-components for: `Background`, `Body`, `Outfit`, `Neck`, `Head`, `Ears`, `Freckles`, `Eyes` (sclera + iris colored + pupil + highlight + lash line), `Brows`, `Nose`, `Lips` (with color), `FacialHair`, `Hair` (front-layer + back-layer for long styles), `Glasses`, `Earrings`, `Hat`, `Accessory`, `Frame`
+- All strokes use ink-brown `#1f1a17` at varying widths for hand-drawn feel
+- Add subtle grain overlay via `<feTurbulence>` for paper texture
+- Smooth crossfade animation on part changes (CSS transition on opacity layers)
+
+### 3. Redesign `src/routes/_authenticated/avatar.tsx`
+
+Replace the stepper rows with a real builder UI:
+
 ```text
-/_authenticated/plan          Study planner
-/_authenticated/triage        Assignment triage + grade forecast
-/_authenticated/recall        Flashcards (decks list + review)
-/_authenticated/recall/$deck  Single deck review session
-/_authenticated/focus         Focus timer + session history
-/_authenticated/wellness      Wellness dashboard + logging
++-------------------------------------------------+
+| ← Dashboard            Avatar Studio   Locker→  |
++-------------------------------------------------+
+|                  |                              |
+|   [BIG LIVE      |  [Tabs: Face | Hair | Style |
+|    PORTRAIT      |         Accessories | Scene]|
+|    ~360px,       |                              |
+|    centered      |  Active tab body:            |
+|    on tinted     |   - Swatch grid (skin/hair/  |
+|    surface]      |     eye/lip/outfit colors)   |
+|                  |   - Thumbnail grid (hair     |
+|   "Randomize"    |     styles, outfit shapes,   |
+|   "Save"         |     glasses, hats)           |
+|                  |   - Toggle chips (freckles,  |
+|                  |     facial hair, earrings)   |
++-------------------------------------------------+
 ```
-Nav entry points added to the existing Dashboard sidebar/cards.
 
-## New tables (all RLS by `auth.uid() = user_id`, GRANTs for authenticated + service_role)
-- `study_blocks` — id, user_id, course_id, title, starts_at, ends_at, source ('auto'|'manual'), gcal_event_id, completed_at
-- `flashcard_decks` — id, user_id, title, course_id, source, created_at
-- `flashcard_cards` — id, deck_id, user_id, front, back, ease, interval, due_at, last_reviewed_at
-- `focus_sessions` — id, user_id, started_at, ended_at, planned_minutes, actual_minutes, assignment_ref, notes
-- `weekly_reflections` — id, user_id, week_of, wins, slips, blockers, goals jsonb
-- `wellness_logs` — id, user_id, log_date (unique per user), sleep_hours, water_cups, meals jsonb, movement_minutes, mood
+Tabs and their controls:
+- **Face** — skin tone (color swatches), eye style (icon grid), eye color (swatches), brow style (icon grid), freckles (chips), nose (subtle, optional)
+- **Hair** — hair style (thumbnail grid showing silhouette), hair color (swatches), facial hair (icon grid)
+- **Style** — outfit base (thumbnail grid), outfit color (swatches), lip color (swatches)
+- **Accessories** — glasses (icon grid), earrings (chips), equipped hat / pin / frame from locker
+- **Scene** — background (large color/gradient swatches), body type (3 silhouettes)
 
-## Server functions (TanStack `createServerFn`, all `requireSupabaseAuth`)
-- `lib/planner.functions.ts` — `generateWeeklyPlan`, `rescheduleBlock`, `syncBlockToGoogleCalendar`
-- `lib/triage.functions.ts` — `getTriageInbox`, `forecastGrade`
-- `lib/recall.functions.ts` — `generateDeckFromText` (Lovable AI), `gradeCard` (SM-2 update)
-- `lib/focus.functions.ts` — `startSession`, `endSession`, `getStreak`
-- `lib/wellness.functions.ts` — `upsertWellnessLog`, `getWellnessTrends`, `getNudges`
+Each control:
+- Swatch = rounded square w/ color, ring on selection, hover scale
+- Thumbnail = mini SVG render of just that part on a neutral head, ring on selection
+- Live preview updates instantly via existing `updateParts` optimistic mutation
+- "Randomize" button rolls all parts; "Reset" restores defaults
 
-## Gamification hooks
-Reuse existing `user_inventory` + on-time count: award items for finishing focus sessions, hitting recall streaks, logging wellness 7 days running.
+Visual treatment: dark editorial surface (`bg-card` with subtle gradient), serif display heading "Avatar Studio", generous spacing, Awwwards-grade restraint. No childish emojis.
 
-## Out of scope (ask later if wanted)
-- Office hours / tutoring finder
-- Study-group matcher
-- Professor email drafter
-- Mobile push notifications (browser-only nudges for now)
+### 4. Database
+
+Inspect `src/lib/avatar.functions.ts` for current persistence shape. If parts are stored as discrete columns, add a migration adding columns: `eye_color`, `lip_color`, `facial_hair`, `freckles`, `glasses`, `earrings`, `outfit_color`. If stored as JSON, no migration needed.
+
+### Technical notes
+
+- Reuse `useAvatar()` hook unchanged — only the part keys grow
+- Mini-thumbnail components render the same SVG primitives at small scale for the option grids (no extra assets)
+- Keep `EquippedMap`-driven hat/top/accessory/frame layering on top of base parts
+- Accessibility: each option button has `aria-label` and `aria-pressed`
+- All colors via design tokens where possible; raw hex only in cosmetic data
+
+### Out of scope
+
+- New AI-generated portrait rendering (staying with SVG)
+- Photo upload / camera capture
+- Body / outfit beyond bust framing
+- Animation beyond gentle bob already present
