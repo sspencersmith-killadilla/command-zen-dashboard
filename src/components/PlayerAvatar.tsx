@@ -7,6 +7,7 @@ import {
   type AvatarParts,
   type EquippedMap,
 } from "@/lib/cosmetics";
+import { useTarnishFlag } from "@/lib/consequences";
 
 type Size = "sm" | "md" | "lg" | "xl";
 const PX: Record<Size, number> = { sm: 40, md: 56, lg: 96, xl: 160 };
