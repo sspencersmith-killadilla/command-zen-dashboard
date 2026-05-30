@@ -327,8 +327,59 @@ function GuidePage() {
           </Card>
         </Section>
 
-        {/* 7. Chat */}
-        <Section id="chat" icon={MessageSquare} title="7. Chatting with your companion">
+        {/* 7. Plan */}
+        <Section id="plan" icon={CalendarClock} title="7. Study Planner">
+          <p>
+            The <Link to="/plan" className="underline">Planner</Link> turns
+            your Canvas backlog into a concrete week. Open it from the{" "}
+            <strong>Plan</strong> link in the dashboard header.
+          </p>
+          <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
+            <li><strong>Auto-generate.</strong> Hit <em>Auto-plan</em> and Winston slots your upcoming Canvas assignments into study blocks weighted by due date.</li>
+            <li><strong>Add a block manually.</strong> Title, optional notes, date — useful for review sessions or non-Canvas work.</li>
+            <li><strong>Tick blocks done</strong> as you finish them; completed blocks fall out of the active list and feed your streak.</li>
+            <li><strong>Delete</strong> anything that no longer fits — the plan is meant to be edited daily.</li>
+          </ul>
+        </Section>
+
+        {/* 8. Focus */}
+        <Section id="focus" icon={Timer} title="8. Focus timer">
+          <p>
+            The <Link to="/focus" className="underline">Focus</Link> page is a
+            distraction-free Pomodoro-style timer. Use it for any single block
+            of deep work.
+          </p>
+          <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
+            <li><strong>Set minutes</strong> (default 25) and optionally tag the session with an assignment or topic.</li>
+            <li><strong>Press Start.</strong> The clock counts down; closing the tab is fine, the session keeps running server-side.</li>
+            <li><strong>Press Stop</strong> when you're done. Completed minutes are logged and shown in your recent sessions list.</li>
+            <li>Launching Focus from an assignment link on the dashboard pre-fills the tag for you.</li>
+          </ul>
+        </Section>
+
+        {/* 9. Locker */}
+        <Section id="locker" icon={Shirt} title="9. Locker & cosmetic drops">
+          <p>
+            The <Link to="/locker" className="underline">Locker</Link> is your
+            character's wardrobe. Items have four rarities —{" "}
+            <strong>Common, Rare, Epic, Legendary</strong> — and slot into four
+            categories: <strong>Hats</strong>, <strong>Tops</strong>,{" "}
+            <strong>Accessories</strong>, and <strong>Frames</strong>.
+          </p>
+          <ul className="list-disc list-outside ml-5 space-y-2 mt-3">
+            <li><strong>On-time drops.</strong> Every 3 assignments submitted on time triggers a new cosmetic. The progress bar at the top of the Locker shows how close you are to the next drop.</li>
+            <li><strong>Theme mastery.</strong> Completing five full daily arcs inside a single world unlocks that theme's signature set, including its Legendary capstone (e.g. <em>Aurora Frame</em>, <em>Oracle's Diadem</em>, <em>Championship Ring</em>).</li>
+            <li><strong>Equip / unequip.</strong> Click any owned item to wear it; use the slot's <em>Unequip</em> button to clear it. Changes are instant and saved automatically.</li>
+            <li><strong>Filter by rarity</strong> with the pill row at the top to focus on what's still missing from your collection.</li>
+          </ul>
+          <p className="text-sm text-muted-foreground mt-3">
+            Your character — and any equipped items — is visible to your
+            companion and shows up on the dashboard hero.
+          </p>
+        </Section>
+
+        {/* 10. Chat */}
+        <Section id="chat" icon={MessageSquare} title="10. Chatting with your companion">
           <ul className="list-disc list-outside ml-5 space-y-2">
             <li>The chat panel lives on the right of the dashboard. Type anything — "what should I do first?", "I'm overwhelmed", "explain this prompt."</li>
             <li>Your companion knows your current assignments and your selected theme, and answers in their personal voice (rigorous, chill, hyped, protective, or roast — see section 5).</li>
@@ -337,8 +388,8 @@ function GuidePage() {
           </ul>
         </Section>
 
-        {/* 8. Settings */}
-        <Section id="settings" icon={SettingsIcon} title="8. Settings explained">
+        {/* 11. Settings */}
+        <Section id="settings" icon={SettingsIcon} title="11. Settings explained">
           <p>
             Open <Link to="/settings" className="underline">Settings</Link>{" "}
             from the dashboard header. Each change has a <strong>Save</strong>{" "}
@@ -350,9 +401,10 @@ function GuidePage() {
             <SettingRow label="Companion" body="Your active companion. Same as the dashboard portrait dropdown." />
             <SettingRow label="Canvas domain & token" body="Connection to your school's Canvas. Stored encrypted server-side." />
             <SettingRow label="Google Calendar" body="Optional. Lets Winston see your class times so its planning is realistic." />
-            <SettingRow label="Reset progress" body="Wipes XP, streaks, trophies, and quest history. Theme & companion are kept." />
+            <SettingRow label="Reset progress" body="Wipes XP, streaks, trophies, quest history, and cosmetic drops. Theme & companion are kept." />
           </div>
         </Section>
+
 
         {/* 9. Bios */}
         <section id="bios" className="scroll-mt-20">
