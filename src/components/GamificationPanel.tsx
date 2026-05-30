@@ -64,7 +64,7 @@ function rankForXp(xp: number, ranks: { title: string; subtitle: string; minXp: 
 }
 
 export function GamificationPanel() {
-  const { state, completeQuest, todayQuestsDone, lastGain } = useGamification();
+  const { state, todayQuestsDone, lastGain } = useGamification();
   const { cfg } = useWinstonConfig();
   const companion = getCompanion(cfg.companionId);
   const pack = useMemo(() => getThemePack(companion.theme), [companion.theme]);
