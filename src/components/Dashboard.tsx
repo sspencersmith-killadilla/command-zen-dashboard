@@ -22,7 +22,9 @@ import {
 } from "@/lib/winston-store";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import { ChatPanel } from "@/components/ChatPanel";
+import { CompanionPicker } from "@/components/CompanionPicker";
 import { useGamification } from "@/lib/gamification";
+import { useCompanions } from "@/lib/companions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -52,6 +54,7 @@ export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
   const [copied, setCopied] = useState(false);
   const { completeQuest } = useGamification();
+  const { hasChosen } = useCompanions();
 
   const assignments = useMemo(
     () => getSimulatedAssignments(cfg.courses).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime()),
@@ -77,6 +80,10 @@ export function Dashboard() {
     } catch {
       /* ignore */
     }
+  }
+
+  if (!hasChosen) {
+    return <CompanionPicker />;
   }
 
   return (
