@@ -15,6 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedTriageRouteImport } from './routes/_authenticated/triage'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedRecallRouteImport } from './routes/_authenticated/recall'
 import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
@@ -48,6 +49,11 @@ const AuthenticatedTriageRoute = AuthenticatedTriageRouteImport.update({
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRecallRoute = AuthenticatedRecallRouteImport.update({
+  id: '/recall',
+  path: '/recall',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPlanRoute = AuthenticatedPlanRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
+  '/recall': typeof AuthenticatedRecallRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
+  '/recall': typeof AuthenticatedRecallRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/locker': typeof AuthenticatedLockerRoute
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
+  '/_authenticated/recall': typeof AuthenticatedRecallRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/guide'
     | '/locker'
     | '/plan'
+    | '/recall'
     | '/settings'
     | '/triage'
     | '/api/chat'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/guide'
     | '/locker'
     | '/plan'
+    | '/recall'
     | '/settings'
     | '/triage'
     | '/api/chat'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/_authenticated/guide'
     | '/_authenticated/locker'
     | '/_authenticated/plan'
+    | '/_authenticated/recall'
     | '/_authenticated/settings'
     | '/_authenticated/triage'
     | '/api/chat'
@@ -206,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/recall': {
+      id: '/_authenticated/recall'
+      path: '/recall'
+      fullPath: '/recall'
+      preLoaderRoute: typeof AuthenticatedRecallRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/plan': {
       id: '/_authenticated/plan'
       path: '/plan'
@@ -249,6 +268,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
   AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
   AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
+  AuthenticatedRecallRoute: typeof AuthenticatedRecallRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTriageRoute: typeof AuthenticatedTriageRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -259,6 +279,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
   AuthenticatedLockerRoute: AuthenticatedLockerRoute,
   AuthenticatedPlanRoute: AuthenticatedPlanRoute,
+  AuthenticatedRecallRoute: AuthenticatedRecallRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTriageRoute: AuthenticatedTriageRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
