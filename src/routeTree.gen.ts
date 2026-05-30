@@ -20,6 +20,7 @@ import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/p
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
 import { Route as AuthenticatedAvatarRouteImport } from './routes/_authenticated/avatar'
+import { Route as AuthenticatedRecallDeckRouteImport } from './routes/_authenticated/recall.$deck'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
 
 const LoginRoute = LoginRouteImport.update({
@@ -76,6 +77,11 @@ const AuthenticatedAvatarRoute = AuthenticatedAvatarRouteImport.update({
   path: '/avatar',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedRecallDeckRoute = AuthenticatedRecallDeckRouteImport.update({
+  id: '/$deck',
+  path: '/$deck',
+  getParentRoute: () => AuthenticatedRecallRoute,
+} as any)
 const ApiOauthGoogleCalendarCallbackRoute =
   ApiOauthGoogleCalendarCallbackRouteImport.update({
     id: '/api/oauth/google-calendar/callback',
@@ -90,10 +96,11 @@ export interface FileRoutesByFullPath {
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
-  '/recall': typeof AuthenticatedRecallRoute
+  '/recall': typeof AuthenticatedRecallRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
+  '/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -102,11 +109,12 @@ export interface FileRoutesByTo {
   '/guide': typeof AuthenticatedGuideRoute
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
-  '/recall': typeof AuthenticatedRecallRoute
+  '/recall': typeof AuthenticatedRecallRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
+  '/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesById {
@@ -117,11 +125,12 @@ export interface FileRoutesById {
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/locker': typeof AuthenticatedLockerRoute
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
-  '/_authenticated/recall': typeof AuthenticatedRecallRoute
+  '/_authenticated/recall': typeof AuthenticatedRecallRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/recall/$deck': typeof AuthenticatedRecallDeckRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRouteTypes {
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/triage'
     | '/api/chat'
+    | '/recall/$deck'
     | '/api/oauth/google-calendar/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/triage'
     | '/api/chat'
     | '/'
+    | '/recall/$deck'
     | '/api/oauth/google-calendar/callback'
   id:
     | '__root__'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/_authenticated/triage'
     | '/api/chat'
     | '/_authenticated/'
+    | '/_authenticated/recall/$deck'
     | '/api/oauth/google-calendar/callback'
   fileRoutesById: FileRoutesById
 }
@@ -253,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAvatarRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/recall/$deck': {
+      id: '/_authenticated/recall/$deck'
+      path: '/$deck'
+      fullPath: '/recall/$deck'
+      preLoaderRoute: typeof AuthenticatedRecallDeckRouteImport
+      parentRoute: typeof AuthenticatedRecallRoute
+    }
     '/api/oauth/google-calendar/callback': {
       id: '/api/oauth/google-calendar/callback'
       path: '/api/oauth/google-calendar/callback'
@@ -263,12 +282,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRecallRouteChildren {
+  AuthenticatedRecallDeckRoute: typeof AuthenticatedRecallDeckRoute
+}
+
+const AuthenticatedRecallRouteChildren: AuthenticatedRecallRouteChildren = {
+  AuthenticatedRecallDeckRoute: AuthenticatedRecallDeckRoute,
+}
+
+const AuthenticatedRecallRouteWithChildren =
+  AuthenticatedRecallRoute._addFileChildren(AuthenticatedRecallRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAvatarRoute: typeof AuthenticatedAvatarRoute
   AuthenticatedGuideRoute: typeof AuthenticatedGuideRoute
   AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
   AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
-  AuthenticatedRecallRoute: typeof AuthenticatedRecallRoute
+  AuthenticatedRecallRoute: typeof AuthenticatedRecallRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTriageRoute: typeof AuthenticatedTriageRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -279,7 +309,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGuideRoute: AuthenticatedGuideRoute,
   AuthenticatedLockerRoute: AuthenticatedLockerRoute,
   AuthenticatedPlanRoute: AuthenticatedPlanRoute,
-  AuthenticatedRecallRoute: AuthenticatedRecallRoute,
+  AuthenticatedRecallRoute: AuthenticatedRecallRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTriageRoute: AuthenticatedTriageRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
