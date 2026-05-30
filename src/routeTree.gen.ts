@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedTriageRouteImport } from './routes/_authenticated/triage'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
@@ -38,6 +39,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedTriageRoute = AuthenticatedTriageRouteImport.update({
+  id: '/triage',
+  path: '/triage',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/locker': typeof AuthenticatedLockerRoute
   '/plan': typeof AuthenticatedPlanRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/_authenticated/locker': typeof AuthenticatedLockerRoute
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/triage': typeof AuthenticatedTriageRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/locker'
     | '/plan'
     | '/settings'
+    | '/triage'
     | '/api/chat'
     | '/api/oauth/google-calendar/callback'
   fileRoutesByTo: FileRoutesByTo
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/locker'
     | '/plan'
     | '/settings'
+    | '/triage'
     | '/api/chat'
     | '/'
     | '/api/oauth/google-calendar/callback'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/_authenticated/locker'
     | '/_authenticated/plan'
     | '/_authenticated/settings'
+    | '/_authenticated/triage'
     | '/api/chat'
     | '/_authenticated/'
     | '/api/oauth/google-calendar/callback'
@@ -179,6 +191,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/triage': {
+      id: '/_authenticated/triage'
+      path: '/triage'
+      fullPath: '/triage'
+      preLoaderRoute: typeof AuthenticatedTriageRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
@@ -231,6 +250,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedLockerRoute: typeof AuthenticatedLockerRoute
   AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTriageRoute: typeof AuthenticatedTriageRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
@@ -240,6 +260,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedLockerRoute: AuthenticatedLockerRoute,
   AuthenticatedPlanRoute: AuthenticatedPlanRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTriageRoute: AuthenticatedTriageRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
