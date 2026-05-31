@@ -22,14 +22,12 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
-import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
+import { Trash2, Sunrise, ListChecks, Target, CalendarCheck } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { CompanionCloseup } from "@/components/CompanionCloseup";
 import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
 import { useGamification } from "@/lib/gamification";
-import { useMumble } from "@/lib/use-mumble";
-import { unlockAudio } from "@/lib/mumble";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -42,7 +40,7 @@ export function ChatPanel() {
   const { cfg } = useWinstonConfig();
   const companion = getCompanion(cfg.companionId);
   const { completeQuest } = useGamification();
-  const { speak, stop: stopMumble, speakingId } = useMumble();
+  
 
   const { data: initialMessages, isLoading } = useQuery({
     queryKey: ["chat-messages"],
@@ -91,25 +89,18 @@ export function ChatPanel() {
 
   const isBusy = status === "submitted" || status === "streaming";
 
-  // Floating close-up: pops in when a new assistant message arrives (idle bob)
-  // and stays in "speaking" mode while voice is playing.
-  const [closeup, setCloseup] = useState<{ open: boolean; speaking: boolean }>({
-    open: false,
-    speaking: false,
-  });
+  // Floating close-up: pops in when a new assistant message arrives, then
+  // auto-closes after a few seconds. No audio, no motion.
+  const [closeupOpen, setCloseupOpen] = useState(false);
   const lastAssistantIdRef = useRef<string | null>(null);
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sawInitialRef = useRef(false);
 
-  // Trigger A — new assistant message: auto-play mumble voice once the
-  // message is fully streamed. The closeup speaking state is driven by
-  // Trigger B (speakingId), so this also opens the portrait.
+  // New assistant message → flash the closeup for ~6s.
   useEffect(() => {
     if (status !== "ready") return;
     const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
     if (!lastAssistant) return;
-    // Skip the very first batch (hydrated history)
     if (!sawInitialRef.current) {
       sawInitialRef.current = true;
       lastAssistantIdRef.current = lastAssistant.id;
@@ -117,56 +108,26 @@ export function ChatPanel() {
     }
     if (lastAssistant.id === lastAssistantIdRef.current) return;
     lastAssistantIdRef.current = lastAssistant.id;
-    const text = partsToText(lastAssistant.parts);
-    if (text.trim()) {
-      speak(companion.id, text, lastAssistant.id);
-    } else {
-      // Fallback: still flash the closeup if the message had no text.
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-      setCloseup((c) => ({ open: true, speaking: c.speaking }));
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = setTimeout(() => {
-        setCloseup((c) => (c.speaking ? c : { open: false, speaking: false }));
-      }, 2000);
-    }
-  }, [messages, status, speak, companion.id]);
-
-  // Trigger B — voice playing
-  useEffect(() => {
-    if (speakingId) {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-      setCloseup({ open: true, speaking: true });
-    } else {
-      setCloseup((c) => {
-        if (!c.speaking) return c;
-        return { open: c.open, speaking: false };
-      });
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-      exitTimerRef.current = setTimeout(() => {
-        setCloseup({ open: false, speaking: false });
-      }, 350);
-    }
-  }, [speakingId]);
+    setCloseupOpen(true);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => setCloseupOpen(false), 6000);
+  }, [messages, status]);
 
   // Reset on companion change
   useEffect(() => {
-    setCloseup({ open: false, speaking: false });
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+    setCloseupOpen(false);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
   }, [companion.id]);
 
   useEffect(
     () => () => {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     },
     [],
   );
 
   function quickAsk(text: string, questId?: string) {
     if (isBusy) return;
-    unlockAudio(); // gesture: prime AudioContext for later auto-play
     sendMessage({ text });
     completeQuest("chat-winston");
     if (questId) completeQuest(questId);
@@ -178,6 +139,12 @@ export function ChatPanel() {
       icon: <Sunrise className="h-3.5 w-3.5" />,
       prompt: DAILY_RESET_PROMPT,
       questId: "copy-prompt",
+    },
+    {
+      label: "Plan my day",
+      icon: <CalendarCheck className="h-3.5 w-3.5" />,
+      prompt: "Build me a realistic plan for today using my real Canvas list. Give me 3 time-boxed blocks I can actually finish before bed, in priority order. Bold the first one.",
+      questId: "plan-day",
     },
     {
       label: "What's due this week?",
@@ -297,7 +264,6 @@ export function ChatPanel() {
           onSubmit={(msg) => {
             const text = msg.text?.trim();
             if (!text || isBusy) return;
-            unlockAudio(); // gesture: prime AudioContext for later auto-play
             sendMessage({ text });
             completeQuest("chat-winston");
             setInput("");
@@ -314,25 +280,7 @@ export function ChatPanel() {
           </PromptInputFooter>
         </PromptInput>
       </div>
-      <CompanionCloseup
-        companionId={companion.id}
-        open={closeup.open}
-        intensity={closeup.speaking ? "speaking" : "idle"}
-        canSpeak={messages.some((m) => m.role === "assistant")}
-        isSpeaking={!!speakingId}
-        onToggleSpeak={() => {
-          if (speakingId) {
-            stopMumble();
-            return;
-          }
-          const last = [...messages].reverse().find((m) => m.role === "assistant");
-          if (!last) return;
-          const text = partsToText(last.parts);
-          if (!text.trim()) return;
-          unlockAudio();
-          speak(companion.id, text, last.id);
-        }}
-      />
+      <CompanionCloseup companionId={companion.id} open={closeupOpen} />
     </Card>
   );
 }

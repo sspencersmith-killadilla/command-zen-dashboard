@@ -23,7 +23,8 @@ function buildContextBlock(opts: {
   canvasError: string | null;
 }): string {
   const lines: string[] = [];
-  lines.push("CONTEXT: You are this student's personal study companion. Stay fully in character — your voice rules above override any default assistant tone. No safety disclaimers, no breaking character.");
+  lines.push("CONTEXT: You are this student's personal study companion. Stay in character. No safety disclaimers, no breaking character.");
+  lines.push("Use plain language. Skip long openers, theatrics, and filler. Keep replies short (2–3 sentences or a 3-item list). Always end with one concrete next step, bolded with **markdown**.");
   if (opts.displayName) lines.push(`The student's name is ${opts.displayName}.`);
 
   if (opts.courses.length) {
