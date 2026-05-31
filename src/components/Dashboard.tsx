@@ -584,10 +584,16 @@ export function Dashboard() {
                           <span className={`text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded border ${TIER_CLASS[tier]}`}>
                             {TIER_LABEL[tier]}
                           </span>
-                          {isBoss({ id: a.id, title: a.title, dueAt: a.dueAt }) && (
+                          {a.tier === "boss" && (
                             <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300">
                               <Swords className="h-3 w-3" />
                               Boss
+                            </span>
+                          )}
+                          {a.tier === "mini" && (
+                            <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded border border-violet-500/40 bg-violet-500/10 text-violet-700 dark:text-violet-300">
+                              <Swords className="h-3 w-3" />
+                              Miniboss
                             </span>
                           )}
                           <span className="text-xs text-muted-foreground tabular-nums">
@@ -600,7 +606,7 @@ export function Dashboard() {
                         <p className="text-sm text-muted-foreground mt-1">{a.courseCode}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-                        {isBoss({ id: a.id, title: a.title, dueAt: a.dueAt }) && (
+                        {(a.tier === "boss" || a.tier === "mini") && (
                           <Button
                             variant="secondary"
                             size="sm"
@@ -612,16 +618,17 @@ export function Dashboard() {
                                     title: a.title,
                                     dueAt: a.dueAt.toISOString(),
                                     courseCode: a.courseCode || undefined,
+                                    tier: a.tier,
                                   },
                                 });
-                                toast.success(`Added ${r.count} checkpoint blocks to your plan.`);
+                                toast.success(`Added ${r.count} checkpoint block${r.count === 1 ? "" : "s"} to your plan.`);
                               } catch (e) {
-                                toast.error(e instanceof Error ? e.message : "Could not plan boss");
+                                toast.error(e instanceof Error ? e.message : "Could not plan");
                               }
                             }}
                           >
                             <Swords className="h-3.5 w-3.5" />
-                            Plan boss
+                            {a.tier === "boss" ? "Plan boss" : "Plan miniboss"}
                           </Button>
                         )}
                         {a.htmlUrl && (
