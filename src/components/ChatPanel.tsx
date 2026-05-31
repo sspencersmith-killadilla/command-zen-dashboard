@@ -168,24 +168,30 @@ export function ChatPanel() {
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="relative flex items-center gap-5 px-6 py-5 border-b border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle at 15% 50%, " + companion.glow + " 0%, transparent 55%)",
-          }}
-        />
-        <div className="relative shrink-0">
-          <CompanionAvatar companionId={companion.id} size="lg" />
-        </div>
+        {!plain && (
+          <div
+            className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle at 15% 50%, " + companion.glow + " 0%, transparent 55%)",
+            }}
+          />
+        )}
+        {!plain && (
+          <div className="relative shrink-0">
+            <CompanionAvatar companionId={companion.id} size="lg" />
+          </div>
+        )}
         <div className="relative flex-1 min-w-0">
           <div className="text-[10px] uppercase tracking-[0.2em] font-semibold opacity-80">
-            Your Companion
+            {plain ? "Chat" : "Your Companion"}
           </div>
-          <h2 className="font-bold text-2xl leading-tight">{companion.name}</h2>
-          <p className="text-sm opacity-90 truncate">
-            {companion.species} · {companion.tagline}
-          </p>
+          <h2 className="font-bold text-2xl leading-tight">{displayName}</h2>
+          {!plain && (
+            <p className="text-sm opacity-90 truncate">
+              {companion.species} · {companion.tagline}
+            </p>
+          )}
         </div>
         <Button
           variant="ghost"
