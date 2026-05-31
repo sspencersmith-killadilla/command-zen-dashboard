@@ -40,7 +40,7 @@ export function ChatPanel() {
   const { cfg } = useWinstonConfig();
   const companion = getCompanion(cfg.companionId);
   const { completeQuest } = useGamification();
-  const { speak, stop: stopMumble, speakingId } = useMumble();
+  
 
   const { data: initialMessages, isLoading } = useQuery({
     queryKey: ["chat-messages"],
