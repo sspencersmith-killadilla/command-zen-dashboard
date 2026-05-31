@@ -200,21 +200,34 @@ export function Dashboard() {
     localStorage.setItem("winston.assignment-window", String(windowDays));
   }, [windowDays]);
 
+  const courseTotalsMap = useMemo(
+    () => courseTotals(rawAssignments.map((a) => ({ courseCode: a.courseCode, pointsPossible: a.pointsPossible }))),
+    [rawAssignments],
+  );
+
   const assignments = useMemo(() => {
     const horizon = Date.now() + windowDays * 24 * 60 * 60 * 1000;
     return rawAssignments
       .filter((a) => !a.submitted) // hide submitted from the live task list
-      .map((a) => ({
-        id: a.id,
-        title: a.title,
-        courseCode: a.courseCode,
-        dueAt: new Date(a.dueAt),
-        htmlUrl: a.htmlUrl,
-        files: a.files ?? [],
-      }))
+      .map((a) => {
+        const dueAt = new Date(a.dueAt);
+        const tier: BossTier = bossTier(
+          { id: a.id, title: a.title, dueAt, courseCode: a.courseCode, pointsPossible: a.pointsPossible },
+          courseTotalsMap[a.courseCode] ?? 0,
+        );
+        return {
+          id: a.id,
+          title: a.title,
+          courseCode: a.courseCode,
+          dueAt,
+          htmlUrl: a.htmlUrl,
+          files: a.files ?? [],
+          tier,
+        };
+      })
       .filter((a) => a.dueAt.getTime() <= horizon)
       .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
-  }, [rawAssignments, windowDays]);
+  }, [rawAssignments, windowDays, courseTotalsMap]);
 
   const recentlySubmitted = useMemo(
     () => rawAssignments.filter((a) => a.submitted).slice(0, 5),
