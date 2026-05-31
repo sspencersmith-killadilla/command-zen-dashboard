@@ -690,7 +690,19 @@ export function Dashboard() {
                     >
                       <div className={`h-2.5 w-2.5 rounded-full ${TIER_DOT[tier]}`} />
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-foreground truncate">{a.title}</div>
+                        <div className="font-medium text-foreground truncate flex items-center gap-1.5">
+                          {a.title}
+                          {a.tier === "boss" && (
+                            <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 shrink-0">
+                              <Swords className="h-2.5 w-2.5" />Boss
+                            </span>
+                          )}
+                          {a.tier === "mini" && (
+                            <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border border-violet-500/40 bg-violet-500/10 text-violet-700 dark:text-violet-300 shrink-0">
+                              <Swords className="h-2.5 w-2.5" />Mini
+                            </span>
+                          )}
+                        </div>
                         <div className="text-sm text-muted-foreground truncate">{a.courseCode}</div>
                       </div>
                       <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${TIER_CLASS[tier]}`}>
