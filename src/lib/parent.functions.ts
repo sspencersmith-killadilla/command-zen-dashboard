@@ -194,7 +194,11 @@ export const updateParentShareSettings = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      mode?: ParentMode;
+      paused?: boolean;
+      parent_name?: string;
+    } = {};
     if (data.mode !== undefined) patch.mode = data.mode;
     if (data.paused !== undefined) patch.paused = data.paused;
     if (data.parentName !== undefined) patch.parent_name = data.parentName;
@@ -219,6 +223,7 @@ export const updateParentShareSettings = createServerFn({ method: "POST" })
     }
     return { link };
   });
+
 
 export const revokeParentShare = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
