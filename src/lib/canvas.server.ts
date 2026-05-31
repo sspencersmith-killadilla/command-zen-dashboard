@@ -193,7 +193,7 @@ async function fetchFromApi(
           // include[]=submission gives us per-user submission state so we can
           // hide assignments the student has already turned in.
           // Don't use bucket=upcoming — Canvas limits that bucket to ~7 days.
-          // Fetch ordered by due date and apply our own 60-day horizon below.
+          // Fetch ordered by due date and apply our own 30-day horizon below.
           const items = await canvasGet<CanvasAssignmentApi[]>(
             domain,
             `/api/v1/courses/${course.id}/assignments?per_page=100&order_by=due_at&include[]=submission`,
