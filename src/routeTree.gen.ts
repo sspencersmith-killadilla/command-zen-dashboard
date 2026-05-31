@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
@@ -38,6 +39,11 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const PTokenRoute = PTokenRouteImport.update({
+  id: '/p/$token',
+  path: '/p/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof AuthenticatedPlanRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
+  '/p/$token': typeof PTokenRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/plan': typeof AuthenticatedPlanRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
+  '/p/$token': typeof PTokenRoute
   '/': typeof AuthenticatedIndexRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
+  '/p/$token': typeof PTokenRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
 }
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/settings'
     | '/api/chat'
+    | '/p/$token'
     | '/api/oauth/google-calendar/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/settings'
     | '/api/chat'
+    | '/p/$token'
     | '/'
     | '/api/oauth/google-calendar/callback'
   id:
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/_authenticated/plan'
     | '/_authenticated/settings'
     | '/api/chat'
+    | '/p/$token'
     | '/_authenticated/'
     | '/api/oauth/google-calendar/callback'
   fileRoutesById: FileRoutesById
@@ -148,6 +160,7 @@ export interface RootRouteChildren {
   GuideRoute: typeof GuideRoute
   LoginRoute: typeof LoginRoute
   ApiChatRoute: typeof ApiChatRoute
+  PTokenRoute: typeof PTokenRoute
   ApiOauthGoogleCalendarCallbackRoute: typeof ApiOauthGoogleCalendarCallbackRoute
 }
 
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/p/$token': {
+      id: '/p/$token'
+      path: '/p/$token'
+      fullPath: '/p/$token'
+      preLoaderRoute: typeof PTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
       id: '/api/chat'
@@ -251,6 +271,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuideRoute: GuideRoute,
   LoginRoute: LoginRoute,
   ApiChatRoute: ApiChatRoute,
+  PTokenRoute: PTokenRoute,
   ApiOauthGoogleCalendarCallbackRoute: ApiOauthGoogleCalendarCallbackRoute,
 }
 export const routeTree = rootRouteImport
