@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAvatar } from "@/lib/use-avatar";
 
 import { COSMETICS, RARITY_META, type Slot, type Rarity, type CosmeticItem } from "@/lib/cosmetics";
+import { CosmeticIcon } from "@/components/CosmeticIcon";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/locker")({
