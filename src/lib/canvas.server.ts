@@ -214,6 +214,7 @@ async function fetchFromApi(
               htmlUrl: a.html_url,
               files: a.description ? extractFilesFromDescription(a.description, domain) : [],
               submitted,
+              pointsPossible: typeof a.points_possible === "number" ? a.points_possible : null,
             });
           }
         } catch {
