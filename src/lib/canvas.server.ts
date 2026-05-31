@@ -90,7 +90,7 @@ async function fetchFromIcs(url: string): Promise<{ assignments: ParsedAssignmen
   }
 
   const now = Date.now();
-  const horizon = now + 60 * 24 * 60 * 60 * 1000;
+  const horizon = now + 30 * 24 * 60 * 60 * 1000;
   const events = parseIcs(text);
   const out: ParsedAssignment[] = [];
   for (const ev of events) {
@@ -184,7 +184,7 @@ async function fetchFromApi(
       token,
     );
     const now = Date.now();
-    const horizon = now + 60 * 24 * 60 * 60 * 1000;
+    const horizon = now + 30 * 24 * 60 * 60 * 1000;
     const all: ParsedAssignment[] = [];
 
     await Promise.all(
