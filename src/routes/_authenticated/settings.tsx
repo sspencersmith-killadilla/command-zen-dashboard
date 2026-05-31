@@ -21,6 +21,8 @@ import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, THEMES, getCompanion, type ThemeId } from "@/lib/companions";
 import { useGamification, rankFor } from "@/lib/gamification";
 import { Lock } from "lucide-react";
+import { ParentSharePanel } from "@/components/ParentSharePanel";
+
 
 const searchSchema = z.object({
   gcal: z.enum(["connected", "error"]).optional(),
@@ -305,7 +307,10 @@ function SettingsPage() {
           </Button>
         </Card>
 
+        <ParentSharePanel />
+
         <Card className="p-6 border-border/60 flex items-center justify-between flex-wrap gap-3">
+
           <Button variant="ghost" onClick={resetOnboarding} className="text-muted-foreground">
             <RotateCcw className="h-4 w-4 mr-1.5" /> Re-run onboarding
           </Button>

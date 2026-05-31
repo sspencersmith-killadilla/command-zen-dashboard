@@ -57,7 +57,9 @@ import { currentSeasonArc } from "@/lib/seasons";
 import { computeLoad, recordCompletion, LOAD_COPY } from "@/lib/difficulty";
 import { bossTier, courseTotals, type BossTier } from "@/lib/boss";
 import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
+import { ParentShareBanner } from "@/components/ParentShareBanner";
 import { planBossAssignment } from "@/lib/boss.functions";
+
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -482,7 +484,10 @@ export function Dashboard() {
           </div>
         </div>
 
+        <ParentShareBanner />
+
         <WeeklyRecapCard awardXp={plain ? undefined : applyXpDelta} />
+
 
 
         {/* HERO: Upcoming assignments — front and center */}
