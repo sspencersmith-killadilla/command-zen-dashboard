@@ -414,9 +414,56 @@ export function Dashboard() {
             Good day{cfg.displayName ? `, ${cfg.displayName}` : ""}.
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
-            Mission briefing below. Clear quests, stack XP.
+            {plain
+              ? "Your assignments, focus blocks, and streak — all in one place."
+              : "Mission briefing below. Clear quests, stack XP."}
           </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1">
+              On-time submissions:{" "}
+              <b className="text-foreground tabular-nums">{state.streak}</b>{" "}
+              {plain ? `day${state.streak === 1 ? "" : "s"} in a row` : `· ${streakTier.label}`}
+            </span>
+            {!plain && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-primary"
+                title={season.arc.blurb}
+              >
+                <Swords className="h-3 w-3" />
+                {season.arc.name} · {season.daysRemaining}d left
+              </span>
+            )}
+            {!plain && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1"
+                title={LOAD_COPY[loadInfo.load].description}
+              >
+                Today's load: <b className="text-foreground">{LOAD_COPY[loadInfo.load].label}</b>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (restDayUsedThisWeek) return;
+                if (takeRestDay()) {
+                  toast.success(
+                    plain
+                      ? "Rest day — streak protected."
+                      : "Rest day spent. Streak protected.",
+                  );
+                }
+              }}
+              disabled={restDayUsedThisWeek}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 hover:border-primary/40 disabled:opacity-50"
+            >
+              <Coffee className="h-3 w-3" />
+              {restDayUsedThisWeek ? "Rest day used" : "Take a rest day"}
+            </button>
+          </div>
         </div>
+
+        <WeeklyRecapCard awardXp={plain ? undefined : applyXpDelta} />
+
 
         {/* HERO: Upcoming assignments — front and center */}
         <Card
