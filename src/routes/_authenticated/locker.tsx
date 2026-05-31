@@ -205,8 +205,7 @@ function ItemTile({
       {/* Glyph + name */}
       <div className="flex items-center gap-2.5">
         <div
-          className="h-12 w-12 rounded-lg shrink-0 border border-border/40 shadow-inner flex items-center justify-center overflow-hidden"
-          style={{ background: shade(item.color, 0.42) }}
+          className="h-12 w-12 rounded-lg shrink-0 border border-border/40 shadow-inner flex items-center justify-center overflow-hidden bg-muted/30"
         >
           <CosmeticIcon item={item} size={40} />
         </div>
