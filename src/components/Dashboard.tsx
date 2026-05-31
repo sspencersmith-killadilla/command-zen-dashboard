@@ -265,6 +265,7 @@ export function Dashboard() {
                 Past due: {consequences.pastDueCount}
               </span>
             )}
+            {!plain && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -323,7 +324,9 @@ export function Dashboard() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
+            )}
 
+            {!plain && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -368,7 +371,9 @@ export function Dashboard() {
                 })}
               </DropdownMenuContent>
             </DropdownMenu>
+            )}
 
+            {!plain && (
             <Link
               to="/locker"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
@@ -377,6 +382,7 @@ export function Dashboard() {
               <Shirt className="h-4 w-4" />
               <span className="hidden sm:inline">Locker</span>
             </Link>
+            )}
 
             <Link to="/plan" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
               <CalendarClock className="h-4 w-4" />
@@ -565,6 +571,12 @@ export function Dashboard() {
                           <span className={`text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded border ${TIER_CLASS[tier]}`}>
                             {TIER_LABEL[tier]}
                           </span>
+                          {isBoss({ id: a.id, title: a.title, dueAt: a.dueAt }) && (
+                            <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                              <Swords className="h-3 w-3" />
+                              Boss
+                            </span>
+                          )}
                           <span className="text-xs text-muted-foreground tabular-nums">
                             · due {fmtDue(a.dueAt)}
                           </span>
@@ -575,6 +587,30 @@ export function Dashboard() {
                         <p className="text-sm text-muted-foreground mt-1">{a.courseCode}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                        {isBoss({ id: a.id, title: a.title, dueAt: a.dueAt }) && (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={async () => {
+                              try {
+                                const r = await planBossFn({
+                                  data: {
+                                    id: a.id,
+                                    title: a.title,
+                                    dueAt: a.dueAt.toISOString(),
+                                    courseCode: a.courseCode || undefined,
+                                  },
+                                });
+                                toast.success(`Added ${r.count} checkpoint blocks to your plan.`);
+                              } catch (e) {
+                                toast.error(e instanceof Error ? e.message : "Could not plan boss");
+                              }
+                            }}
+                          >
+                            <Swords className="h-3.5 w-3.5" />
+                            Plan boss
+                          </Button>
+                        )}
                         {a.htmlUrl && (
                           <Button asChild variant="outline" size="sm">
                             <a href={a.htmlUrl} target="_blank" rel="noopener noreferrer">
@@ -708,6 +744,7 @@ export function Dashboard() {
         </div>
 
         {/* Perfect-Day bonus — locked while anything is past due */}
+        {!plain && (
         <Card
           className="p-5 mb-6 border-border/60 flex items-center justify-between gap-4 flex-wrap"
           style={{ boxShadow: "var(--shadow-soft)" }}
@@ -765,11 +802,14 @@ export function Dashboard() {
                 : "Claim bonus"}
           </Button>
         </Card>
+        )}
 
         {/* Gamification HUD */}
+        {!plain && (
         <div className="mb-6">
           <GamificationPanel />
         </div>
+        )}
 
         {/* Second Brain — full width now that Daily Reset lives in the chat */}
         <Card className="p-6 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
