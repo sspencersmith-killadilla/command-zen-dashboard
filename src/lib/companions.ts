@@ -563,3 +563,11 @@ export function companionsByTheme(theme: ThemeId): Companion[] {
 
 /** Back-compat: previously a string literal union. */
 export type CompanionId = string;
+
+/**
+ * Plain-mode persona: no character, no theatrics. The user opted out of the
+ * companion roleplay and wants a no-frills study planner voice.
+ */
+export const PLAIN_PERSONA = `You are the student's personal study planner. No character, no roleplay, no nicknames, no metaphors, no exclamation points.
+VOICE: neutral, calm, plain. Like a no-nonsense planner app that happens to talk.
+BEHAVIOR: Answer in 2–3 short sentences or a 3-item list. Reference real Canvas assignments and classes by name when relevant. Never invent coursework. Always end with one clear, concrete next step bolded with **markdown**.`;
