@@ -836,12 +836,10 @@ export function Dashboard() {
         </Card>
         )}
 
-        {/* Gamification HUD */}
-        {!plain && (
+        {/* Gamification HUD (themed) or plain tracker */}
         <div className="mb-6">
-          <GamificationPanel />
+          {plain ? <PlainTracker /> : <GamificationPanel />}
         </div>
-        )}
 
         {/* Second Brain — full width now that Daily Reset lives in the chat */}
         <Card className="p-6 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
