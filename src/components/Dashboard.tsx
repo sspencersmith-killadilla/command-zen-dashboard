@@ -44,6 +44,7 @@ import {
 } from "@/lib/winston-store";
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
+import { PlainTracker } from "@/components/PlainTracker";
 import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
