@@ -49,7 +49,7 @@ import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
 import { useAvatar } from "@/lib/use-avatar";
-import { Shirt, Trophy, Coffee, Flame, Swords } from "lucide-react";
+import { Shirt, Coffee, Swords } from "lucide-react";
 import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
 import { toast } from "sonner";
 import { currentSeasonArc } from "@/lib/seasons";
@@ -102,10 +102,17 @@ function saveCleared(s: Set<string>) {
 
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { state, completeQuest, todayQuestsDone, applyXpDelta } = useGamification();
+  const {
+    state, completeQuest, todayQuestsDone, applyXpDelta,
+    takeRestDay, restDayUsedThisWeek, streakTier,
+  } = useGamification();
   const playerLevel = rankFor(state.xp).level;
   const { recordOnTime, recordMastery } = useAvatar();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
+  const planBossFn = useServerFn(planBossAssignment);
+  const season = useMemo(() => currentSeasonArc(), []);
+  const loadInfo = useMemo(() => computeLoad(), [state.lastActiveDay]);
+  const plain = cfg.plainMode;
   const currentCompanion = getCompanion(cfg.companionId);
   const currentThemeId = currentCompanion.theme;
   const currentTheme = THEMES.find((t) => t.id === currentThemeId)!;
