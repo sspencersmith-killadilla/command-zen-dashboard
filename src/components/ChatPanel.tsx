@@ -30,7 +30,9 @@ import { getCompanion } from "@/lib/companions";
 import { useGamification } from "@/lib/gamification";
 
 function partsToText(parts: UIMessage["parts"]): string {
-  return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+  const raw = parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+  // Hide the [remember: key: value] memory directives from the rendered chat.
+  return raw.replace(/\[remember:[^\]]*\]/gi, "").trimEnd();
 }
 
 export function ChatPanel() {
