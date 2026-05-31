@@ -265,6 +265,7 @@ export function Dashboard() {
                 Past due: {consequences.pastDueCount}
               </span>
             )}
+            {!plain && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -323,7 +324,9 @@ export function Dashboard() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
+            )}
 
+            {!plain && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -368,7 +371,9 @@ export function Dashboard() {
                 })}
               </DropdownMenuContent>
             </DropdownMenu>
+            )}
 
+            {!plain && (
             <Link
               to="/locker"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
@@ -377,6 +382,7 @@ export function Dashboard() {
               <Shirt className="h-4 w-4" />
               <span className="hidden sm:inline">Locker</span>
             </Link>
+            )}
 
             <Link to="/plan" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
               <CalendarClock className="h-4 w-4" />
