@@ -54,7 +54,7 @@ import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
 import { toast } from "sonner";
 import { currentSeasonArc } from "@/lib/seasons";
 import { computeLoad, recordCompletion, LOAD_COPY } from "@/lib/difficulty";
-import { isBoss } from "@/lib/boss";
+import { bossTier, courseTotals, type BossTier } from "@/lib/boss";
 import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
 import { planBossAssignment } from "@/lib/boss.functions";
 
