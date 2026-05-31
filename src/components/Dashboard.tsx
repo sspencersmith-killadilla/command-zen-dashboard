@@ -423,6 +423,35 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <div
+                role="tablist"
+                aria-label="Assignment window"
+                className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 p-0.5"
+              >
+                {([
+                  { v: 7, label: "1w" },
+                  { v: 14, label: "2w" },
+                  { v: 30, label: "30d" },
+                ] as const).map((opt) => {
+                  const sel = windowDays === opt.v;
+                  return (
+                    <button
+                      key={opt.v}
+                      type="button"
+                      role="tab"
+                      aria-selected={sel}
+                      onClick={() => setWindowDays(opt.v)}
+                      className={`px-2.5 py-1 text-[11px] font-medium rounded-full transition-colors ${
+                        sel
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
               <button
                 type="button"
                 onClick={() => canvasQ.refetch()}
@@ -457,7 +486,7 @@ export function Dashboard() {
           {!canvasConfigured ? (
             <EmptyState text="Connect Canvas in Settings — add your Canvas domain and access token to pull real assignments, with direct links and files." />
           ) : assignments.length === 0 ? (
-            <EmptyState text={canvasQ.isLoading ? "Loading assignments from Canvas…" : "No upcoming assignments in the next 60 days."} />
+            <EmptyState text={canvasQ.isLoading ? "Loading assignments from Canvas…" : `No upcoming assignments in the next ${windowDays} days.`} />
           ) : (
             <>
               {(() => {
