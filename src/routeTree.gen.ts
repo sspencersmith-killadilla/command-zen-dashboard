@@ -19,6 +19,8 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedFocusRouteImport } from './routes/_authenticated/focus'
+import { Route as ApiPublicHooksNotificationsDueRouteImport } from './routes/api/public/hooks/notifications-due'
+import { Route as ApiPublicHooksNotificationsDailyCheckInRouteImport } from './routes/api/public/hooks/notifications-daily-check-in'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
 
 const LoginRoute = LoginRouteImport.update({
@@ -70,6 +72,18 @@ const AuthenticatedFocusRoute = AuthenticatedFocusRouteImport.update({
   path: '/focus',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicHooksNotificationsDueRoute =
+  ApiPublicHooksNotificationsDueRouteImport.update({
+    id: '/api/public/hooks/notifications-due',
+    path: '/api/public/hooks/notifications-due',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksNotificationsDailyCheckInRoute =
+  ApiPublicHooksNotificationsDailyCheckInRouteImport.update({
+    id: '/api/public/hooks/notifications-daily-check-in',
+    path: '/api/public/hooks/notifications-daily-check-in',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiOauthGoogleCalendarCallbackRoute =
   ApiOauthGoogleCalendarCallbackRouteImport.update({
     id: '/api/oauth/google-calendar/callback',
@@ -88,6 +102,8 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/p/$token': typeof PTokenRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
+  '/api/public/hooks/notifications-daily-check-in': typeof ApiPublicHooksNotificationsDailyCheckInRoute
+  '/api/public/hooks/notifications-due': typeof ApiPublicHooksNotificationsDueRoute
 }
 export interface FileRoutesByTo {
   '/guide': typeof GuideRoute
@@ -100,6 +116,8 @@ export interface FileRoutesByTo {
   '/p/$token': typeof PTokenRoute
   '/': typeof AuthenticatedIndexRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
+  '/api/public/hooks/notifications-daily-check-in': typeof ApiPublicHooksNotificationsDailyCheckInRoute
+  '/api/public/hooks/notifications-due': typeof ApiPublicHooksNotificationsDueRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -114,6 +132,8 @@ export interface FileRoutesById {
   '/p/$token': typeof PTokenRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/api/oauth/google-calendar/callback': typeof ApiOauthGoogleCalendarCallbackRoute
+  '/api/public/hooks/notifications-daily-check-in': typeof ApiPublicHooksNotificationsDailyCheckInRoute
+  '/api/public/hooks/notifications-due': typeof ApiPublicHooksNotificationsDueRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,6 +148,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/p/$token'
     | '/api/oauth/google-calendar/callback'
+    | '/api/public/hooks/notifications-daily-check-in'
+    | '/api/public/hooks/notifications-due'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/guide'
@@ -140,6 +162,8 @@ export interface FileRouteTypes {
     | '/p/$token'
     | '/'
     | '/api/oauth/google-calendar/callback'
+    | '/api/public/hooks/notifications-daily-check-in'
+    | '/api/public/hooks/notifications-due'
   id:
     | '__root__'
     | '/_authenticated'
@@ -153,6 +177,8 @@ export interface FileRouteTypes {
     | '/p/$token'
     | '/_authenticated/'
     | '/api/oauth/google-calendar/callback'
+    | '/api/public/hooks/notifications-daily-check-in'
+    | '/api/public/hooks/notifications-due'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -162,6 +188,8 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   PTokenRoute: typeof PTokenRoute
   ApiOauthGoogleCalendarCallbackRoute: typeof ApiOauthGoogleCalendarCallbackRoute
+  ApiPublicHooksNotificationsDailyCheckInRoute: typeof ApiPublicHooksNotificationsDailyCheckInRoute
+  ApiPublicHooksNotificationsDueRoute: typeof ApiPublicHooksNotificationsDueRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -236,6 +264,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFocusRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/hooks/notifications-due': {
+      id: '/api/public/hooks/notifications-due'
+      path: '/api/public/hooks/notifications-due'
+      fullPath: '/api/public/hooks/notifications-due'
+      preLoaderRoute: typeof ApiPublicHooksNotificationsDueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/notifications-daily-check-in': {
+      id: '/api/public/hooks/notifications-daily-check-in'
+      path: '/api/public/hooks/notifications-daily-check-in'
+      fullPath: '/api/public/hooks/notifications-daily-check-in'
+      preLoaderRoute: typeof ApiPublicHooksNotificationsDailyCheckInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/oauth/google-calendar/callback': {
       id: '/api/oauth/google-calendar/callback'
       path: '/api/oauth/google-calendar/callback'
@@ -273,6 +315,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   PTokenRoute: PTokenRoute,
   ApiOauthGoogleCalendarCallbackRoute: ApiOauthGoogleCalendarCallbackRoute,
+  ApiPublicHooksNotificationsDailyCheckInRoute:
+    ApiPublicHooksNotificationsDailyCheckInRoute,
+  ApiPublicHooksNotificationsDueRoute: ApiPublicHooksNotificationsDueRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
