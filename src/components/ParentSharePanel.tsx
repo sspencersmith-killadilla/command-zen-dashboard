@@ -257,14 +257,15 @@ export function ParentSharePanel() {
             What I've shared ({state.audit.length})
           </summary>
           <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-            {state.audit.map((row: { id: string; kind: string; created_at: string; payload_preview: Record<string, unknown> }) => (
+            {state.audit.map((row) => {
+              const preview = (row.payload_preview ?? {}) as { statusLabel?: string };
+              return (
               <li key={row.id} className="flex items-center justify-between gap-3">
                 <span>
                   <span className="font-medium text-foreground">{row.kind}</span>
-                  {(row.payload_preview as { statusLabel?: string })?.statusLabel && (
-                    <span> — {(row.payload_preview as { statusLabel?: string }).statusLabel}</span>
-                  )}
+                  {preview.statusLabel && <span> — {preview.statusLabel}</span>}
                 </span>
+
                 <span className="tabular-nums">
                   {new Date(row.created_at).toLocaleDateString()}
                 </span>
