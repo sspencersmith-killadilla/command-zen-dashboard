@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, BookOpen } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
@@ -78,9 +78,11 @@ function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-background">
       <Card className="w-full max-w-md p-8 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
         <div className="text-center mb-6">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[image:var(--gradient-hero)] mb-4">
-            <Sparkles className="h-7 w-7 text-primary-foreground" />
-          </div>
+          <img
+            src="/icon-192.png"
+            alt="Command Center"
+            className="mx-auto h-14 w-14 rounded-2xl mb-4"
+          />
           <h1 className="text-2xl font-semibold tracking-tight">Command Center</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {mode === "signin" ? "Welcome back." : "Create your account."}
