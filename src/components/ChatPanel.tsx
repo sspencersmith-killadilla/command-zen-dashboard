@@ -227,9 +227,9 @@ export function ChatPanel() {
             <div className="text-sm text-muted-foreground p-4">Loading…</div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center text-center py-8 px-6 gap-4">
-              <CompanionAvatar companionId={companion.id} size="lg" />
+              {!plain && <CompanionAvatar companionId={companion.id} size="lg" />}
               <div>
-                <h3 className="font-semibold text-base">{companion.name} is ready.</h3>
+                <h3 className="font-semibold text-base">{displayName} is ready.</h3>
                 <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                   Ask for an assignment breakdown, a daily plan, or a quick quiz.
                 </p>
