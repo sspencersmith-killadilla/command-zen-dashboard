@@ -40,7 +40,9 @@ export function ChatPanel() {
   const fetchMessages = useServerFn(getMyChatMessages);
   const clearChat = useServerFn(clearMyChat);
   const { cfg } = useWinstonConfig();
+  const plain = cfg.plainMode;
   const companion = getCompanion(cfg.companionId);
+  const displayName = plain ? "Assistant" : companion.name;
   const { completeQuest } = useGamification();
   
 
