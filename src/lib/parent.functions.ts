@@ -272,7 +272,10 @@ export const updateWeeklyParentNote = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const weekOf = mondayISO();
 
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      parent_note?: string | null;
+      parent_send_status?: string;
+    } = {};
     if (data.note !== undefined) patch.parent_note = data.note || null;
     if (data.skip) patch.parent_send_status = "skipped";
     if (data.approve) patch.parent_send_status = "approved";
@@ -303,6 +306,7 @@ export const updateWeeklyParentNote = createServerFn({ method: "POST" })
         });
       if (error) throw new Error(error.message);
     }
+
     return { ok: true };
   });
 
