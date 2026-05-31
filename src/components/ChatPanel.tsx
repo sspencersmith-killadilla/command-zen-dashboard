@@ -40,7 +40,9 @@ export function ChatPanel() {
   const fetchMessages = useServerFn(getMyChatMessages);
   const clearChat = useServerFn(clearMyChat);
   const { cfg } = useWinstonConfig();
+  const plain = cfg.plainMode;
   const companion = getCompanion(cfg.companionId);
+  const displayName = plain ? "Assistant" : companion.name;
   const { completeQuest } = useGamification();
   
 
@@ -166,24 +168,30 @@ export function ChatPanel() {
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="relative flex items-center gap-5 px-6 py-5 border-b border-border/60 bg-[image:var(--gradient-hero)] text-primary-foreground overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle at 15% 50%, " + companion.glow + " 0%, transparent 55%)",
-          }}
-        />
-        <div className="relative shrink-0">
-          <CompanionAvatar companionId={companion.id} size="lg" />
-        </div>
+        {!plain && (
+          <div
+            className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle at 15% 50%, " + companion.glow + " 0%, transparent 55%)",
+            }}
+          />
+        )}
+        {!plain && (
+          <div className="relative shrink-0">
+            <CompanionAvatar companionId={companion.id} size="lg" />
+          </div>
+        )}
         <div className="relative flex-1 min-w-0">
           <div className="text-[10px] uppercase tracking-[0.2em] font-semibold opacity-80">
-            Your Companion
+            {plain ? "Chat" : "Your Companion"}
           </div>
-          <h2 className="font-bold text-2xl leading-tight">{companion.name}</h2>
-          <p className="text-sm opacity-90 truncate">
-            {companion.species} · {companion.tagline}
-          </p>
+          <h2 className="font-bold text-2xl leading-tight">{displayName}</h2>
+          {!plain && (
+            <p className="text-sm opacity-90 truncate">
+              {companion.species} · {companion.tagline}
+            </p>
+          )}
         </div>
         <Button
           variant="ghost"
@@ -219,9 +227,9 @@ export function ChatPanel() {
             <div className="text-sm text-muted-foreground p-4">Loading…</div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center text-center py-8 px-6 gap-4">
-              <CompanionAvatar companionId={companion.id} size="lg" />
+              {!plain && <CompanionAvatar companionId={companion.id} size="lg" />}
               <div>
-                <h3 className="font-semibold text-base">{companion.name} is ready.</h3>
+                <h3 className="font-semibold text-base">{displayName} is ready.</h3>
                 <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                   Ask for an assignment breakdown, a daily plan, or a quick quiz.
                 </p>
@@ -274,7 +282,7 @@ export function ChatPanel() {
           <PromptInputTextarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={`Ask ${companion.name} anything…`}
+            placeholder={`Ask ${displayName} anything…`}
             autoFocus
           />
           <PromptInputFooter className="justify-end">
@@ -282,7 +290,7 @@ export function ChatPanel() {
           </PromptInputFooter>
         </PromptInput>
       </div>
-      <CompanionCloseup companionId={companion.id} open={closeupOpen} />
+      {!plain && <CompanionCloseup companionId={companion.id} open={closeupOpen} />}
     </Card>
   );
 }

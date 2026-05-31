@@ -44,6 +44,7 @@ import {
 } from "@/lib/winston-store";
 import { fetchCanvasAssignments } from "@/lib/canvas.functions";
 import { GamificationPanel } from "@/components/GamificationPanel";
+import { PlainTracker } from "@/components/PlainTracker";
 import { ChatPanel } from "@/components/ChatPanel";
 import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
@@ -836,12 +837,10 @@ export function Dashboard() {
         </Card>
         )}
 
-        {/* Gamification HUD */}
-        {!plain && (
+        {/* Gamification HUD (themed) or plain tracker */}
         <div className="mb-6">
-          <GamificationPanel />
+          {plain ? <PlainTracker /> : <GamificationPanel />}
         </div>
-        )}
 
         {/* Second Brain — full width now that Daily Reset lives in the chat */}
         <Card className="p-6 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
