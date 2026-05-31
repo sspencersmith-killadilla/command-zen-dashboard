@@ -536,7 +536,7 @@ function GuidePage() {
         </section>
 
         {/* 12. FAQ */}
-        <Section id="faq" icon={Bell} title="12. FAQ & troubleshooting">
+        <Section id="faq" icon={Bell} title="15. FAQ & troubleshooting">
           <FaqRow
             q="My assignments aren't showing up."
             a="Open Settings and re-save your Canvas domain and token. The domain should be just the host (school.instructure.com), no https:// and no path."
