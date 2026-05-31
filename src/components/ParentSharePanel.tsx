@@ -66,10 +66,14 @@ export function ParentSharePanel() {
   });
 
   const settingsMut = useMutation({
-    mutationFn: (input: Parameters<typeof updateSettings>[0]["data"]) =>
-      updateSettings({ data: input }),
+    mutationFn: (input: {
+      mode?: "minimal" | "shared";
+      paused?: boolean;
+      parentName?: string;
+    }) => updateSettings({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: parentStateKey }),
   });
+
 
   const revokeMut = useMutation({
     mutationFn: () => revoke(),
