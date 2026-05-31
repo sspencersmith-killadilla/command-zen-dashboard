@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { getCompanion } from "@/lib/companions";
+import { getCompanion, PLAIN_PERSONA } from "@/lib/companions";
 import { fetchCanvasAssignmentsFromConfig } from "@/lib/canvas.server";
+
+type MemoryEntry = { key: string; value: string; updatedAt: string };
 
 type CourseHub = { id: string; name: string; notebookUrl: string };
 
