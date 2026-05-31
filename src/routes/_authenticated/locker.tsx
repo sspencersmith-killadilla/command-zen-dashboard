@@ -202,16 +202,14 @@ function ItemTile({
         {!owned && <Lock className="h-3 w-3 text-muted-foreground" />}
       </div>
 
-      {/* Swatch + name */}
+      {/* Glyph + name */}
       <div className="flex items-center gap-2.5">
         <div
-          className="h-10 w-10 rounded-lg shrink-0 border border-border/40 shadow-inner relative overflow-hidden"
-          style={
-            item.color2
-              ? { background: `linear-gradient(135deg, ${item.color} 0%, ${item.color} 50%, ${item.color2} 50%, ${item.color2} 100%)` }
-              : { background: item.color }
-          }
-        />
+          className="h-12 w-12 rounded-lg shrink-0 border border-border/40 shadow-inner flex items-center justify-center overflow-hidden"
+          style={{ background: shade(item.color, 0.42) }}
+        >
+          <CosmeticIcon item={item} size={40} />
+        </div>
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold leading-tight truncate">{item.name}</div>
           <div className="text-[11px] text-muted-foreground leading-tight mt-0.5 line-clamp-2">{item.blurb}</div>
