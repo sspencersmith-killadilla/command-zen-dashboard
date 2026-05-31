@@ -282,7 +282,7 @@ export function ChatPanel() {
           <PromptInputTextarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={`Ask ${companion.name} anything…`}
+            placeholder={`Ask ${displayName} anything…`}
             autoFocus
           />
           <PromptInputFooter className="justify-end">
