@@ -22,14 +22,12 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyChatMessages, clearMyChat } from "@/lib/chat.functions";
-import { Trash2, Sunrise, ListChecks, Target } from "lucide-react";
+import { Trash2, Sunrise, ListChecks, Target, CalendarCheck } from "lucide-react";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { CompanionCloseup } from "@/components/CompanionCloseup";
 import { useWinstonConfig, DAILY_RESET_PROMPT } from "@/lib/winston-store";
 import { getCompanion } from "@/lib/companions";
 import { useGamification } from "@/lib/gamification";
-import { useMumble } from "@/lib/use-mumble";
-import { unlockAudio } from "@/lib/mumble";
 
 function partsToText(parts: UIMessage["parts"]): string {
   return parts.map((p) => (p.type === "text" ? p.text : "")).join("");
