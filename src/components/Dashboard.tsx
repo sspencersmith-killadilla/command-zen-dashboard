@@ -58,7 +58,11 @@ import { computeLoad, recordCompletion, LOAD_COPY } from "@/lib/difficulty";
 import { bossTier, courseTotals, type BossTier } from "@/lib/boss";
 import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
 import { ParentShareBanner } from "@/components/ParentShareBanner";
+import { useDueReminders } from "@/lib/use-due-reminders";
+import { useServerFn as _useServerFn } from "@tanstack/react-start";
+import { getNotificationPrefs } from "@/lib/notifications.functions";
 import { planBossAssignment } from "@/lib/boss.functions";
+
 
 
 const TIER_LABEL: Record<AlertTier, string> = {
