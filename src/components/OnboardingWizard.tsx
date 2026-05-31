@@ -28,6 +28,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
   );
   const [draftName, setDraftName] = useState("");
   const [draftUrl, setDraftUrl] = useState("");
+  const [plainMode, setPlainMode] = useState(initial.plainMode);
 
   async function connectGoogle() {
     setConnecting(true);
@@ -40,7 +41,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
     }
   }
 
-  const steps = ["Welcome", "Canvas", "Google", "Notebooks"];
+  const steps = ["Welcome", "Canvas", "Google", "Notebooks", "Style"];
   const progress = ((step + 1) / steps.length) * 100;
 
   function next() {
@@ -54,6 +55,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
         canvasApiToken: canvasToken.trim(),
         googleConnected,
         courses,
+        plainMode,
       });
   }
 
