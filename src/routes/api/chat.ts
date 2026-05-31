@@ -73,12 +73,16 @@ export const Route = createFileRoute("/api/chat")({
         // Pull the user's full study context in one round-trip
         const { data: cfgRow } = await supabaseAdmin
           .from("user_configs")
-          .select("companion_id,display_name,canvas_feed_url,canvas_api_token,canvas_domain,courses")
+          .select("companion_id,display_name,canvas_feed_url,canvas_api_token,canvas_domain,courses,plain_mode,companion_memory")
           .eq("user_id", userId)
           .maybeSingle();
 
+        const plainMode = !!cfgRow?.plain_mode;
         const companion = getCompanion(cfgRow?.companion_id ?? null);
         const courses: CourseHub[] = Array.isArray(cfgRow?.courses) ? (cfgRow.courses as CourseHub[]) : [];
+        const memory: MemoryEntry[] = Array.isArray(cfgRow?.companion_memory)
+          ? (cfgRow.companion_memory as MemoryEntry[])
+          : [];
 
         const { assignments, error: canvasError } = await fetchCanvasAssignmentsFromConfig({
           apiToken: cfgRow?.canvas_api_token ?? "",
@@ -93,6 +97,17 @@ export const Route = createFileRoute("/api/chat")({
           canvasError,
         });
 
+        const memoryBlock = memory.length
+          ? `\n\nWHAT YOU REMEMBER ABOUT THIS STUDENT (from past conversations — reference naturally when relevant):\n${memory
+              .slice(-12)
+              .map((m) => `- ${m.key}: ${m.value}`)
+              .join("\n")}`
+          : "";
+
+        const rememberInstruction = plainMode
+          ? ""
+          : `\n\nMEMORY: If the student tells you something worth remembering long-term (their major, a recurring blocker, a habit, a preference), append a single line at the very end of your reply in this exact format: [remember: short_key: short value]. Use this sparingly — only for durable facts, not session details. Never mention the memory system explicitly.`;
+
         // Persist the latest user message
         const lastUser = [...messages].reverse().find((m) => m.role === "user");
         if (lastUser) {
@@ -106,9 +121,11 @@ export const Route = createFileRoute("/api/chat")({
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");
 
+        const persona = plainMode ? PLAIN_PERSONA : companion.persona;
+
         const result = streamText({
           model,
-          system: `${companion.persona}\n\n${contextBlock}`,
+          system: `${persona}\n\n${contextBlock}${memoryBlock}${rememberInstruction}`,
           messages: await convertToModelMessages(messages),
         });
 
@@ -116,13 +133,45 @@ export const Route = createFileRoute("/api/chat")({
           originalMessages: messages,
           onFinish: async ({ messages: finalMessages }) => {
             const assistantMsg = [...finalMessages].reverse().find((m) => m.role === "assistant");
-            if (assistantMsg) {
-              await supabaseAdmin.from("chat_messages").insert({
-                user_id: userId,
-                role: "assistant",
-                parts: assistantMsg.parts as never,
-              });
+            if (!assistantMsg) return;
+
+            // Parse [remember: key: value] lines from assistant output and persist.
+            if (!plainMode) {
+              try {
+                const text = assistantMsg.parts
+                  .map((p) => ("text" in p && typeof p.text === "string" ? p.text : ""))
+                  .join("\n");
+                const matches = [...text.matchAll(/\[remember:\s*([^:\]]{1,40}):\s*([^\]]{1,200})\]/gi)];
+                if (matches.length) {
+                  const now = new Date().toISOString();
+                  const newEntries: MemoryEntry[] = matches.map((m) => ({
+                    key: m[1].trim().slice(0, 40),
+                    value: m[2].trim().slice(0, 200),
+                    updatedAt: now,
+                  }));
+                  // Dedup by key (newest wins), cap at 30 entries total.
+                  const merged: MemoryEntry[] = [...memory];
+                  for (const e of newEntries) {
+                    const idx = merged.findIndex((m) => m.key.toLowerCase() === e.key.toLowerCase());
+                    if (idx >= 0) merged[idx] = e;
+                    else merged.push(e);
+                  }
+                  const trimmed = merged.slice(-30);
+                  await supabaseAdmin
+                    .from("user_configs")
+                    .update({ companion_memory: trimmed as never })
+                    .eq("user_id", userId);
+                }
+              } catch {
+                /* ignore memory parsing errors */
+              }
             }
+
+            await supabaseAdmin.from("chat_messages").insert({
+              user_id: userId,
+              role: "assistant",
+              parts: assistantMsg.parts as never,
+            });
           },
         });
       },
