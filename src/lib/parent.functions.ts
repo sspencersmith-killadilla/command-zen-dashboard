@@ -381,7 +381,7 @@ export const generateParentShareLink = createServerFn({ method: "POST" })
       user_id: userId,
       kind: data.kind,
       week_of: weekOf,
-      payload: payload as unknown as Record<string, unknown>,
+      payload: payload as unknown as never,
       expires_at: expiresAt.toISOString(),
     });
     if (error) throw new Error(error.message);
