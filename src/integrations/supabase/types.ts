@@ -196,6 +196,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_log: {
+        Row: {
+          channel: string
+          created_at: string
+          dedupe_key: string
+          id: string
+          meta: Json
+          status: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          dedupe_key: string
+          id?: string
+          meta?: Json
+          status?: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          dedupe_key?: string
+          id?: string
+          meta?: Json
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       parent_links: {
         Row: {
           created_at: string
@@ -310,6 +340,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       study_blocks: {
         Row: {
@@ -446,9 +509,11 @@ export type Database = {
           display_name: string
           google_connection_id: string | null
           id: string
+          notification_prefs: Json
           notifications_enabled: boolean
           onboarded: boolean
           plain_mode: boolean
+          timezone: string
           updated_at: string
           user_id: string
         }
@@ -463,9 +528,11 @@ export type Database = {
           display_name?: string
           google_connection_id?: string | null
           id?: string
+          notification_prefs?: Json
           notifications_enabled?: boolean
           onboarded?: boolean
           plain_mode?: boolean
+          timezone?: string
           updated_at?: string
           user_id: string
         }
@@ -480,9 +547,11 @@ export type Database = {
           display_name?: string
           google_connection_id?: string | null
           id?: string
+          notification_prefs?: Json
           notifications_enabled?: boolean
           onboarded?: boolean
           plain_mode?: boolean
+          timezone?: string
           updated_at?: string
           user_id?: string
         }
