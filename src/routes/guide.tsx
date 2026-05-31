@@ -95,8 +95,11 @@ function GuidePage() {
               ["#focus", "8. Focus timer", Timer],
               ["#chat", "9. Chatting with your companion", MessageSquare],
               ["#settings", "10. Settings explained", SettingsIcon],
-              ["#bios", "11. Character biographies", BookOpen],
-              ["#faq", "12. FAQ & troubleshooting", Bell],
+              ["#plain-mode", "11. Plain mode", CheckCircle2],
+              ["#parent-share", "12. Sharing with parents", Users],
+              ["#notifications", "13. Notifications", Bell],
+              ["#bios", "14. Character biographies", BookOpen],
+              ["#faq", "15. FAQ & troubleshooting", Bell],
             ].map(([href, label, Icon]) => {
               const I = Icon as typeof Sparkles;
               return (
@@ -383,13 +386,100 @@ function GuidePage() {
           </div>
         </Section>
 
+        {/* 11. Plain mode */}
+        <Section id="plain-mode" icon={CheckCircle2} title="11. Plain mode">
+          <p>
+            A toggle in <Link to="/settings" className="underline">Settings</Link> that
+            strips the game language out of the entire app. Useful when you
+            need to focus, when you're sharing the screen, or when the world
+            framing feels like noise.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3 mt-4">
+            <SettingRow label="What it hides" body="Quest names, theme HUD labels, XP/level animations, companion banter, and the world's framing on cards." />
+            <SettingRow label="What it keeps" body="Your assignments, study planner, focus timer, Canvas sync, settings, and the parent-share status — everything functional." />
+            <SettingRow label="Where it lives" body="Settings → Plain mode toggle. Flip it any time; nothing is lost." />
+            <SettingRow label="When to use" body="During exam week, when a parent is helping you plan, or any moment the gamification feels like too much." />
+          </div>
+        </Section>
+
+        {/* 12. Parent share */}
+        <Section id="parent-share" icon={Users} title="12. Sharing with parents">
+          <p>
+            Optional, privacy-first status sharing. A parent (or anyone you
+            trust) gets a weekly traffic-light view of how you're doing —
+            <strong> only what you allow, and only when you allow it</strong>.
+            They never see your assignments, messages, or game profile.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3 mt-4">
+            <SettingRow label="How they see it" body="A magic link emailed to their address. Opens a clean status page — no login, no app install." />
+            <SettingRow label="What they see" body="A green / yellow / red traffic light for the week, plus any note you add. Nothing else." />
+            <SettingRow label="Minimal vs Family mode" body="Minimal = just the light. Family = light + your optional note. You pick." />
+            <SettingRow label="Pause or revoke" body="One click in Settings → Sharing. Past links stop working immediately." />
+            <SettingRow label="Audit log" body="See exactly what was shared and when, in your own settings. Nothing happens silently." />
+            <SettingRow label="Defaults" body="OFF. Nothing ships to anyone until you invite a parent and confirm the share." />
+          </div>
+          <p className="text-sm text-muted-foreground mt-4">
+            The goal: give parents peace of mind without making you feel
+            monitored. If at any point it stops feeling right, pause it.
+          </p>
+        </Section>
+
+        {/* 13. Notifications */}
+        <Section id="notifications" icon={Bell} title="13. Notifications">
+          <p>
+            Three independent channels, all <strong>off by default</strong>.
+            You opt in to each one separately, and pick exactly what fires
+            it. Manage everything in{" "}
+            <Link to="/settings" className="underline">Settings → Notifications</Link>.
+          </p>
+
+          <div className="grid sm:grid-cols-3 gap-3 mt-4">
+            <Card className="p-4 space-y-1">
+              <div className="text-xs uppercase tracking-wider text-primary font-medium">In-app</div>
+              <p className="text-sm">Toasts that appear while the tab is open. Works on any device, no setup. Best for "the tab is already open while I study" reminders.</p>
+            </Card>
+            <Card className="p-4 space-y-1">
+              <div className="text-xs uppercase tracking-wider text-primary font-medium">Browser push</div>
+              <p className="text-sm">Real OS-level pings on desktop Chrome / Firefox / Edge and Android. Only fires on the published site, not the preview. On iPhone you have to "Add to Home Screen" first — Apple rules.</p>
+            </Card>
+            <Card className="p-4 space-y-1">
+              <div className="text-xs uppercase tracking-wider text-primary font-medium">Email digest</div>
+              <p className="text-sm">Coming next — needs a sender domain. Will deliver a weekly due-reminder digest and an optional daily check-in email.</p>
+            </Card>
+          </div>
+
+          <h3 className="text-base font-semibold mt-6">What can fire</h3>
+          <div className="grid sm:grid-cols-2 gap-3 mt-2">
+            <SettingRow label="Assignment due reminders" body="Pings at 24h, 2h, and at-due-time for upcoming Canvas items. Browser-push reminders dedupe so you don't get the same one twice." />
+            <SettingRow label="Daily check-in" body="One nudge per day at a time you pick. 'You have things due this week — clear what you can.'" />
+          </div>
+
+          <h3 className="text-base font-semibold mt-6">Enabling push</h3>
+          <ol className="list-decimal list-outside ml-5 space-y-2 mt-2 text-sm">
+            <li>Open the app at its published URL in a normal tab (not the preview iframe).</li>
+            <li>Settings → Notifications → <em>Enable push on this device</em>.</li>
+            <li>Allow notifications when the browser asks.</li>
+            <li>Flip on the triggers you actually want.</li>
+            <li>Hit <em>Send a test push</em> to confirm it's working.</li>
+          </ol>
+
+          <h3 className="text-base font-semibold mt-6">Privacy</h3>
+          <p className="text-sm text-muted-foreground">
+            Push subscriptions are stored per-device and only used to send
+            reminders you opted into. Disable on any device at any time — the
+            subscription is deleted on the server immediately. Notification
+            history is yours alone (not visible to parents on the share page).
+          </p>
+        </Section>
+
+
 
         {/* 11. Bios */}
         <section id="bios" className="scroll-mt-20">
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="h-5 w-5 text-primary" />
             <h2 className="text-2xl font-semibold tracking-tight">
-              11. Character biographies
+              14. Character biographies
             </h2>
           </div>
           <p className="text-muted-foreground mb-8">
@@ -446,7 +536,7 @@ function GuidePage() {
         </section>
 
         {/* 12. FAQ */}
-        <Section id="faq" icon={Bell} title="12. FAQ & troubleshooting">
+        <Section id="faq" icon={Bell} title="15. FAQ & troubleshooting">
           <FaqRow
             q="My assignments aren't showing up."
             a="Open Settings and re-save your Canvas domain and token. The domain should be just the host (school.instructure.com), no https:// and no path."
