@@ -270,7 +270,8 @@ export function ParentSharePanel() {
                   {new Date(row.created_at).toLocaleDateString()}
                 </span>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </details>
       )}
