@@ -744,6 +744,7 @@ export function Dashboard() {
         </div>
 
         {/* Perfect-Day bonus — locked while anything is past due */}
+        {!plain && (
         <Card
           className="p-5 mb-6 border-border/60 flex items-center justify-between gap-4 flex-wrap"
           style={{ boxShadow: "var(--shadow-soft)" }}
@@ -801,11 +802,14 @@ export function Dashboard() {
                 : "Claim bonus"}
           </Button>
         </Card>
+        )}
 
         {/* Gamification HUD */}
+        {!plain && (
         <div className="mb-6">
           <GamificationPanel />
         </div>
+        )}
 
         {/* Second Brain — full width now that Daily Reset lives in the chat */}
         <Card className="p-6 border-border/60" style={{ boxShadow: "var(--shadow-soft)" }}>
