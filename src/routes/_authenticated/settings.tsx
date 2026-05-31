@@ -22,6 +22,7 @@ import { COMPANION_LIST, THEMES, getCompanion, type ThemeId } from "@/lib/compan
 import { useGamification, rankFor } from "@/lib/gamification";
 import { Lock } from "lucide-react";
 import { ParentSharePanel } from "@/components/ParentSharePanel";
+import { NotificationsPanel } from "@/components/NotificationsPanel";
 
 
 const searchSchema = z.object({
@@ -260,13 +261,10 @@ function SettingsPage() {
               </Button>
             )}
           </div>
-          <Row
-            title="Push / SMS alerts"
-            subtitle="Tiered reminders via Twilio / FCM."
-            checked={cfg.notificationsEnabled}
-            onChange={(v) => update({ notificationsEnabled: v })}
-          />
         </Card>
+
+        <NotificationsPanel />
+
 
         <Card className="p-6 space-y-4 border-border/60">
           <div>

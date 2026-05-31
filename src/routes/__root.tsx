@@ -120,6 +120,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    // Defensive: unregister any stale service workers in preview/iframe contexts.
+    import("@/lib/push").then((m) => m.unregisterPreviewServiceWorkers()).catch(() => {});
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
