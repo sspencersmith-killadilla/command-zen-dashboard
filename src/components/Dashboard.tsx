@@ -49,9 +49,14 @@ import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
 import { useAvatar } from "@/lib/use-avatar";
-import { Shirt } from "lucide-react";
+import { Shirt, Trophy, Coffee, Flame, Swords } from "lucide-react";
 import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
 import { toast } from "sonner";
+import { currentSeasonArc } from "@/lib/seasons";
+import { computeLoad, recordCompletion, LOAD_COPY } from "@/lib/difficulty";
+import { isBoss } from "@/lib/boss";
+import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
+import { planBossAssignment } from "@/lib/boss.functions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
