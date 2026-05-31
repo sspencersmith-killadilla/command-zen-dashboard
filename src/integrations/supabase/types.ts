@@ -325,6 +325,7 @@ export type Database = {
           canvas_domain: string
           canvas_feed_url: string
           companion_id: string
+          companion_memory: Json
           courses: Json
           created_at: string
           display_name: string
@@ -332,6 +333,7 @@ export type Database = {
           id: string
           notifications_enabled: boolean
           onboarded: boolean
+          plain_mode: boolean
           updated_at: string
           user_id: string
         }
@@ -340,6 +342,7 @@ export type Database = {
           canvas_domain?: string
           canvas_feed_url?: string
           companion_id?: string
+          companion_memory?: Json
           courses?: Json
           created_at?: string
           display_name?: string
@@ -347,6 +350,7 @@ export type Database = {
           id?: string
           notifications_enabled?: boolean
           onboarded?: boolean
+          plain_mode?: boolean
           updated_at?: string
           user_id: string
         }
@@ -355,6 +359,7 @@ export type Database = {
           canvas_domain?: string
           canvas_feed_url?: string
           companion_id?: string
+          companion_memory?: Json
           courses?: Json
           created_at?: string
           display_name?: string
@@ -362,6 +367,7 @@ export type Database = {
           id?: string
           notifications_enabled?: boolean
           onboarded?: boolean
+          plain_mode?: boolean
           updated_at?: string
           user_id?: string
         }
@@ -388,6 +394,39 @@ export type Database = {
           item_id?: string
           source?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_recaps: {
+        Row: {
+          created_at: string
+          id: string
+          summary: Json
+          updated_at: string
+          user_id: string
+          viewed_at: string | null
+          week_of: string
+          xp_awarded: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          summary?: Json
+          updated_at?: string
+          user_id: string
+          viewed_at?: string | null
+          week_of: string
+          xp_awarded?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          summary?: Json
+          updated_at?: string
+          user_id?: string
+          viewed_at?: string | null
+          week_of?: string
+          xp_awarded?: number
         }
         Relationships: []
       }

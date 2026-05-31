@@ -1,55 +1,98 @@
-## 1. Simplify companion language (keep personalities)
+# Long-term engagement + Plain mode
 
-In `src/lib/companions.ts`, rewrite the five persona archetypes (`SAGE`, `CHILL`, `HYPE`, `GUARDIAN`, `TRICKSTER`) so the **voice cues stay** but the language is plainer for students:
+Two parallel tracks. Plain mode is a single toggle in Settings; engagement features all read it and degrade gracefully (no XP, no companion, no cosmetics, no quests — just deadlines, plans, and streaks described literally).
 
-- Cap responses at ~2–3 short sentences (or a 3-item list) by default.
-- Target ~8th-grade reading level: short words, no archaic phrasing, no jargon, no theatrical filler.
-- Keep one signature tic per archetype so personality survives:
-  - Sage: one calm, direct question, then the answer. Drop "Indeed."/"the old texts."
-  - Chill: short, low-key, contractions, no slang stacking.
-  - Hype: one short pep line + one concrete 5-minute step. No em-dash chains.
-  - Guardian: one warm line + the single most important next deadline.
-  - Trickster: one light tease + the real plan. No "boss/champ" sarcasm.
-- Add a global rule in `src/routes/api/chat.ts` system prompt: "Use plain language. Avoid filler, theatrics, and long openers. Bold the one next action."
+## A. Plain mode (new)
 
-The per-companion `tagline` and `species` stay untouched, so the roster still feels distinct.
+- Add `plainMode: boolean` to `user_configs` (migration).
+- New toggle in `src/routes/_authenticated/settings.tsx`: "Plain mode — no avatars, no XP, no game".
+- When `plainMode` is on:
+  - `Dashboard.tsx` hides: GamificationPanel, PlayerAvatar, CompanionAvatar, CompanionCloseup, quests, XP toasts, cosmetic dust.
+  - ChatPanel keeps assistant replies but drops persona flavor — system prompt switches to a plain "study planner assistant" voice.
+  - Streak shown as a literal counter: "On-time submissions: 7 days in a row" (no Bronze/Gold tier names, no badges).
+  - Locker, Focus rewards, mastery sets — routes still exist but Dashboard nav hides their entry points.
+- Onboarding wizard gets a final step: "Game-style or Plain?" — defaults to game-style for new users.
 
-## 2. "Plan my day" quick action
+## B. Engagement mechanics (all 7)
 
-In `src/components/ChatPanel.tsx`, add a fourth quick-action button next to **Daily Reset / What's due this week? / Break down my next assignment**:
+### 1. Seasonal arcs (4-week cycles)
+- `src/lib/seasons.ts`: arc registry (id, name, theme rotation, arc-only quest, limited cosmetic). 4 arcs hardcoded to rotate by ISO week mod.
+- Dashboard banner shows current arc + days remaining + arc quest progress.
+- Arc-only cosmetic is added to inventory on arc completion (clear ≥80% of arc quests).
+- Hidden in plain mode.
 
-- Label: **"Plan my day"** (icon: `CalendarCheck`).
-- Prompt: "Build me a realistic plan for today. Use my real Canvas list. Give me 3 time-boxed blocks I can actually finish before bed, in priority order. Bold the first one."
-- Wire to `quickAsk` like the others; mark a new `plan-day` quest as complete.
+### 2. Adaptive difficulty
+- `src/lib/difficulty.ts`: compute 7-day rolling on-time rate from `flashcard_cards`/Canvas-derived completions stored locally (we don't have submissions table — use existing `winston.gamification` `lastActiveDay` + assignment due dates + a new `winston.completions.v1` local log written when user marks an assignment cleared via quest `clear-assignment`).
+- Daily quest count: rate >85% → 6 quests, 65–85% → 5, <65% → 4 easier ones.
+- Surfaced as "Today's load: light/standard/stretch" chip on Dashboard.
+- Plain mode: ignored (no quests).
 
-## 3. Silent, static closeup (no sound, no motion)
+### 3. Streak ladder
+- Extend `gamification.ts`: derive tier from `state.streak` (Bronze 3, Silver 7, Gold 14, Platinum 30).
+- Breaking a streak drops one tier (set streak to previous tier's minimum) instead of zero.
+- Tier persisted as `state.streakTier`; tier-up toast.
+- Tier injected into system prompt as a tone trait ("Gold tier: remember the user's worst class and check in unprompted").
+- Plain mode: tier hidden, raw day count shown.
 
-- **`src/components/ChatPanel.tsx`**: remove the `useMumble` import + hook, the `speak`/`stop`/`speakingId` wiring, both `unlockAudio()` calls, and the `onToggleSpeak` prop on `CompanionCloseup`. Drive `closeup.open` purely from "new assistant message arrived" — open on arrival, auto-close after ~6 seconds.
-- **`src/components/CompanionCloseup.tsx`**: drop `canSpeak`, `isSpeaking`, `onToggleSpeak`, the speak/stop button, the `closeup-jaw` animation class, and the "speaking" dot indicator. Bump the frame from 180px → ~240px so the face reads larger. Remove the `closeup-bob` class so the portrait sits still.
-- Leave `src/lib/use-mumble.ts` and `src/lib/mumble.ts` in place (unused) so we don't churn other files; they can be deleted in a follow-up if you'd like.
+### 4. Companion memory
+- Add `companion_memory jsonb` to `user_configs` (array of {key, value, updatedAt}, capped at 5).
+- New server fn `updateCompanionMemory` (auth) — called when chat assistant emits a `[remember: …]` tag (parse server-side in `src/routes/api/chat.ts`).
+- Memory injected into system prompt block.
+- Plain mode: disabled.
 
-## 4. Assignment window: 7 / 14 / 30 days (default 30)
+### 5. Sunday recap ritual
+- New table `weekly_recaps` (user_id, week_of, summary jsonb, viewed_at, xp_awarded).
+- Server fn `getOrCreateThisWeekRecap`: if today is Sun ≥9pm local (or any time on Mon before recap viewed), compose recap from `chat_messages`, `focus_sessions`, `flashcard_cards`, on-time count.
+- Dashboard one-shot card "This week" — dismissing awards +50 XP (skipped in plain mode; card still shows summary text).
 
-- In `src/lib/canvas.functions.ts` / `src/lib/canvas.server.ts`, cap returned assignments at **30 days out** from today (currently 60).
-- In `src/components/Dashboard.tsx`, above the "Up Next" list, add a small segmented control: **1 week · 2 weeks · 30 days**, defaulting to 30 days, persisted to `useWinstonConfig` as `assignmentWindowDays`. The filter applies on the client to the already-fetched list, so switching is instant.
-- Same window is passed into the chat context block in `src/routes/api/chat.ts` so the companion only references assignments inside the chosen window.
+### 6. Boss assignments
+- `src/lib/boss.ts`: detect from Canvas list — points_possible / course_points >20% OR title regex /\b(final|midterm|exam|capstone)\b/i.
+- Boss tag rendered on the assignment row.
+- Auto-generated checkpoint plan: T-7, T-3, T-1 study blocks inserted into `study_blocks` when user clicks "Plan boss".
+- Plain mode: still shown — checkpoints are the value, not gamification.
 
-## 5. Long-term engagement (anti-mastery) — proposed roadmap
+### 7. Rest days
+- `restDayUsed: Record<isoWeek, dateISO>` in gamification state.
+- "Take a rest day" button on Dashboard, enabled only if (a) no past-due AND (b) all of THIS week's must-do quests done AND (c) not used this week.
+- Spending it sets `lastActiveDay` to today without breaking streak and shows a calm confirmation.
+- Plain mode: relabeled "Skip today without breaking your streak" — no game framing.
 
-The current loop (daily quests + XP + cosmetics + companion unlocks per level) is great for week 1–3 but plateaus once a student has seen every theme and hit max level. To stay sticky for a full semester:
+## Files touched
 
-1. **Seasonal arcs (4-week cycles).** Each arc introduces a new theme rotation, a limited-time cosmetic, and an arc-only daily quest ("Citations Week", "Finals Sprint"). Old themes remain unlocked; the *featured* rotation changes. Prevents "I've already collected everything."
-2. **Difficulty that scales with the student, not the calendar.** Track 7-day rolling on-time submission rate. If it stays >85%, daily quests get harder (more blocks, tighter focus sessions, "no quick-action chat today"). If it drops, they get gentler. Mastery never sticks because the bar moves.
-3. **Streak depth, not streak length.** Replace pure day-streaks with a **streak ladder** (Bronze 3d → Silver 7d → Gold 14d → Platinum 30d). Each tier unlocks a permanent tone trait on the companion ("Gold streak: Barnaby now remembers your worst class and checks in on it unprompted"). Breaking a streak drops one tier, not to zero — punishment without despair.
-4. **Companion memory & callbacks.** Persist 3–5 facts per user (worst class, best study time, last big win) in `user_configs.companion_memory` and inject into the system prompt. After ~2 weeks the companion sounds like it actually knows them — extremely hard to replicate by re-reading a guide.
-5. **End-of-week ritual.** Sunday 9pm: companion DMs a 60-second recap (what you crushed, what slipped, the one thing for Monday). One-shot card on the dashboard — closing it grants the week's XP. Anchors the app to a weekly habit, not just daily.
-6. **"Boss" assignments.** Auto-detect assignments worth >20% of the grade (or flagged "exam"/"final" in the title) and surface a multi-stage quest line with checkpoint deadlines a week out, three days out, the night before. These take real planning to clear — not gameable by spamming chat.
-7. **Quiet days are wins too.** A "rest day" mechanic: students can spend one rest day per week without breaking their streak, but only if they've cleared that week's must-do list. Rewards finishing early instead of grinding.
+New:
+- `src/lib/seasons.ts`
+- `src/lib/difficulty.ts`
+- `src/lib/boss.ts`
+- `src/components/SeasonalArcBanner.tsx`
+- `src/components/StreakTierBadge.tsx`
+- `src/components/WeeklyRecapCard.tsx`
+- `src/components/BossAssignmentRow.tsx` (or inline into Dashboard)
+- `src/lib/recap.functions.ts`
+- `src/lib/memory.functions.ts`
 
-I'd recommend shipping **#1 (seasonal arcs)**, **#3 (streak ladder)**, and **#5 (Sunday recap)** first — they're the highest engagement-per-line-of-code and don't require new AI behavior. #2 and #4 are a second sprint.
+Edited:
+- `src/lib/gamification.ts` (tier, rest day, soft-drop streak)
+- `src/lib/companions.ts` (memory injection helper exported)
+- `src/routes/api/chat.ts` (memory + tier + plain-mode system prompts, [remember:] parser)
+- `src/components/Dashboard.tsx` (arc banner, difficulty chip, recap card, rest day, boss rows, plain-mode gates)
+- `src/components/ChatPanel.tsx` (plain-mode label tweaks)
+- `src/components/GamificationPanel.tsx` (tier badge, hidden in plain mode)
+- `src/routes/_authenticated/settings.tsx` (plain mode toggle)
+- `src/components/OnboardingWizard.tsx` (mode step)
+- `src/lib/winston-store.ts` (expose plainMode)
 
-## Technical notes
+DB migrations:
+- ALTER TABLE user_configs ADD COLUMN plain_mode boolean NOT NULL DEFAULT false, ADD COLUMN companion_memory jsonb NOT NULL DEFAULT '[]'::jsonb
+- CREATE TABLE weekly_recaps (id, user_id, week_of date, summary jsonb, viewed_at timestamptz, xp_awarded int DEFAULT 0, unique(user_id, week_of)) with RLS + grants
 
-- The `assignmentWindowDays` filter is purely a UI/context concern; no DB schema change.
-- Removing audio doesn't require touching `src/lib/mumble.ts` — just unwire it from `ChatPanel`.
-- Persona rewrite is the only change that affects the model output; everything else is presentational.
+## Order of operations
+
+1. Migrations (plain_mode + companion_memory + weekly_recaps).
+2. `winston-store` + Settings toggle + Onboarding step (so plain mode exists and gates everything that follows).
+3. Gamification: streak tier + rest day + soft-drop.
+4. Seasons + difficulty + boss libs (pure logic, no DB).
+5. Dashboard wiring (arc banner, difficulty chip, rest-day button, boss rows, plain-mode gates).
+6. Recap server fn + card.
+7. Companion memory server fn + chat.ts integration (memory, tier, plain-mode prompt).
+
+Will ship in this order in one pass, then verify build.

@@ -28,6 +28,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
   );
   const [draftName, setDraftName] = useState("");
   const [draftUrl, setDraftUrl] = useState("");
+  const [plainMode, setPlainMode] = useState(initial.plainMode);
 
   async function connectGoogle() {
     setConnecting(true);
@@ -40,7 +41,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
     }
   }
 
-  const steps = ["Welcome", "Canvas", "Google", "Notebooks"];
+  const steps = ["Welcome", "Canvas", "Google", "Notebooks", "Style"];
   const progress = ((step + 1) / steps.length) * 100;
 
   function next() {
@@ -54,6 +55,7 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
         canvasApiToken: canvasToken.trim(),
         googleConnected,
         courses,
+        plainMode,
       });
   }
 
@@ -328,6 +330,50 @@ export function OnboardingWizard({ initial, onComplete }: Props) {
               </div>
             </div>
           )}
+
+          {step === 4 && (
+            <div className="space-y-6">
+              <Header
+                icon={<Sparkles />}
+                title="Pick your style"
+                subtitle="You can change this anytime in Settings."
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPlainMode(false)}
+                  className={`text-left rounded-xl border p-4 transition-colors ${
+                    !plainMode
+                      ? "border-primary bg-primary/5"
+                      : "border-border/60 hover:border-border bg-card"
+                  }`}
+                >
+                  <div className="font-semibold mb-1">Game style</div>
+                  <p className="text-sm text-muted-foreground">
+                    Avatars, XP, quests, seasonal arcs, unlockable companions.
+                    Best if you like a sense of progression.
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlainMode(true)}
+                  className={`text-left rounded-xl border p-4 transition-colors ${
+                    plainMode
+                      ? "border-primary bg-primary/5"
+                      : "border-border/60 hover:border-border bg-card"
+                  }`}
+                >
+                  <div className="font-semibold mb-1">Plain mode</div>
+                  <p className="text-sm text-muted-foreground">
+                    Just deadlines, planning, and a literal day-counter streak.
+                    No avatars, no XP, no game layer.
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
+
+
 
           <div className="mt-8 flex items-center justify-between">
             <Button

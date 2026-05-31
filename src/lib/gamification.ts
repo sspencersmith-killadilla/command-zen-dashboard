@@ -32,6 +32,8 @@ export type GameState = {
   copies: number;
   notebooksOpened: number;
   quests: Record<string, string>;
+  /** ISO Monday → ISO date when rest day was used. One rest day per week. */
+  restDays: Record<string, string>;
 };
 
 const KEY = "winston.gamification.v2";
@@ -43,7 +45,53 @@ const DEFAULT_STATE: GameState = {
   copies: 0,
   notebooksOpened: 0,
   quests: {},
+  restDays: {},
 };
+
+export type StreakTier = "none" | "bronze" | "silver" | "gold" | "platinum";
+
+export const STREAK_TIERS: { id: StreakTier; label: string; min: number }[] = [
+  { id: "none", label: "Building", min: 0 },
+  { id: "bronze", label: "Bronze", min: 3 },
+  { id: "silver", label: "Silver", min: 7 },
+  { id: "gold", label: "Gold", min: 14 },
+  { id: "platinum", label: "Platinum", min: 30 },
+];
+
+export function tierForStreak(streak: number): { tier: StreakTier; label: string; next: number | null } {
+  let current = STREAK_TIERS[0];
+  let next: number | null = STREAK_TIERS[1]?.min ?? null;
+  for (let i = 0; i < STREAK_TIERS.length; i++) {
+    if (streak >= STREAK_TIERS[i].min) {
+      current = STREAK_TIERS[i];
+      next = STREAK_TIERS[i + 1]?.min ?? null;
+    }
+  }
+  return { tier: current.id, label: current.label, next };
+}
+
+function dropOneTier(streak: number): number {
+  // Find current tier, return previous tier's minimum (or 0)
+  let prev = 0;
+  for (const t of STREAK_TIERS) {
+    if (streak >= t.min) {
+      // keep moving up; prev becomes last min that's strictly less
+    } else {
+      break;
+    }
+    prev = t.min;
+  }
+  // step down one tier
+  const idx = STREAK_TIERS.findIndex((t) => t.min === prev);
+  return STREAK_TIERS[Math.max(0, idx - 1)]?.min ?? 0;
+}
+
+function weekKey(d = new Date()): string {
+  const day = d.getUTCDay() || 7;
+  const m = new Date(d);
+  m.setUTCDate(m.getUTCDate() - day + 1);
+  return m.toISOString().slice(0, 10);
+}
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -121,12 +169,13 @@ export function useGamification() {
     if (loaded.lastActiveDay && loaded.lastActiveDay !== t) {
       const last = new Date(loaded.lastActiveDay);
       const diff = Math.round((Date.now() - last.getTime()) / 86400000);
+      const usedRest = !!loaded.restDays?.[weekKey()];
       if (diff > 1) {
-        // Soft consequence #1: weekly streak freeze. Burns the freeze, keeps streak.
         if (isFreezeAvailable()) {
           consumeFreeze();
-        } else {
-          loaded.streak = 0;
+        } else if (!usedRest) {
+          // Soft-drop: lose one tier instead of zeroing.
+          loaded.streak = dropOneTier(loaded.streak);
         }
       }
     }
@@ -170,8 +219,36 @@ export function useGamification() {
 
   const reset = useCallback(() => persist(() => DEFAULT_STATE), [persist]);
 
+  const takeRestDay = useCallback(() => {
+    const wk = weekKey();
+    const t = today();
+    let took = false;
+    persist((s) => {
+      if (s.restDays?.[wk]) return s;
+      took = true;
+      return {
+        ...s,
+        lastActiveDay: t,
+        restDays: { ...(s.restDays ?? {}), [wk]: t },
+      };
+    });
+    return took;
+  }, [persist]);
+
   const t = today();
   const todayQuestsDone = DAILY_QUESTS.filter((q) => state.quests[q.id] === t).map((q) => q.id);
+  const restDayUsedThisWeek = !!state.restDays?.[weekKey()];
+  const streakTier = tierForStreak(state.streak);
 
-  return { state, completeQuest, applyXpDelta, reset, todayQuestsDone, lastGain };
+  return {
+    state,
+    completeQuest,
+    applyXpDelta,
+    reset,
+    todayQuestsDone,
+    lastGain,
+    takeRestDay,
+    restDayUsedThisWeek,
+    streakTier,
+  };
 }

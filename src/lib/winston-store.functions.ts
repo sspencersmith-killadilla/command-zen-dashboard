@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export type CourseHub = { id: string; name: string; notebookUrl: string };
+export type MemoryEntry = { key: string; value: string; updatedAt: string };
 
 export type WinstonConfig = {
   onboarded: boolean;
@@ -14,6 +15,8 @@ export type WinstonConfig = {
   notificationsEnabled: boolean;
   courses: CourseHub[];
   companionId: string;
+  plainMode: boolean;
+  companionMemory: MemoryEntry[];
 };
 
 const courseSchema = z.object({
@@ -31,6 +34,7 @@ const patchSchema = z.object({
   notificationsEnabled: z.boolean().optional(),
   courses: z.array(courseSchema).max(50).optional(),
   companionId: z.string().min(1).max(64).regex(/^[a-z0-9-]+$/).optional(),
+  plainMode: z.boolean().optional(),
 });
 
 type Row = {
@@ -43,10 +47,12 @@ type Row = {
   onboarded: boolean;
   google_connection_id: string | null;
   companion_id: string | null;
+  plain_mode: boolean | null;
+  companion_memory: unknown;
 };
 
 const SELECT =
-  "display_name,canvas_feed_url,canvas_api_token,canvas_domain,courses,notifications_enabled,onboarded,google_connection_id,companion_id";
+  "display_name,canvas_feed_url,canvas_api_token,canvas_domain,courses,notifications_enabled,onboarded,google_connection_id,companion_id,plain_mode,companion_memory";
 
 function rowToConfig(row: Row): WinstonConfig {
   return {
@@ -59,6 +65,10 @@ function rowToConfig(row: Row): WinstonConfig {
     notificationsEnabled: row.notifications_enabled,
     courses: Array.isArray(row.courses) ? (row.courses as CourseHub[]) : [],
     companionId: row.companion_id ?? "barnaby",
+    plainMode: !!row.plain_mode,
+    companionMemory: Array.isArray(row.companion_memory)
+      ? (row.companion_memory as MemoryEntry[])
+      : [],
   };
 }
 
@@ -98,6 +108,7 @@ export const updateMyConfig = createServerFn({ method: "POST" })
       notifications_enabled?: boolean;
       courses?: CourseHub[];
       companion_id?: string;
+      plain_mode?: boolean;
     } = {};
     if (data.onboarded !== undefined) patch.onboarded = data.onboarded;
     if (data.displayName !== undefined) patch.display_name = data.displayName;
@@ -107,6 +118,7 @@ export const updateMyConfig = createServerFn({ method: "POST" })
     if (data.notificationsEnabled !== undefined) patch.notifications_enabled = data.notificationsEnabled;
     if (data.courses !== undefined) patch.courses = data.courses;
     if (data.companionId !== undefined) patch.companion_id = data.companionId;
+    if (data.plainMode !== undefined) patch.plain_mode = data.plainMode;
 
     const { data: row, error } = await supabase
       .from("user_configs")

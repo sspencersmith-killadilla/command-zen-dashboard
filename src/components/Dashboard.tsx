@@ -49,9 +49,14 @@ import { useGamification, rankFor, DAILY_QUESTS } from "@/lib/gamification";
 import { CompanionAvatar } from "@/components/CompanionAvatar";
 import { COMPANION_LIST, getCompanion, THEMES, type ThemeId } from "@/lib/companions";
 import { useAvatar } from "@/lib/use-avatar";
-import { Shirt } from "lucide-react";
+import { Shirt, Coffee, Swords } from "lucide-react";
 import { useConsequences, PERFECT_DAY_XP } from "@/lib/consequences";
 import { toast } from "sonner";
+import { currentSeasonArc } from "@/lib/seasons";
+import { computeLoad, recordCompletion, LOAD_COPY } from "@/lib/difficulty";
+import { isBoss } from "@/lib/boss";
+import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
+import { planBossAssignment } from "@/lib/boss.functions";
 
 const TIER_LABEL: Record<AlertTier, string> = {
   horizon: "On the Horizon",
@@ -97,10 +102,17 @@ function saveCleared(s: Set<string>) {
 
 export function Dashboard() {
   const { cfg, update } = useWinstonConfig();
-  const { state, completeQuest, todayQuestsDone, applyXpDelta } = useGamification();
+  const {
+    state, completeQuest, todayQuestsDone, applyXpDelta,
+    takeRestDay, restDayUsedThisWeek, streakTier,
+  } = useGamification();
   const playerLevel = rankFor(state.xp).level;
   const { recordOnTime, recordMastery } = useAvatar();
   const fetchCanvas = useServerFn(fetchCanvasAssignments);
+  const planBossFn = useServerFn(planBossAssignment);
+  const season = useMemo(() => currentSeasonArc(), []);
+  const loadInfo = useMemo(() => computeLoad(), [state.lastActiveDay]);
+  const plain = cfg.plainMode;
   const currentCompanion = getCompanion(cfg.companionId);
   const currentThemeId = currentCompanion.theme;
   const currentTheme = THEMES.find((t) => t.id === currentThemeId)!;
@@ -140,6 +152,7 @@ export function Dashboard() {
     for (const a of rawAssignments) {
       if (a.submitted && !cleared.has(a.id)) {
         cleared.add(a.id);
+        recordCompletion(a.id, new Date(a.dueAt));
         if (!credited) {
           completeQuest("clear-assignment");
           recordOnTime();
@@ -401,9 +414,56 @@ export function Dashboard() {
             Good day{cfg.displayName ? `, ${cfg.displayName}` : ""}.
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
-            Mission briefing below. Clear quests, stack XP.
+            {plain
+              ? "Your assignments, focus blocks, and streak — all in one place."
+              : "Mission briefing below. Clear quests, stack XP."}
           </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1">
+              On-time submissions:{" "}
+              <b className="text-foreground tabular-nums">{state.streak}</b>{" "}
+              {plain ? `day${state.streak === 1 ? "" : "s"} in a row` : `· ${streakTier.label}`}
+            </span>
+            {!plain && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-primary"
+                title={season.arc.blurb}
+              >
+                <Swords className="h-3 w-3" />
+                {season.arc.name} · {season.daysRemaining}d left
+              </span>
+            )}
+            {!plain && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1"
+                title={LOAD_COPY[loadInfo.load].description}
+              >
+                Today's load: <b className="text-foreground">{LOAD_COPY[loadInfo.load].label}</b>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (restDayUsedThisWeek) return;
+                if (takeRestDay()) {
+                  toast.success(
+                    plain
+                      ? "Rest day — streak protected."
+                      : "Rest day spent. Streak protected.",
+                  );
+                }
+              }}
+              disabled={restDayUsedThisWeek}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 hover:border-primary/40 disabled:opacity-50"
+            >
+              <Coffee className="h-3 w-3" />
+              {restDayUsedThisWeek ? "Rest day used" : "Take a rest day"}
+            </button>
+          </div>
         </div>
+
+        <WeeklyRecapCard awardXp={plain ? undefined : applyXpDelta} />
+
 
         {/* HERO: Upcoming assignments — front and center */}
         <Card

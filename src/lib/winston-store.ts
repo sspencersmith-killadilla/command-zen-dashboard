@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback } from "react";
-import { getMyConfig, updateMyConfig, type WinstonConfig, type CourseHub } from "./winston-store.functions";
+import { getMyConfig, updateMyConfig, type WinstonConfig, type CourseHub, type MemoryEntry } from "./winston-store.functions";
 
-export type { WinstonConfig, CourseHub };
+export type { WinstonConfig, CourseHub, MemoryEntry };
 
 const DEFAULT: WinstonConfig = {
   onboarded: false,
@@ -15,6 +15,8 @@ const DEFAULT: WinstonConfig = {
   notificationsEnabled: false,
   courses: [],
   companionId: "barnaby",
+  plainMode: false,
+  companionMemory: [],
 };
 
 export const configQueryKey = ["winston-config"] as const;
