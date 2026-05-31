@@ -14,6 +14,7 @@ export type ParsedAssignment = {
   htmlUrl?: string; // direct link to the assignment in Canvas
   files?: CanvasFile[]; // attachments parsed out of the description HTML
   submitted?: boolean; // whether the user has already submitted this assignment
+  pointsPossible?: number | null; // max points (Canvas API only) — used for boss/miniboss tier
 };
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -128,6 +129,7 @@ type CanvasAssignmentApi = {
   due_at: string | null;
   html_url: string;
   description: string | null;
+  points_possible?: number | null;
   submission?: CanvasSubmissionApi | null;
   has_submitted_submissions?: boolean;
 };
@@ -212,6 +214,7 @@ async function fetchFromApi(
               htmlUrl: a.html_url,
               files: a.description ? extractFilesFromDescription(a.description, domain) : [],
               submitted,
+              pointsPossible: typeof a.points_possible === "number" ? a.points_possible : null,
             });
           }
         } catch {

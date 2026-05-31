@@ -10,6 +10,7 @@ export type CanvasAssignment = {
   htmlUrl?: string;
   files?: CanvasFile[];
   submitted?: boolean;
+  pointsPossible?: number | null;
 };
 
 export const fetchCanvasAssignments = createServerFn({ method: "GET" })
