@@ -129,6 +129,7 @@ type CanvasAssignmentApi = {
   due_at: string | null;
   html_url: string;
   description: string | null;
+  points_possible?: number | null;
   submission?: CanvasSubmissionApi | null;
   has_submitted_submissions?: boolean;
 };
