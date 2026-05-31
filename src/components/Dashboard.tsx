@@ -176,7 +176,19 @@ export function Dashboard() {
     recordMastery(currentThemeId);
   }, [todayQuestsDone.length, currentThemeId, recordMastery]);
 
+  // Assignment window filter (1w / 2w / 30d). Persisted to localStorage.
+  const [windowDays, setWindowDays] = useState<7 | 14 | 30>(() => {
+    if (typeof window === "undefined") return 30;
+    const v = Number(localStorage.getItem("winston.assignment-window") ?? "30");
+    return v === 7 || v === 14 ? v : 30;
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("winston.assignment-window", String(windowDays));
+  }, [windowDays]);
+
   const assignments = useMemo(() => {
+    const horizon = Date.now() + windowDays * 24 * 60 * 60 * 1000;
     return rawAssignments
       .filter((a) => !a.submitted) // hide submitted from the live task list
       .map((a) => ({
@@ -187,8 +199,9 @@ export function Dashboard() {
         htmlUrl: a.htmlUrl,
         files: a.files ?? [],
       }))
+      .filter((a) => a.dueAt.getTime() <= horizon)
       .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
-  }, [rawAssignments]);
+  }, [rawAssignments, windowDays]);
 
   const recentlySubmitted = useMemo(
     () => rawAssignments.filter((a) => a.submitted).slice(0, 5),
