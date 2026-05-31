@@ -152,6 +152,7 @@ export function Dashboard() {
     for (const a of rawAssignments) {
       if (a.submitted && !cleared.has(a.id)) {
         cleared.add(a.id);
+        recordCompletion(a.id, new Date(a.dueAt));
         if (!credited) {
           completeQuest("clear-assignment");
           recordOnTime();
