@@ -136,10 +136,30 @@ function SettingsPage() {
           </div>
         </Card>
 
-        <CompanionPicker
-          selectedId={cfg.companionId}
-          onSelect={(id) => update({ companionId: id })}
-        />
+        <Card className="p-6 space-y-4 border-border/60">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-semibold text-lg">Plain mode</h2>
+              <p className="text-sm text-muted-foreground max-w-md">
+                Hides avatars, XP, quests, themes, and the whole game layer.
+                You still get assignments, planning, focus sessions, and a
+                literal day-counter streak. Built for adults who want tracking
+                without the video game.
+              </p>
+            </div>
+            <Switch
+              checked={cfg.plainMode}
+              onCheckedChange={(v) => update({ plainMode: v })}
+            />
+          </div>
+        </Card>
+
+        {!cfg.plainMode && (
+          <CompanionPicker
+            selectedId={cfg.companionId}
+            onSelect={(id) => update({ companionId: id })}
+          />
+        )}
 
         <Card className="p-6 space-y-5 border-border/60">
           <div>
