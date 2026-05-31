@@ -14,6 +14,7 @@ export type ParsedAssignment = {
   htmlUrl?: string; // direct link to the assignment in Canvas
   files?: CanvasFile[]; // attachments parsed out of the description HTML
   submitted?: boolean; // whether the user has already submitted this assignment
+  pointsPossible?: number | null; // max points (Canvas API only) — used for boss/miniboss tier
 };
 
 // ────────────────────────────────────────────────────────────────────────────
