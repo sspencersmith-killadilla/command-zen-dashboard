@@ -1,63 +1,55 @@
-## Goal
+## 1. Simplify companion language (keep personalities)
 
-When the helper companion sends a new message or its voice is playing, briefly show a large floating close-up of its face that bobs and jaw-bounces, then smoothly zooms back out.
+In `src/lib/companions.ts`, rewrite the five persona archetypes (`SAGE`, `CHILL`, `HYPE`, `GUARDIAN`, `TRICKSTER`) so the **voice cues stay** but the language is plainer for students:
 
-## What changes
+- Cap responses at ~2–3 short sentences (or a 3-item list) by default.
+- Target ~8th-grade reading level: short words, no archaic phrasing, no jargon, no theatrical filler.
+- Keep one signature tic per archetype so personality survives:
+  - Sage: one calm, direct question, then the answer. Drop "Indeed."/"the old texts."
+  - Chill: short, low-key, contractions, no slang stacking.
+  - Hype: one short pep line + one concrete 5-minute step. No em-dash chains.
+  - Guardian: one warm line + the single most important next deadline.
+  - Trickster: one light tease + the real plan. No "boss/champ" sarcasm.
+- Add a global rule in `src/routes/api/chat.ts` system prompt: "Use plain language. Avoid filler, theatrics, and long openers. Bold the one next action."
 
-### 1. New component: `src/components/CompanionCloseup.tsx`
+The per-companion `tagline` and `species` stay untouched, so the roster still feels distinct.
 
-A presentational overlay that renders the companion sprite zoomed in on the face.
+## 2. "Plan my day" quick action
 
-- Props: `companionId`, `open` (boolean), `intensity` ("idle" | "speaking"), `onClose?`.
-- Layout:
-  - `fixed` positioned, centered top-right of the chat panel area (bottom-right on desktop, with safe-area padding). Uses a portal-less fixed div with `z-50`.
-  - Circular masked frame ~180px, soft glow ring (reuses `companion.glow`), subtle drop shadow.
-  - Inner `<img>` of the sprite scaled ~2.4× and translated up so the face fills the circle (sprites are top-aligned faces — confirmed in `CompanionAvatar.tsx`).
-- Animation layers (CSS keyframes added to `src/styles.css`):
-  - `closeup-enter`: scale 0.6 → 1, opacity 0 → 1, 240ms ease-out.
-  - `closeup-exit`: reverse, 200ms ease-in.
-  - `closeup-bob`: vertical translate ±2px, 1.6s infinite — always on.
-  - `closeup-jaw`: when `intensity="speaking"`, the inner image gets a fast `scaleY(1 → 1.04 → 0.98 → 1)` cycle on its lower half via `transform-origin: 50% 30%` plus a tiny `translateY` jitter every ~140ms to imply a moving jaw without a real mouth layer.
-  - Idle mode (auto-closeup on new message but no voice playing): bob only, no jaw bounce.
-- Respects `prefers-reduced-motion`: disables jaw bounce and bob, keeps fade only.
+In `src/components/ChatPanel.tsx`, add a fourth quick-action button next to **Daily Reset / What's due this week? / Break down my next assignment**:
 
-### 2. Wire into `src/components/ChatPanel.tsx`
+- Label: **"Plan my day"** (icon: `CalendarCheck`).
+- Prompt: "Build me a realistic plan for today. Use my real Canvas list. Give me 3 time-boxed blocks I can actually finish before bed, in priority order. Bold the first one."
+- Wire to `quickAsk` like the others; mark a new `plan-day` quest as complete.
 
-The chat panel already knows:
-- which companion is active (`companion`)
-- which message is currently being voiced (`speakingId` from `useMumble`)
-- the message list
+## 3. Silent, static closeup (no sound, no motion)
 
-Add local state + effects:
+- **`src/components/ChatPanel.tsx`**: remove the `useMumble` import + hook, the `speak`/`stop`/`speakingId` wiring, both `unlockAudio()` calls, and the `onToggleSpeak` prop on `CompanionCloseup`. Drive `closeup.open` purely from "new assistant message arrived" — open on arrival, auto-close after ~6 seconds.
+- **`src/components/CompanionCloseup.tsx`**: drop `canSpeak`, `isSpeaking`, `onToggleSpeak`, the speak/stop button, the `closeup-jaw` animation class, and the "speaking" dot indicator. Bump the frame from 180px → ~240px so the face reads larger. Remove the `closeup-bob` class so the portrait sits still.
+- Leave `src/lib/use-mumble.ts` and `src/lib/mumble.ts` in place (unused) so we don't churn other files; they can be deleted in a follow-up if you'd like.
 
-- `const [closeup, setCloseup] = useState<{ open: boolean; speaking: boolean }>({ open: false, speaking: false })`.
-- **Trigger A — new helper message**: track the last seen assistant message id with a ref. When a new assistant message appears (id changes, role is assistant), open the closeup in idle mode and auto-close after 1800ms via a timeout. Skip on the very first mount so it doesn't fire for history.
-- **Trigger B — voice playing**: watch `speakingId`. When it transitions from null → some id, open the closeup with `speaking: true` and cancel any pending auto-close. When it transitions back to null, fade out after a short 250ms tail.
-- Both triggers: if voice starts during an idle closeup, upgrade to speaking and clear the auto-close timer. The closeup stays open until voice ends.
-- Render `<CompanionCloseup companionId={companion.id} open={closeup.open} intensity={closeup.speaking ? "speaking" : "idle"} />` at the root of the panel.
+## 4. Assignment window: 7 / 14 / 30 days (default 30)
 
-### 3. CSS keyframes
+- In `src/lib/canvas.functions.ts` / `src/lib/canvas.server.ts`, cap returned assignments at **30 days out** from today (currently 60).
+- In `src/components/Dashboard.tsx`, above the "Up Next" list, add a small segmented control: **1 week · 2 weeks · 30 days**, defaulting to 30 days, persisted to `useWinstonConfig` as `assignmentWindowDays`. The filter applies on the client to the already-fetched list, so switching is instant.
+- Same window is passed into the chat context block in `src/routes/api/chat.ts` so the companion only references assignments inside the chosen window.
 
-Append to `src/styles.css`:
+## 5. Long-term engagement (anti-mastery) — proposed roadmap
 
-```css
-@keyframes closeup-enter { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
-@keyframes closeup-exit  { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.85); } }
-@keyframes closeup-bob   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-@keyframes closeup-jaw   { 0%,100% { transform: scaleY(1) translateY(0); } 40% { transform: scaleY(1.04) translateY(1px); } 70% { transform: scaleY(0.98) translateY(0); } }
-```
+The current loop (daily quests + XP + cosmetics + companion unlocks per level) is great for week 1–3 but plateaus once a student has seen every theme and hit max level. To stay sticky for a full semester:
 
-Plus `prefers-reduced-motion` overrides that zero out bob/jaw.
+1. **Seasonal arcs (4-week cycles).** Each arc introduces a new theme rotation, a limited-time cosmetic, and an arc-only daily quest ("Citations Week", "Finals Sprint"). Old themes remain unlocked; the *featured* rotation changes. Prevents "I've already collected everything."
+2. **Difficulty that scales with the student, not the calendar.** Track 7-day rolling on-time submission rate. If it stays >85%, daily quests get harder (more blocks, tighter focus sessions, "no quick-action chat today"). If it drops, they get gentler. Mastery never sticks because the bar moves.
+3. **Streak depth, not streak length.** Replace pure day-streaks with a **streak ladder** (Bronze 3d → Silver 7d → Gold 14d → Platinum 30d). Each tier unlocks a permanent tone trait on the companion ("Gold streak: Barnaby now remembers your worst class and checks in on it unprompted"). Breaking a streak drops one tier, not to zero — punishment without despair.
+4. **Companion memory & callbacks.** Persist 3–5 facts per user (worst class, best study time, last big win) in `user_configs.companion_memory` and inject into the system prompt. After ~2 weeks the companion sounds like it actually knows them — extremely hard to replicate by re-reading a guide.
+5. **End-of-week ritual.** Sunday 9pm: companion DMs a 60-second recap (what you crushed, what slipped, the one thing for Monday). One-shot card on the dashboard — closing it grants the week's XP. Anchors the app to a weekly habit, not just daily.
+6. **"Boss" assignments.** Auto-detect assignments worth >20% of the grade (or flagged "exam"/"final" in the title) and surface a multi-stage quest line with checkpoint deadlines a week out, three days out, the night before. These take real planning to clear — not gameable by spamming chat.
+7. **Quiet days are wins too.** A "rest day" mechanic: students can spend one rest day per week without breaking their streak, but only if they've cleared that week's must-do list. Rewards finishing early instead of grinding.
 
-## Out of scope
-
-- No new sprite art or per-companion mouth assets.
-- No audio waveform analysis — jaw bounce is a fixed cadence while `speakingId` is set.
-- No changes to the Dashboard sidebar avatar; only the chat experience gets the closeup.
-- No global "agent is speaking" indicator outside the chat panel.
+I'd recommend shipping **#1 (seasonal arcs)**, **#3 (streak ladder)**, and **#5 (Sunday recap)** first — they're the highest engagement-per-line-of-code and don't require new AI behavior. #2 and #4 are a second sprint.
 
 ## Technical notes
 
-- Uses existing `companions.ts` `sprite` + `glow` fields, no new data.
-- Pure presentational + state; no DB or server changes.
-- Cleanup: clear any pending timeouts on unmount and when `companion.id` changes (switching companions closes the closeup immediately).
+- The `assignmentWindowDays` filter is purely a UI/context concern; no DB schema change.
+- Removing audio doesn't require touching `src/lib/mumble.ts` — just unwire it from `ChatPanel`.
+- Persona rewrite is the only change that affects the model output; everything else is presentational.
