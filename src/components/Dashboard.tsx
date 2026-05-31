@@ -59,9 +59,9 @@ import { bossTier, courseTotals, type BossTier } from "@/lib/boss";
 import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
 import { ParentShareBanner } from "@/components/ParentShareBanner";
 import { useDueReminders } from "@/lib/use-due-reminders";
-import { useServerFn as _useServerFn } from "@tanstack/react-start";
 import { getNotificationPrefs } from "@/lib/notifications.functions";
 import { planBossAssignment } from "@/lib/boss.functions";
+
 
 
 
@@ -149,6 +149,19 @@ export function Dashboard() {
   });
 
   const rawAssignments = canvasQ.data?.assignments ?? [];
+
+  // In-app due reminders (only when the user has opted in).
+  const notifPrefsFn = useServerFn(getNotificationPrefs);
+  const notifPrefsQ = useQuery({
+    queryKey: ["notification-prefs"],
+    queryFn: () => notifPrefsFn(),
+    staleTime: 60_000,
+  });
+  useDueReminders({
+    enabled: !!notifPrefsQ.data?.prefs.inapp.due,
+    assignments: rawAssignments,
+  });
+
 
   // Auto-credit XP when Canvas reports a submitted assignment we hadn't
   // previously seen as submitted. No self-reporting.
