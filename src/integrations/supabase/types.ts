@@ -196,6 +196,121 @@ export type Database = {
         }
         Relationships: []
       }
+      parent_links: {
+        Row: {
+          created_at: string
+          id: string
+          mode: string
+          parent_email: string
+          parent_name: string
+          paused: boolean
+          revoked_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode?: string
+          parent_email: string
+          parent_name?: string
+          paused?: boolean
+          revoked_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: string
+          parent_email?: string
+          parent_name?: string
+          paused?: boolean
+          revoked_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      parent_share_audit: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          parent_link_id: string
+          payload_preview: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          parent_link_id: string
+          payload_preview?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          parent_link_id?: string
+          payload_preview?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_share_audit_parent_link_id_fkey"
+            columns: ["parent_link_id"]
+            isOneToOne: false
+            referencedRelation: "parent_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parent_share_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          kind: string
+          parent_link_id: string
+          payload: Json
+          token: string
+          user_id: string
+          viewed_at: string | null
+          week_of: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          kind?: string
+          parent_link_id: string
+          payload?: Json
+          token: string
+          user_id: string
+          viewed_at?: string | null
+          week_of: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          kind?: string
+          parent_link_id?: string
+          payload?: Json
+          token?: string
+          user_id?: string
+          viewed_at?: string | null
+          week_of?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_share_tokens_parent_link_id_fkey"
+            columns: ["parent_link_id"]
+            isOneToOne: false
+            referencedRelation: "parent_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_blocks: {
         Row: {
           completed_at: string | null
@@ -401,6 +516,8 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          parent_note: string | null
+          parent_send_status: string
           summary: Json
           updated_at: string
           user_id: string
@@ -411,6 +528,8 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          parent_note?: string | null
+          parent_send_status?: string
           summary?: Json
           updated_at?: string
           user_id: string
@@ -421,6 +540,8 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          parent_note?: string | null
+          parent_send_status?: string
           summary?: Json
           updated_at?: string
           user_id?: string
