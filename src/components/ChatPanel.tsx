@@ -290,7 +290,7 @@ export function ChatPanel() {
           </PromptInputFooter>
         </PromptInput>
       </div>
-      <CompanionCloseup companionId={companion.id} open={closeupOpen} />
+      {!plain && <CompanionCloseup companionId={companion.id} open={closeupOpen} />}
     </Card>
   );
 }
