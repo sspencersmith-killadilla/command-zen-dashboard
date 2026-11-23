@@ -60,6 +60,16 @@ Prefer working locally? You need Node.js and npm — [install with nvm](https://
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
+cp .env.example .env   # then fill in your own Lovable Cloud values
 npm i
 npm run dev
 ```
+
+## License
+
+Released as free and open-source software under the [MIT License](LICENSE).
+
+You may use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of this software. The only condition is that the copyright notice and
+license notice are kept in all copies or substantial portions of the software.
+The software is provided as-is, with no warranty.

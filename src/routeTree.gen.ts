@@ -9,23 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as GuideRouteImport } from './routes/guide'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as GuideRouteImport } from './routes/guide'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as PTokenRouteImport } from './routes/p.$token'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
-import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
 import { Route as AuthenticatedFocusRouteImport } from './routes/_authenticated/focus'
-import { Route as ApiPublicHooksNotificationsDueRouteImport } from './routes/api/public/hooks/notifications-due'
-import { Route as ApiPublicHooksNotificationsDailyCheckInRouteImport } from './routes/api/public/hooks/notifications-daily-check-in'
+import { Route as AuthenticatedLockerRouteImport } from './routes/_authenticated/locker'
+import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as ApiOauthGoogleCalendarCallbackRouteImport } from './routes/api/oauth/google-calendar/callback'
+import { Route as ApiPublicHooksNotificationsDailyCheckInRouteImport } from './routes/api/public/hooks/notifications-daily-check-in'
+import { Route as ApiPublicHooksNotificationsDueRouteImport } from './routes/api/public/hooks/notifications-due'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuideRoute = GuideRouteImport.update({
@@ -33,8 +32,9 @@ const GuideRoute = GuideRouteImport.update({
   path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -42,24 +42,9 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const PTokenRoute = PTokenRouteImport.update({
-  id: '/p/$token',
-  path: '/p/$token',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedPlanRoute = AuthenticatedPlanRouteImport.update({
-  id: '/plan',
-  path: '/plan',
+const AuthenticatedFocusRoute = AuthenticatedFocusRouteImport.update({
+  id: '/focus',
+  path: '/focus',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedLockerRoute = AuthenticatedLockerRouteImport.update({
@@ -67,15 +52,30 @@ const AuthenticatedLockerRoute = AuthenticatedLockerRouteImport.update({
   path: '/locker',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedFocusRoute = AuthenticatedFocusRouteImport.update({
-  id: '/focus',
-  path: '/focus',
+const AuthenticatedPlanRoute = AuthenticatedPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const ApiPublicHooksNotificationsDueRoute =
-  ApiPublicHooksNotificationsDueRouteImport.update({
-    id: '/api/public/hooks/notifications-due',
-    path: '/api/public/hooks/notifications-due',
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PTokenRoute = PTokenRouteImport.update({
+  id: '/p/$token',
+  path: '/p/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthGoogleCalendarCallbackRoute =
+  ApiOauthGoogleCalendarCallbackRouteImport.update({
+    id: '/api/oauth/google-calendar/callback',
+    path: '/api/oauth/google-calendar/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksNotificationsDailyCheckInRoute =
@@ -84,10 +84,10 @@ const ApiPublicHooksNotificationsDailyCheckInRoute =
     path: '/api/public/hooks/notifications-daily-check-in',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiOauthGoogleCalendarCallbackRoute =
-  ApiOauthGoogleCalendarCallbackRouteImport.update({
-    id: '/api/oauth/google-calendar/callback',
-    path: '/api/oauth/google-calendar/callback',
+const ApiPublicHooksNotificationsDueRoute =
+  ApiPublicHooksNotificationsDueRouteImport.update({
+    id: '/api/public/hooks/notifications-due',
+    path: '/api/public/hooks/notifications-due',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -194,11 +194,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guide': {
@@ -208,11 +208,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -222,32 +222,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/p/$token': {
-      id: '/p/$token'
-      path: '/p/$token'
-      fullPath: '/p/$token'
-      preLoaderRoute: typeof PTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/plan': {
-      id: '/_authenticated/plan'
-      path: '/plan'
-      fullPath: '/plan'
-      preLoaderRoute: typeof AuthenticatedPlanRouteImport
+    '/_authenticated/focus': {
+      id: '/_authenticated/focus'
+      path: '/focus'
+      fullPath: '/focus'
+      preLoaderRoute: typeof AuthenticatedFocusRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/locker': {
@@ -257,18 +236,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLockerRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/focus': {
-      id: '/_authenticated/focus'
-      path: '/focus'
-      fullPath: '/focus'
-      preLoaderRoute: typeof AuthenticatedFocusRouteImport
+    '/_authenticated/plan': {
+      id: '/_authenticated/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof AuthenticatedPlanRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/api/public/hooks/notifications-due': {
-      id: '/api/public/hooks/notifications-due'
-      path: '/api/public/hooks/notifications-due'
-      fullPath: '/api/public/hooks/notifications-due'
-      preLoaderRoute: typeof ApiPublicHooksNotificationsDueRouteImport
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$token': {
+      id: '/p/$token'
+      path: '/p/$token'
+      fullPath: '/p/$token'
+      preLoaderRoute: typeof PTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/google-calendar/callback': {
+      id: '/api/oauth/google-calendar/callback'
+      path: '/api/oauth/google-calendar/callback'
+      fullPath: '/api/oauth/google-calendar/callback'
+      preLoaderRoute: typeof ApiOauthGoogleCalendarCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/notifications-daily-check-in': {
@@ -278,11 +278,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNotificationsDailyCheckInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/oauth/google-calendar/callback': {
-      id: '/api/oauth/google-calendar/callback'
-      path: '/api/oauth/google-calendar/callback'
-      fullPath: '/api/oauth/google-calendar/callback'
-      preLoaderRoute: typeof ApiOauthGoogleCalendarCallbackRouteImport
+    '/api/public/hooks/notifications-due': {
+      id: '/api/public/hooks/notifications-due'
+      path: '/api/public/hooks/notifications-due'
+      fullPath: '/api/public/hooks/notifications-due'
+      preLoaderRoute: typeof ApiPublicHooksNotificationsDueRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -322,3 +322,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
